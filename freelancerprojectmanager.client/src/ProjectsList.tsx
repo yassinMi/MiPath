@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Project } from './Model/Project';
+import ProjectComponent from './ProjectComponent';
 
 
 
@@ -21,21 +22,23 @@ const ProjectsList: React.FC<ProjectsListProps> = ({ projects, onSelectProject, 
   return (
     <div>
           <h2>Projects</h2>
-          <div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               <button onClick={handleCreate} >create new</button>          </div>
-      <ul>
-        {projects.map(project => (
-          <li
-            key={project.id}
-            style={{ cursor: onSelectProject ? 'pointer' : 'default', marginBottom: '1rem' }}
-            onClick={() => onSelectProject && onSelectProject(project)}
-          >
-            <strong>{project.name}</strong>
-            {project.description && <div>{project.description}</div>}
-            {project.status && <span>Status: {project.status}</span>}
-          </li>
-        ))}
-      </ul>
+          <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {projects.map(project => (
+                      <ProjectComponent clientName={project.clientName} projectName={project.name} status={project.status}
+                          key={project.id}
+                          style={{ cursor: onSelectProject ? 'pointer' : 'default', marginBottom: '1rem' }}
+                          onClick={() => onSelectProject && onSelectProject(project)}
+                      >
+
+                      </ProjectComponent>
+                  ))}
+
+              </div>
+              
+      </div>
     </div>
   );
 };

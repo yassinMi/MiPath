@@ -3,6 +3,8 @@ import './App.css';
 import ProjectComponent from './ProjectComponent';
 import ProjectsList from './ProjectsList';
 import type { CreateProjectCommand, Project } from './Model/Project';
+import AppHeader from './AppHeader';
+import AppIcon from './AppIcon';
 interface Forecast {
     date: string;
     temperatureC: number;
@@ -12,7 +14,8 @@ interface Forecast {
 
 function App() {
     const [projects, setProjects] = useState<Project[]>([]);
-
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const [darkMode, setDarkMode] = useState(prefersDark);
     const handleCreateProject = async () => {
         try {
             console.log("handleCreateProject called")
@@ -36,19 +39,26 @@ function App() {
     useEffect(() => {
         populateWeatherData();
     }, []);
-
+    const onDarkToggle = () => {
+        setDarkMode((p) => !p);
+    }
     const contents = projects === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has sssstarted. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
+        ? <p><em>Loading... Please refresh once the ASP.NET backend has started</em></p>
         : <div aria-labelledby="tableLabel">
             <ProjectsList handleCreate={handleCreateProject} projects={projects} ></ProjectsList>
-            <ProjectComponent projectName="proj1" clientName="yass" deadline="2025" status="pending" key="4" ></ProjectComponent>
         </div>;
 
     return (
-        <div>
-            freelancer project manager
-            {contents}
+        <div className={darkMode ? "dark" : "light"}>
+            <AppHeader onDarkToggle={onDarkToggle} subtitle="Projects" title="Freelancer Project Manager"></AppHeader>
+            <div>
+                
+              
+                <div className="text-3xl font-bold underline">hi</div>
+                {contents}
+            </div>
         </div>
+       
     );
 
     async function populateWeatherData() {
