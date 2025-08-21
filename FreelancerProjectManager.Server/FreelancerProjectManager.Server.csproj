@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Api\DTO\NewFolder\" />
     <Folder Include="Application\PorojectManagement\" />
   </ItemGroup>
 

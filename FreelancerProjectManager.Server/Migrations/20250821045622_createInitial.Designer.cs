@@ -11,8 +11,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FreelancerProjectManager.Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250820234506_initialCreate")]
-    partial class initialCreate
+    [Migration("20250821045622_createInitial")]
+    partial class createInitial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,8 +26,11 @@ namespace FreelancerProjectManager.Server.Migrations
 
             modelBuilder.Entity("FreelancerProjectManager.Server.Domain.ProjectManagement.Client", b =>
                 {
-                    b.Property<string>("ID")
-                        .HasColumnType("text");
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -40,8 +43,11 @@ namespace FreelancerProjectManager.Server.Migrations
 
             modelBuilder.Entity("FreelancerProjectManager.Server.Domain.ProjectManagement.PTask", b =>
                 {
-                    b.Property<string>("ID")
-                        .HasColumnType("text");
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -50,9 +56,8 @@ namespace FreelancerProjectManager.Server.Migrations
                     b.Property<int?>("EstimateMinute")
                         .HasColumnType("integer");
 
-                    b.Property<string>("ProjectID")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("ProjectID")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -67,12 +72,14 @@ namespace FreelancerProjectManager.Server.Migrations
 
             modelBuilder.Entity("FreelancerProjectManager.Server.Domain.ProjectManagement.Project", b =>
                 {
-                    b.Property<string>("ID")
-                        .HasColumnType("text");
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
 
-                    b.Property<string>("ClientID")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
+
+                    b.Property<int>("ClientID")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Description")
                         .IsRequired()

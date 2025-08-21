@@ -4,8 +4,12 @@ services:
     build:
       context: .
       dockerfile: FreelancerProjectManager.Server/Dockerfile
+    ports:
+      - "5451:8080"
+      - "5452:8081"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:15
@@ -15,6 +19,11 @@ services:
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: mydb
     ports:
-      - "5432:5432"
+      - "5450:5432"
     volumes:
       - ./data.mi:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

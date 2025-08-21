@@ -13,7 +13,14 @@ namespace FreelancerProjectManager.Server
 
             // Add services to the container.
             builder.Services.AddDbContext<AppDbContext>(options =>
-        { options.UseNpgsql("Host=db;Port=5432;Database=mydb;Username=myuser;Password=mypassword");
+        { options.UseNpgsql("Host=db;Port=5432;Database=mydb;Username=myuser;Password=mypassword",npgsqlOptions =>
+        {
+            npgsqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 10,
+                        maxRetryDelay: TimeSpan.FromSeconds(5),
+                        errorCodesToAdd: null
+                    );
+        });
         });
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi

@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace FreelancerProjectManager.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class initialCreate : Migration
+    public partial class createInitial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,7 +15,8 @@ namespace FreelancerProjectManager.Server.Migrations
                 name: "Clients",
                 columns: table => new
                 {
-                    ID = table.Column<string>(type: "text", nullable: false),
+                    ID = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -26,10 +28,11 @@ namespace FreelancerProjectManager.Server.Migrations
                 name: "Project",
                 columns: table => new
                 {
-                    ID = table.Column<string>(type: "text", nullable: false),
+                    ID = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    ClientID = table.Column<string>(type: "text", nullable: false)
+                    ClientID = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,10 +49,11 @@ namespace FreelancerProjectManager.Server.Migrations
                 name: "Tasks",
                 columns: table => new
                 {
-                    ID = table.Column<string>(type: "text", nullable: false),
+                    ID = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    ProjectID = table.Column<string>(type: "text", nullable: false),
+                    ProjectID = table.Column<int>(type: "integer", nullable: false),
                     EstimateMinute = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
