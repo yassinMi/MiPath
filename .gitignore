@@ -1,0 +1,8 @@
+/data.mi/*
+
+*.yass
+bin/
+obj/
+*.user
+*.sln.user
+.vs
