@@ -26,7 +26,7 @@ function AppIcon() {
         dangerouslySetInnerHTML={{ __html: svg }
         
         }
-        className="size-16"
+        className="size-12"
     />
 }
 

@@ -1,15 +1,18 @@
 import React from 'react';
 import AppIcon from './AppIcon';
+import AccountButton from './AccountButton';
+import ThemeSwitch from './ThemeSwitch';
 
 export interface AppHeaderProps {
   title: string;
   subtitle?: string;
     children?: React.ReactNode;
-    onDarkToggle: ()=>void
+    onDarkToggle: () => void;
+    isDark: boolean;
 }
 
-const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDarkToggle }) => (
-    <header className="flex shrink-0 p-6 bg-white  dark:bg-gray-950 ">
+const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDarkToggle , isDark}) => (
+    <header className="flex shrink-0 px-6 py-2 bg-white  dark:bg-gray-950 shadow-xl ">
             <div className="flex flex-1 justify-between h-16 items-center">
 
                 {/* Logo / Title */}
@@ -39,9 +42,16 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                     </div>
                 </div>
 
-                <button onClick={onDarkToggle } >dark</button>
+            <ul className="flex flex-row gap-4 p-4">
+                <li className="font-bold hover:underline cursor-pointer">Today</li>
+                <li className="font-bold hover:underline cursor-pointer">This Week</li>
+            </ul>
+            <div className="flex flex-row gap-4 p-4 items-center">
+                <ThemeSwitch onClick={onDarkToggle} isDark={isDark} ></ThemeSwitch>
+                <AccountButton userName="YassinMi" accountInitials="YM" onClick={() => { }}></AccountButton>
 
-
+</div>
+           
 
             </div>
     </header>

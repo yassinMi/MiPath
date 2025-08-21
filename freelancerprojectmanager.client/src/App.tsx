@@ -50,8 +50,8 @@ function App() {
 
     return (
         <div className={darkMode ? "dark" : "light"}>
-            <AppHeader onDarkToggle={onDarkToggle} subtitle="Projects" title="Freelancer Project Manager"></AppHeader>
-            <div>
+            <AppHeader onDarkToggle={onDarkToggle} isDark={darkMode} subtitle="Projects" title="Freelancer Project Manager"></AppHeader>
+            <div className="bg-gray-200 dark:bg-gray-800 p-6 text-gray-800 dark:text-gray-200">
                 
               
                 <div className="text-3xl font-bold underline">hi</div>
