@@ -10,6 +10,7 @@
         public ClientDto Client { get; set; }
 
         public List<TaskDto> Tasks { get; set; } = new();
+        public string Status { get; set; }
     }
     public class ClientDto
     {

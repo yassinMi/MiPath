@@ -76,24 +76,23 @@ primary: {
         }
     },
     light:{
-        palette:{
-            primary: {
-        main: "#06962fff", // blue
-        dark: "#106829ff",
-        light: "#06962fff",
-        
-      },
-    
-      
-      secondary: {
-        main: "#2737b0ff", // purple
+   palette:{
+primary: {
+     main: "#2737b0ff", // purple
         dark: "#2737b0ff", // purple
                 light: "#2737b0ff"
-
+      
+        
       },
       
+      secondary: {
+         main: "#06962fff", // blue
+        dark: "#106829ff",
+        light: "#06962fff",
+
+      },
         }
-    }
+    },
   },
 
 

@@ -21,7 +21,7 @@ const ProjectsCards: React.FC<ProjectsCardsProps> = ({ projects, onSelectProject
    
     
   return (
-     <div className="bg-gray-200 dark:bg-gray-800 p-6 text-gray-800 dark:text-gray-200">
+     <div className="bg-transparent dark:bg-transparent p-6 text-gray-800 dark:text-gray-200">
                 
            
                

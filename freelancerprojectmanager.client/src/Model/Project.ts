@@ -1,7 +1,7 @@
 import type { ProjectStatus } from "./ProjectStatus";
 
 export interface Project {
-    id: string;
+    id: number;
     name: string;
     description: string;
     clientName?: string;

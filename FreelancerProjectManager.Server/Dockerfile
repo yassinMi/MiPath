@@ -14,6 +14,9 @@ RUN apt-get update
 RUN apt-get install curl
 RUN curl -sL https://deb.nodesource.com/setup_20.x | bash
 RUN apt-get -y install nodejs
+COPY  ["./freelancerprojectmanager.client/package.json", "./freelancerprojectmanager.client/"]
+WORKDIR /freelancerprojectmanager.client/
+RUN npm install
 
 
 FROM with-node AS build

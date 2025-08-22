@@ -15,7 +15,8 @@ namespace FreelancerProjectManager.Server.Api.DTO
                 Description = project.Description,
                 ClientID = project.ClientID,
                 Client = project.Client?.ToDto(),
-                Tasks = project.Tasks?.Select(t => t.ToDto()).ToList() ?? new List<TaskDto>()
+                Tasks = project.Tasks?.Select(t => t.ToDto()).ToList() ?? new List<TaskDto>(),
+                Status = project.Status.ToString()
             };
         }
 
@@ -57,7 +58,8 @@ namespace FreelancerProjectManager.Server.Api.DTO
                 Description = dto.Description,
                 ClientID = dto.ClientID,
                 Client = dto.Client?.ToEntity(),
-                Tasks = dto.Tasks?.Select(t => t.ToEntity()).ToList() ?? new List<PTask>()
+                Tasks = dto.Tasks?.Select(t => t.ToEntity()).ToList() ?? new List<PTask>(),
+                Status = (Project.ProjectStatus)Enum.Parse<Project.ProjectStatus>(dto.Status)
             };
         }
 
