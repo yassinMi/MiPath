@@ -2,7 +2,21 @@ import React from 'react';
 import AppIcon from './AppIcon';
 import AccountButton from './AccountButton';
 import ThemeSwitch from './ThemeSwitch';
-
+import { Breadcrumbs, Link, Typography } from '@mui/material';
+import { Link as RouterLink, } from 'react-router';
+import HomeIcon from "@mui/icons-material/Home"
+import DarkModeIcon from "@mui/icons-material/DarkMode";       // Moon / Dark Mode
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";   // Project / Folder
+import TaskAltIcon from "@mui/icons-material/TaskAlt";         // Task / Completed task
+import InventoryIcon from "@mui/icons-material/Inventory";     // Item / Stock
+import AllInboxIcon from "@mui/icons-material/AllInbox";       // Box / Container
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney"; // Money / Finance
+import ScheduleIcon from "@mui/icons-material/Schedule";       // Schedule / Calendar
+import ViewWeekIcon from "@mui/icons-material/ViewWeek";       // Week / Timeline
+import PersonIcon from "@mui/icons-material/Person";           // Person / User
+import WorkIcon from "@mui/icons-material/Work";           // Person / User
+import DashboardIcon from "@mui/icons-material/Dashboard";           // Person / User
+import ListAltIcon from "@mui/icons-material/ListAlt";           // Person / User
 export interface AppHeaderProps {
   title: string;
   subtitle?: string;
@@ -12,14 +26,43 @@ export interface AppHeaderProps {
 }
 
 const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDarkToggle , isDark}) => (
-    <header className="flex shrink-0 px-6 py-2 bg-white  dark:bg-gray-950 shadow-xl ">
+    <header className="flex h-heade z-30 sticky top-0 shrink-0 px-6 py-2 bg-white  dark:bg-gray-950 shadow-xl ">
             <div className="flex flex-1 justify-between h-16 items-center">
 
                 {/* Logo / Title */}
                 <div className="flex items-center space-x-3">
                 
                     <AppIcon></AppIcon>
+                    <div>
                     <h1 className="text-2xl font-semibold text-black dark:text-white">{title}</h1>
+                      <Breadcrumbs aria-label="breadcrumb">
+    
+         
+        
+           <RouterLink to={"project"}>
+            <div className='p-1 rounded flex flex-row gap-2 items-center hover:bg-gray-800'>
+                          <FolderOpenIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+
+<div>Projects</div>
+                
+            </div>
+        </RouterLink>
+        <RouterLink to={"project/1"}>
+            <div className='p-1 rounded flex flex-row gap-2 items-center hover:bg-gray-800'>
+                          <DashboardIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+
+<div>YassFPM</div>
+                
+            </div>
+        </RouterLink>
+        <Typography
+          sx={{ color: 'text.primary', display: 'flex', alignItems: 'center' }}
+        >
+          <ListAltIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+          Tasks
+        </Typography>
+      </Breadcrumbs>
+                    </div>
                 </div>
 
                 {/* Search bar */}
@@ -43,8 +86,9 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                 </div>
 
             <ul className="flex flex-row gap-4 p-4">
-                <li className="font-bold hover:underline cursor-pointer">Today</li>
-                <li className="font-bold hover:underline cursor-pointer">This Week</li>
+
+                <li className="font-bold hover:underline cursor-pointer"><RouterLink to={"/today"} >Today</RouterLink></li>
+                <li className="font-bold hover:underline cursor-pointer"><RouterLink to={"/thisweek"} >This Week</RouterLink></li>
             </ul>
             <div className="flex flex-row gap-4 p-4 items-center">
                 <ThemeSwitch onClick={onDarkToggle} isDark={isDark} ></ThemeSwitch>

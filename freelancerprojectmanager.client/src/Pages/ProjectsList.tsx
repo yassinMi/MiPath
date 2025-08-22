@@ -1,6 +1,7 @@
 import React from 'react';
-import type { Project } from './Model/Project';
-import ProjectComponent from './ProjectComponent';
+import ProjectComponent from '../ProjectComponent';
+import type { Project } from '../Model/Project';
+import { ToggleButtonGroup } from '@mui/material';
 
 
 
@@ -20,17 +21,16 @@ const ProjectsList: React.FC<ProjectsListProps> = ({ projects, onSelectProject, 
    
     
   return (
-    <div>
-          <h2>Projects</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              <button onClick={handleCreate} >create new</button>          </div>
-          <div>
+     <div className="bg-gray-200 rounded dark:bg-gray-900 m-4 p-6 text-gray-800 dark:text-gray-200">
+                
+           
+               
+          
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {projects.map(project => (
                       <ProjectComponent clientName={project.clientName} projectName={project.name} status={project.status}
-                          key={project.id}
-                          style={{ cursor: onSelectProject ? 'pointer' : 'default', marginBottom: '1rem' }}
-                          onClick={() => onSelectProject && onSelectProject(project)}
+                          key={project.id}    
+                          
                       >
 
                       </ProjectComponent>
@@ -38,8 +38,9 @@ const ProjectsList: React.FC<ProjectsListProps> = ({ projects, onSelectProject, 
 
               </div>
               
-      </div>
-    </div>
+    
+            </div>
+    
   );
 };
 

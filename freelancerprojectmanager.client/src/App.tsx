@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import ProjectComponent from './ProjectComponent';
-import ProjectsList from './ProjectsList';
+import ProjectsList from './Pages/ProjectsList';
 import type { CreateProjectCommand, Project } from './Model/Project';
 import AppHeader from './AppHeader';
 import AppIcon from './AppIcon';
+import { createTheme, ThemeProvider, useColorScheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { Outlet, Route, Routes } from 'react-router-dom';
+import ProjectPage from './Pages/ProjectPage';
 interface Forecast {
     date: string;
     temperatureC: number;
@@ -13,63 +17,93 @@ interface Forecast {
 }
 
 function App() {
-    const [projects, setProjects] = useState<Project[]>([]);
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const [darkMode, setDarkMode] = useState(prefersDark);
-    const handleCreateProject = async () => {
-        try {
-            console.log("handleCreateProject called")
-
-            var project: CreateProjectCommand = {
-                name: "New Project", description: "short description",
-                clientName:"yass" 
-
-            }
-            const res = await fetch("/api/project", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(project) // change as needed
-            });
-            const newProject = await res.json();
-            setProjects(prev => [...prev, newProject]); // add the new project to state
-        } catch (err) {
-            console.error(err);
-        }
-    };
-    useEffect(() => {
-        populateWeatherData();
-    }, []);
-    const onDarkToggle = () => {
-        setDarkMode((p) => !p);
+     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+    const { mode, setMode } = useColorScheme();
+    if(!mode){
+        setMode("system")
     }
-    const contents = projects === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started</em></p>
-        : <div aria-labelledby="tableLabel">
-            <ProjectsList handleCreate={handleCreateProject} projects={projects} ></ProjectsList>
-        </div>;
+ 
+   
+   
+    const onDarkToggle = () => {
+        if (mode == "light") {
+            setMode("dark")
+            setDarkMode(true)
+        }
+        else {
+            setMode("light")
+            setDarkMode(false)
+        }
+    }
+  
 
     return (
-        <div className={darkMode ? "dark" : "light"}>
+        <div className={`min-h-screen bg-gray-100 dark:bg-gray-900 ${darkMode ? "dark" : "light"}`}>
             <AppHeader onDarkToggle={onDarkToggle} isDark={darkMode} subtitle="Projects" title="Freelancer Project Manager"></AppHeader>
-            <div className="bg-gray-200 dark:bg-gray-800 p-6 text-gray-800 dark:text-gray-200">
-                
-              
-                <div className="text-3xl font-bold underline">hi</div>
-                {contents}
-            </div>
+              <Outlet></Outlet>
+             
+    
+           
         </div>
        
     );
 
-    async function populateWeatherData() {
-        console.log("populate")
-        const response = await fetch('/api/project');
-        if (response.ok) {
-            
-            const data = await response.json();
-            setProjects(data);
-        }
-    }
+    
 }
 
-export default App;
+
+const theme = createTheme({
+   
+  colorSchemes: {
+    dark: {
+        palette:{
+primary: {
+     main: "#2737b0ff", // purple
+        dark: "#2737b0ff", // purple
+                light: "#2737b0ff"
+      
+        
+      },
+      
+      secondary: {
+         main: "#06962fff", // blue
+        dark: "#106829ff",
+        light: "#06962fff",
+
+      },
+        }
+    },
+    light:{
+        palette:{
+            primary: {
+        main: "#06962fff", // blue
+        dark: "#106829ff",
+        light: "#06962fff",
+        
+      },
+    
+      
+      secondary: {
+        main: "#2737b0ff", // purple
+        dark: "#2737b0ff", // purple
+                light: "#2737b0ff"
+
+      },
+      
+        }
+    }
+  },
+
+
+
+});
+
+export default function ToggleColorMode() {
+  return (
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
+  );
+}

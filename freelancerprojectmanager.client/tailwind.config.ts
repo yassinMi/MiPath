@@ -7,7 +7,9 @@ const config: Config = {
         "./src/**/*.{ts,tsx}", // include your TS and TSX files
     ],
     theme: {
-        extend: {},
+        extend: {spacing: {
+        header: '4rem', // 64px
+      },},
     },
     plugins: [],
     corePlugins: {

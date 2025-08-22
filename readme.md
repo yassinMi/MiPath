@@ -26,3 +26,8 @@ npm run dev
 step3: navigate to the url displayed in the vite server command prompt
 
 
+## Features
+- manage projects
+- manage child tasks in projects
+- overview pages: this week and today
+- filter/sort projects and tasks by status, priority and custom tags
