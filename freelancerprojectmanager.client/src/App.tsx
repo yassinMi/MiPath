@@ -40,7 +40,7 @@ function App() {
   
 
     return (
-        <div className={`min-h-screen bg-gray-100 dark:bg-gray-900 ${darkMode ? "dark" : "light"}`}>
+        <div className={`min-h-screen flex flex-col text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-900 ${darkMode ? "dark" : "light"}`}>
             <AppHeader onDarkToggle={onDarkToggle} isDark={darkMode} subtitle="Projects" title="Freelancer Project Manager"></AppHeader>
               <Outlet></Outlet>
              

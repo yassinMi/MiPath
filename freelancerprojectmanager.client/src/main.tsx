@@ -13,6 +13,7 @@ import TodayOverview from './Pages/TodayOverview.tsx'
 import WeekOverview from './Pages/WeekOverview.tsx'
 import ProjectOverview from './Pages/ProjectOverview.tsx'
 import ProjectTasks from './Pages/ProjectTasks.tsx'
+import HomeDashboard from './Pages/HomeDashboard.tsx'
 createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <BrowserRouter>
@@ -24,6 +25,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path='project/:projectId/tasks' element={<ProjectTasks ></ProjectTasks>}></Route>
                 <Route path='today' element={<TodayOverview ></TodayOverview>}></Route>
                 <Route path='thisweek' element={<WeekOverview ></WeekOverview>}></Route>
+                <Route path='/' element={<HomeDashboard ></HomeDashboard>}></Route>
             </Route>
                 <Route path="/about" element={<About />} />
             </Routes>

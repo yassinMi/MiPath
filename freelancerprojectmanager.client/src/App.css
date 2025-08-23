@@ -1,5 +1,6 @@
-﻿
-
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
 .button-main {
     border-radius: 8px;
     border: 1px solid transparent;
@@ -16,7 +17,19 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+.card-header-m {
+  @apply text-xl flex-shrink-0 h-10 m-2 flex gap-4 items-center;
+}
+.card-paper-m {
+  @apply flex-1 flex flex-col ;
+}
+.card-separator-m{
+   @apply  mx-1 bg-gray-200 dark:bg-gray-800 h-[1px];
+}
 #root{
     width: 100%;
 }

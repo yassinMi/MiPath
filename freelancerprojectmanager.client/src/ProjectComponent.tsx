@@ -3,6 +3,7 @@ import type { ProjectStatus } from './Model/ProjectStatus';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreHoriz';
 import { useNavigate } from 'react-router-dom';
+import type { LocationState } from './Model/LocationState';
 
 interface ProjectComponentProps {
   projectId: number;
@@ -130,7 +131,8 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({
   };
   const handleCardClick=(e: React.MouseEvent<HTMLDivElement>)=>{
     if (e.target === e.currentTarget) {
-     navigate(`/project/${projectId}/overview`, {state :{projectId,projectName,deadline,status,description} })
+      let locState:LocationState = {pageType:"projectOverview",projectName,projectId:projectId,projectStatus:status} 
+     navigate(`/project/${projectId}/overview`, {state :locState})
 
     }
   }

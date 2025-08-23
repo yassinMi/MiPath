@@ -9,14 +9,16 @@ import React from "react";
 import ProjectsCards from "./ProjectsCards";
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ControlPanelLayout from "../ControlPanelLayout";
 
 
 
-const options = ["Create Project", "Create Task", "Create Pre-project"];
+const options_ = ["Create Project", "Create Task", "Create Pre-project"];
 export interface SplitButtonProps {
-    sx:any
+    sx:any,
+    options: string[]
 }
-  const SplitButton:FC<SplitButtonProps>= ({sx}) =>{
+  export const SplitButton:FC<SplitButtonProps>= ({sx, options}) =>{
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedIndex, setSelectedIndex] = React.useState(0);
 
@@ -99,7 +101,7 @@ const ProjectsPage : FC = ({})=>{
     return (
 
         <div className="text-gray-800 dark:text-gray-200">
-               <div  className="projects-control-panel    z-50 dark:bg-gray-900 bg-white h-12  rounded p-0 flex flex-row gap-4 items-center shadow m-10 my-4">
+               <ControlPanelLayout  className="projects  ">
   <ToggleButtonGroup
       value={viewMode}
       exclusive
@@ -114,9 +116,9 @@ const ProjectsPage : FC = ({})=>{
       </ToggleButton>
       
     </ToggleButtonGroup>
-     <SplitButton sx={{ ml: "auto" }}></SplitButton>
+     <SplitButton options={options_} sx={{ ml: "auto" }}></SplitButton>
      {/* <Button sx={{ ml: "auto" }} onClick={handleCreateProject} variant="contained">Create new</Button> */}
-              </div>
+              </ControlPanelLayout>
 
 {isLoadingProjects?<div className="flex items-center justify-center h-[calc(100vh-200px)]">
       <CircularProgress color="primary" />
