@@ -34,7 +34,7 @@ export interface BreadcrumbsComponentProps {
 
 const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({ locationInfo }) => {
 
-    var className = `max-h-[56px] lg:max-h-[32px]`
+    var className = `max-h-[56px] lg:max-h-[32px] min-h-[32px] items-center flex flex-row`
     switch (locationInfo.pageType) {
         case "about": return (<Breadcrumbs className={className} sx={{ maxHeight: "32px", overflow: "clip" }} aria-label="breadcrumb">
             <Typography
@@ -216,13 +216,17 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
     }, [locationInfo])
 
     return (
-        <header className={`text-gray-900 min-w-0 dark:text-white flex h-heade group z-30 sticky top-0 shrink-0 px-6 py-2 bg-white ${scrolled?"scrolled":""} dark:bg-gray-950 shadow-xl transition-all duration-500 ease-in-out`}>
-            <div className="flex flex-1  min-w-0 justify-between h-16 group-[.scrolled]:h-10 items-center transition-all duration-500">
+        <div className='h-20 z-30 sticky top-0 shrink-0 '>
+  <header style={{transition:"height"}} className={`text-gray-900 min-w-0 dark:text-white flex top-0 group h-heade px-6 py-2 bg-white ${scrolled?"scrolled":""} dark:bg-gray-950 shadow-xl transition-height duration-500 ease-in-out`}>
+            <div className="flex flex-1  min-w-0 justify-between h-16 group-[.scrolled]:h-10  items-center transition-height duration-500">
 
                 {/* Logo / Title */}
                 <div className="flex items-center min-w-0  space-x-3">
 
-                    <AppIcon ></AppIcon>
+
+                    <RouterLink to="/" state={{pageType:"home"} as LocationState}>
+                                        <AppIcon ></AppIcon>
+                    </RouterLink>
                     <div className='flex flex-col max-h-16 gap-0 items-stretch min-w-0 '>
                         {!scrolled?
                         <h1 className="text-2xl truncate min-w-0 font-semibold text-black dark:text-white hidden lg:block">{title}</h1>
@@ -267,6 +271,8 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
 
             </div>
         </header>
+        </div>
+      
     );
 }
 

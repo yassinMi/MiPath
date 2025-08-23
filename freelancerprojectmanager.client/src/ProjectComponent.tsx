@@ -144,7 +144,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({
     handleClose()
   };
   return (
-      <div data-status={(status)} onClick={handleCardClick} className="project-component group cursor-pointer h-48  flex flex-col gap-2 max-w-sm bg-white dark:bg-[#060606] rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300  
+      <div data-status={(status)} onClick={handleCardClick} className="project-component group cursor-pointer h-48  flex flex-col gap-2  bg-white dark:bg-[#060606] rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300  
     data-[status=Scoping]:border-2
     dark:border-white
     border-amber-700
