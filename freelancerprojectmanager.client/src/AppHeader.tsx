@@ -34,8 +34,9 @@ export interface BreadcrumbsComponentProps {
 
 const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({ locationInfo }) => {
 
+    var className = `max-h-[56px] lg:max-h-[32px]`
     switch (locationInfo.pageType) {
-        case "about": return  (<Breadcrumbs sx={{ maxHeight: "32px", overflow: "clip" }} aria-label="breadcrumb">
+        case "about": return (<Breadcrumbs className={className} sx={{ maxHeight: "32px", overflow: "clip" }} aria-label="breadcrumb">
             <Typography
                 sx={{ color: 'text.primary', display: 'flex', alignItems: 'center' }}
             >
@@ -45,48 +46,48 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({ locationInf
         </Breadcrumbs>)
         case "projectOverview":
         case "projectTasks": return (
-        <Breadcrumbs sx={{ maxHeight: "32px", overflow: "clip" }} aria-label="breadcrumb">
-            <RouterLink to={"project"}>
-                <div className='p-1 rounded flex flex-row gap-2 items-center hover:bg-gray-100 dark:hover:bg-gray-800'>
-                    <FolderOpenIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+            <Breadcrumbs className={className} sx={{  overflow: "clip" }} aria-label="breadcrumb">
+                <RouterLink to={"project"}>
+                    <div className='p-1 rounded flex flex-row gap-2 items-center hover:bg-gray-100 dark:hover:bg-gray-800'>
+                        <FolderOpenIcon sx={{ mr: 0.5 }} fontSize="inherit" />
 
-                    <div>Projects</div>
+                        <div>Projects</div>
 
-                </div>
-            </RouterLink>
-            <RouterLink to={`project/${locationInfo.projectId}/overview`}>
-                <div className='p-1 rounded flex flex-row gap-2 items-center hover:bg-gray-100 dark:hover:bg-gray-800'>
-                    <DashboardIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+                    </div>
+                </RouterLink>
+                <RouterLink to={`project/${locationInfo.projectId}/overview`}>
+                    <div className='p-1 rounded flex flex-row gap-2 items-center hover:bg-gray-100 dark:hover:bg-gray-800'>
+                        <DashboardIcon sx={{ mr: 0.5 }} fontSize="inherit" />
 
-                    <div>{locationInfo?.projectName}</div>
-                    {locationInfo.projectStatus=="Scoping"? <div className="text-xs font-bold  items-center min-w-0 truncate break-all justify-center bg-orange-500/10 text-orange-700 p-2 py-1 rounded-lg shadow">
-    Scoping
-  </div>:null}
+                        <div>{locationInfo?.projectName}</div>
+                        {locationInfo.projectStatus == "Scoping" ? <div className="text-xs font-bold  items-center min-w-0 truncate break-all justify-center bg-orange-500/10 text-orange-700 p-2 py-1 rounded-lg shadow">
+                            Scoping
+                        </div> : null}
 
-                </div>
-            </RouterLink>
-            <Typography
-                sx={{ color: 'text.primary', display: 'flex', alignItems: 'center' }}
-            >
-                {locationInfo.pageType=="projectOverview"?<> <InfoIcon sx={{ mr: 0.5 }} fontSize="inherit" />
-                Overview</>:<><ListAltIcon sx={{ mr: 0.5 }} fontSize="inherit" />
-                Tasks</>}
-               
-            </Typography>
-        </Breadcrumbs>);
+                    </div>
+                </RouterLink>
+                <Typography
+                    sx={{ color: 'text.primary', display: 'flex', alignItems: 'center' }}
+                >
+                    {locationInfo.pageType == "projectOverview" ? <> <InfoIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+                        Overview</> : <><ListAltIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+                        Tasks</>}
+
+                </Typography>
+            </Breadcrumbs>);
         case "projects": return (
-            <Breadcrumbs sx={{ maxHeight: "32px", overflow: "clip" }} aria-label="breadcrumb">
-            <RouterLink to={"project"}>
-                <div className='p-1 rounded flex flex-row gap-2 items-center hover:bg-gray-100 dark:hover:bg-gray-800'>
-                    <FolderOpenIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+            <Breadcrumbs className={className} sx={{  overflow: "clip" }}  aria-label="breadcrumb">
+                <RouterLink to={"project"}>
+                    <div className='p-1 rounded flex flex-row gap-2 items-center hover:bg-gray-100 dark:hover:bg-gray-800'>
+                        <FolderOpenIcon sx={{ mr: 0.5 }} fontSize="inherit" />
 
-                    <div>Projects</div>
+                        <div>Projects</div>
 
-                </div>
-            </RouterLink>
-        </Breadcrumbs>)
-        
-        case "home": return (  <Breadcrumbs sx={{ maxHeight: "32px", overflow: "clip" }} aria-label="breadcrumb">
+                    </div>
+                </RouterLink>
+            </Breadcrumbs>)
+
+        case "home": return (<Breadcrumbs className={className} sx={{  overflow: "clip" }}  aria-label="breadcrumb">
             <Typography
                 sx={{ color: 'text.primary', display: 'flex', alignItems: 'center' }}
             >
@@ -95,13 +96,13 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({ locationInf
             </Typography>
         </Breadcrumbs>)
         case "thisweekOverview":
-        case "todayOverview":return (  <Breadcrumbs sx={{ maxHeight: "32px", overflow: "clip" }} aria-label="breadcrumb">
+        case "todayOverview": return (<Breadcrumbs className={className} sx={{  overflow: "clip" }}  aria-label="breadcrumb">
             <Typography
                 sx={{ color: 'text.primary', display: 'flex', alignItems: 'center' }}
             >
-                {locationInfo.pageType=="thisweekOverview"? <WeekIcon sx={{ mr: 0.5 }} fontSize="inherit" />: <ScheduleIcon sx={{ mr: 0.5 }} fontSize="inherit" />}
-               
-                {locationInfo.pageType=="thisweekOverview"?"This Week":"Today"}
+                {locationInfo.pageType == "thisweekOverview" ? <WeekIcon sx={{ mr: 0.5 }} fontSize="inherit" /> : <ScheduleIcon sx={{ mr: 0.5 }} fontSize="inherit" />}
+
+                {locationInfo.pageType == "thisweekOverview" ? "This Week" : "Today"}
             </Typography>
         </Breadcrumbs>)
 
@@ -112,9 +113,21 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
     let location = useLocation() as Location<LocationState>
 
     const [locationInfo, setLocactionInfo] = useState<LocationState | null>(null)
+    const [scrolled, setScrolled] = useState<boolean>(false)
 
     const breadcrumbRef = useRef(null);
+    useEffect(()=>{
 
+        const scrollHndl = ()=>{
+            let scrolledVal = window.scrollY>50
+            setScrolled(scrolledVal)
+        }
+        window.addEventListener("scroll", scrollHndl)
+        return ()=>{
+            window.removeEventListener("scroll", scrollHndl)
+        }
+
+    },[])
     useEffect(() => {
         let ignored = false;
         if (location.state) {
@@ -164,53 +177,56 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
 
     }, [location])
 
-    useEffect(()=>{
-        if(locationInfo){switch (locationInfo.pageType) {
-            case "about":
-                 document.title = `About - Freelancer Project Manager`
-                break;
-                 case "home":
-                 document.title = `Dashboard - Freelancer Project Manager`
-                break;
-         case "projectOverview":
-                 document.title = `${locationInfo.projectName} - Freelancer Project Manager`
-                break;
-                 case "projectTasks":
-                 document.title = `Tasks of '${locationInfo.projectName}' - Freelancer Project Manager`
-                break;
-                 case "projects":
-                 document.title = `Projects - Freelancer Project Manager`
-                break;
-                 case "tasks":
-                 document.title = `Tasks - Freelancer Project Manager`
-                break;
-                 case "thisweekOverview":
-                 document.title = `This Week - Freelancer Project Manager`
-                break;
-                 case "todayOverview":
-                 document.title = `Today - Freelancer Project Manager`
-                break;
-            default:
-                break;
-        }
+    useEffect(() => {
+        if (locationInfo) {
+            switch (locationInfo.pageType) {
+                case "about":
+                    document.title = `About - Freelancer Project Manager`
+                    break;
+                case "home":
+                    document.title = `Dashboard - Freelancer Project Manager`
+                    break;
+                case "projectOverview":
+                    document.title = `${locationInfo.projectName} - Freelancer Project Manager`
+                    break;
+                case "projectTasks":
+                    document.title = `Tasks of '${locationInfo.projectName}' - Freelancer Project Manager`
+                    break;
+                case "projects":
+                    document.title = `Projects - Freelancer Project Manager`
+                    break;
+                case "tasks":
+                    document.title = `Tasks - Freelancer Project Manager`
+                    break;
+                case "thisweekOverview":
+                    document.title = `This Week - Freelancer Project Manager`
+                    break;
+                case "todayOverview":
+                    document.title = `Today - Freelancer Project Manager`
+                    break;
+                default:
+                    break;
+            }
 
         }
 
-        return ()=>{
+        return () => {
             document.title = "Freelancer Project Manager"
         }
-    },[locationInfo])
+    }, [locationInfo])
 
     return (
-        <header className="text-gray-900 min-w-0 dark:text-white flex h-heade z-30 sticky top-0 shrink-0 px-6 py-2 bg-white  dark:bg-gray-950 shadow-xl ">
-            <div className="flex flex-1  min-w-0 justify-between h-16 items-center">
+        <header className={`text-gray-900 min-w-0 dark:text-white flex h-heade group z-30 sticky top-0 shrink-0 px-6 py-2 bg-white ${scrolled?"scrolled":""} dark:bg-gray-950 shadow-xl transition-all duration-500 ease-in-out`}>
+            <div className="flex flex-1  min-w-0 justify-between h-16 group-[.scrolled]:h-10 items-center transition-all duration-500">
 
                 {/* Logo / Title */}
                 <div className="flex items-center min-w-0  space-x-3">
 
                     <AppIcon ></AppIcon>
                     <div className='flex flex-col max-h-16 gap-0 items-stretch min-w-0 '>
-                        <h1 className="text-2xl truncate min-w-0 font-semibold text-black dark:text-white">{title}</h1>
+                        {!scrolled?
+                        <h1 className="text-2xl truncate min-w-0 font-semibold text-black dark:text-white hidden lg:block">{title}</h1>
+                        :null}
                         {locationInfo ? <BreadcrumbsComponent locationInfo={locationInfo}></BreadcrumbsComponent> : null}
                     </div>
                 </div>
@@ -235,12 +251,13 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                     </div>
                 </div>
 
-                <ul className="flex flex-row gap-4 p-4">
+{ <ul className=" flex-row gap-4 p-4 hidden md:flex">
 
-                    <li className="font-bold hover:underline cursor-pointer"><RouterLink className='truncate ' state={{pageType:"todayOverview"}} to={"/today"} >Today</RouterLink></li>
-                    <li className="font-bold hover:underline cursor-pointer"><RouterLink className='truncate ' state={{pageType:"thisweekOverview"}} to={"/thisweek"} >This Week</RouterLink></li>
-                    <li className="font-bold hover:underline cursor-pointer"><RouterLink className='truncate ' state={{pageType:"about"}} to={"/about"} >About</RouterLink></li>
+                    <li className="font-bold hover:underline cursor-pointer"><RouterLink className='truncate ' state={{ pageType: "todayOverview" }} to={"/today"} >Today</RouterLink></li>
+                    <li className="font-bold hover:underline cursor-pointer"><RouterLink className='truncate ' state={{ pageType: "thisweekOverview" }} to={"/thisweek"} >This Week</RouterLink></li>
+                    <li className="font-bold hover:underline cursor-pointer"><RouterLink className='truncate ' state={{ pageType: "about" }} to={"/about"} >About</RouterLink></li>
                 </ul>
+                }
                 <div className="flex flex-row gap-4  items-center">
                     <ThemeSwitch onClick={onDarkToggle} isDark={isDark} ></ThemeSwitch>
                     <AccountButton userName="YassinMi" accountInitials="YM" onClick={() => { }}></AccountButton>
