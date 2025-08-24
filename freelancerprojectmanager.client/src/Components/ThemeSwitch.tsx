@@ -1,7 +1,6 @@
 
 
 import React from 'react';
-import AppIcon from './AppIcon';
 import LightIcon from '@mui/icons-material/LightMode';
 import DarkIcon from '@mui/icons-material/DarkMode';
 export interface ThemeSwitchProps {

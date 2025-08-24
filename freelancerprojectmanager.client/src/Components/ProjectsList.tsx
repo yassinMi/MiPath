@@ -1,5 +1,5 @@
 import React from 'react';
-import ProjectComponent from '../ProjectComponent';
+import ProjectComponent from './ProjectComponent';
 import type { Project } from '../Model/Project';
 import { ToggleButtonGroup } from '@mui/material';
 

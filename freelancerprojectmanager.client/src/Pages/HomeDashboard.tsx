@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { Project } from '../Model/Project';
 import { useParams } from 'react-router-dom';
-import ProjectComponent from '../ProjectComponent';
+import ProjectComponent from '../Components/ProjectComponent';
 
 
 

@@ -20,7 +20,7 @@ import WorkIcon from "@mui/icons-material/Work";           // Person / User
 import DashboardIcon from "@mui/icons-material/Dashboard";           // Person / User
 import ListAltIcon from "@mui/icons-material/ListAlt";           // Person / User
 import { useLocation } from 'react-router';
-import type { LocationState } from './Model/LocationState';
+import type { LocationState } from '../Model/LocationState';
 export interface AppHeaderProps {
     title: string;
     subtitle?: string;

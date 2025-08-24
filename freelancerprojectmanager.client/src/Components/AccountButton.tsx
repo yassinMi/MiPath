@@ -1,7 +1,6 @@
 
 
 import React from 'react';
-import AppIcon from './AppIcon';
 
 export interface AccountButtonProps {
     accountInitials: string;

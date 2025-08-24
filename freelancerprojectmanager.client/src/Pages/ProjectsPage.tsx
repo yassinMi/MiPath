@@ -1,15 +1,15 @@
 import { useEffect, useState, type FC } from "react";
-import ProjectsList from "./ProjectsList";
+import ProjectsList from "../Components/ProjectsList";
 import type { CreateProjectCommand, Project } from "../Model/Project";
 import { Button, ButtonGroup, CircularProgress, Menu, MenuItem, ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 import ListIcon from "@mui/icons-material/ViewStream"
 import CardIcon from "@mui/icons-material/ViewModule"
 import React from "react";
-import ProjectsCards from "./ProjectsCards";
+import ProjectsCards from "../Components/ProjectsCards";
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ControlPanelLayout from "../ControlPanelLayout";
+import ControlPanelLayout from "../Components/ControlPanelLayout";
 
 
 

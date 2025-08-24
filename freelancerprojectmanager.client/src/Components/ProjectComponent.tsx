@@ -1,9 +1,9 @@
 import React from 'react';
-import type { ProjectStatus } from './Model/ProjectStatus';
+import type { ProjectStatus } from '../Model/ProjectStatus';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreHoriz';
 import { useNavigate } from 'react-router-dom';
-import type { LocationState } from './Model/LocationState';
+import type { LocationState } from '../Model/LocationState';
 
 interface ProjectComponentProps {
   projectId: number;

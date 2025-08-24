@@ -1,7 +1,9 @@
 import { useEffect, useState, type FC } from "react";
-import ProjectsList from "./ProjectsList";
+import ProjectsList from "../Components/ProjectsList";
 import type { CreateProjectCommand, Project, PTask } from "../Model/Project";
 import KanbanBoard from "../Components/KanbanBoard";
+import { usePTasks } from "../hooks";
+import { CircularProgress } from "@mui/material";
 const dummyTasks: PTask[] = [
   {
     id: 1,
@@ -39,9 +41,14 @@ const dummyTasks: PTask[] = [
 
 const TodayOverview : FC = ()=>{
  
-    
+    const {data:pTasks, isLoading:isLoadingPTasks, error:errorPTasks} = usePTasks({useCase:"today"})
     return (<div className="flex flex-col items-center justify-center flex-1 overflow-auto">
-       <KanbanBoard tasks={dummyTasks}></KanbanBoard>
+        {isLoadingPTasks?<CircularProgress></CircularProgress>:null}
+        {errorPTasks?<>failed load tasks: {(errorPTasks as Error).message}</>:null}
+        {pTasks?.length===0?<>No tasks for today</>:null}
+        {pTasks?.length?
+       <KanbanBoard tasks={pTasks}></KanbanBoard>   :null
+        }
     </div>)
 
    

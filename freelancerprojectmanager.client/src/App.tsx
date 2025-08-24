@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import ProjectComponent from './ProjectComponent';
-import ProjectsList from './Pages/ProjectsList';
+import ProjectComponent from './Components/ProjectComponent';
+import ProjectsList from './Components/ProjectsList';
 import type { CreateProjectCommand, Project } from './Model/Project';
-import AppHeader from './AppHeader';
-import AppIcon from './AppIcon';
+import AppHeader from './Components/AppHeader';
+import AppIcon from './Components/AppIcon';
 import { createTheme, ThemeProvider, useColorScheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Outlet, Route, Routes } from 'react-router-dom';
-import ProjectPage from './Pages/ProjectPage';
+
 interface Forecast {
     date: string;
     temperatureC: number;
@@ -111,7 +111,7 @@ primary: {
 export default function ToggleColorMode() {
   return (
     <ThemeProvider theme={theme}>
-      <App />
+         <App />
     </ThemeProvider>
   );
 }

@@ -7,7 +7,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import NoteIcon from '@mui/icons-material/NoteAlt'
 import TasksIcon from '@mui/icons-material/TaskSharp'
 import InfoIcon from '@mui/icons-material/Info'
-import ControlPanelLayout from '../ControlPanelLayout';
+import ControlPanelLayout from '../Components/ControlPanelLayout';
 import { SplitButton } from './ProjectsPage';
 import { Link } from 'react-router-dom';
 
@@ -19,6 +19,8 @@ import { DatePicker, DesktopDatePicker, LocalizationProvider, type PickerValueTy
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import type { PickerValue } from '@mui/x-date-pickers/internals';
+import { useProjectPTasks } from '../hooks';
+import type { ref } from 'process';
 
 
 const PaperM = styled(Paper)(({theme})=> ({
@@ -55,6 +57,8 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
    const [project, setProject] = useState<Project | null>(null)
    const [startDate, setStartDate] = useState<PickerValue|undefined>(dayjs("2022-04-04"))
    const [editabledDescription, setEditabledDescription] = useState<string | undefined>(undefined)
+
+   const {data: projectPTasks, isLoading:isLoadingProjectPTasks,error: errorProjectPTasks} = useProjectPTasks(projectId,{enabled:!!projectId});
 
    const eff = useEffect(() => {
 
@@ -228,7 +232,11 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                         </div>
                      </div>
                      <div className='tasksPreview overflow-auto  p-2 border-1 border-gray-700 flex-1 w-1/2 rounded-xl dark:bg-gray-900 text-sm'>
-                           <CompactTasksPreview></CompactTasksPreview>
+                           {isLoadingProjectPTasks && <CircularProgress></CircularProgress>}
+                           {errorProjectPTasks && <div className='text-red-500'>Error loading tasks</div>}
+                           {!isLoadingProjectPTasks && !errorProjectPTasks && projectPTasks &&
+                           <CompactTasksPreview pTasks={projectPTasks}></CompactTasksPreview>}
+                           
                      </div>
                   </div>
                   <div className='card-separator-m'></div>
