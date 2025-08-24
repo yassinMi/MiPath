@@ -39,7 +39,7 @@ namespace FreelancerProjectManager.Server.Application.PorojectManagement.Command
             p.Description = value.Description ?? "";
             p.Status = value.Status == CreateProjectCommand.ProjectCreationStatus.Active
                 ? Domain.ProjectManagement.ProjectStatus.Active
-                : value.Status == CreateProjectCommand.ProjectCreationStatus.Active
+                : value.Status == CreateProjectCommand.ProjectCreationStatus.Scoping
                 ? Domain.ProjectManagement.ProjectStatus.Scoping
                 : throw new ArgumentException("unknownProjectCreationStatus intent");
             p.CreatedAt = DateTime.UtcNow;

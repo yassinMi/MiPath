@@ -1,4 +1,5 @@
 
+using FreelancerProjectManager.Server.Api;
 using FreelancerProjectManager.Server.Application.DependencyInjection;
 using FreelancerProjectManager.Server.Application.Interfaces;
 using FreelancerProjectManager.Server.Infrastructure;
@@ -33,8 +34,10 @@ namespace FreelancerProjectManager.Server
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
-            builder.Services.AddSwaggerGen();
-
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SchemaFilter<TaskFieldsSchemaFilter>();
+            });
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
             builder.Services.AddApplicationCommandAndQueryHandlers();

@@ -13,9 +13,9 @@ namespace FreelancerProjectManager.Server.Infrastructure.Repositories
             _dbContext = dbContext;
         }
 
-        public Task<Project?> GetByIdAsync(int id)
+        public async Task<Project?> GetByIdAsync(int id)
         {
-            return Task.FromResult( _dbContext.Project.Include(p => p.Client).FirstOrDefault(p => p.ID == id));
+            return await  _dbContext.Project.Include(p => p.Client).FirstOrDefaultAsync(p => p.ID == id);
         }
 
         public async Task DeleteAsync(Project project)

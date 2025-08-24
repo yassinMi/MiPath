@@ -18,7 +18,7 @@ namespace FreelancerProjectManager.Server.Application.TaskManagement.Commands
             var task =  await taskRepository.GetById(value.ID);
             if (task == null)
             {
-                throw new ArgumentException("task not found");
+                throw new EntityNotFoundException("task",value.ID);
             }
             //todo enforce business rules per intent
             switch (value.Intent)

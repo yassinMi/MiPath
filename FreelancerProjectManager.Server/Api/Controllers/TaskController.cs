@@ -1,8 +1,10 @@
-﻿using FreelancerProjectManager.Server.Application.DTO;
+﻿using FreelancerProjectManager.Server.Application;
+using FreelancerProjectManager.Server.Application.DTO;
 using FreelancerProjectManager.Server.Application.PorojectManagement.Commands;
 using FreelancerProjectManager.Server.Application.TaskManagement.Commands;
 using FreelancerProjectManager.Server.Application.TaskManagement.Queries;
 using FreelancerProjectManager.Server.Application.TaskManagement.Queries.Dto;
+using FreelancerProjectManager.Server.Domain.ProjectManagement;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,9 +22,39 @@ namespace FreelancerProjectManager.Server.Api.Controllers
         #region queries
         // GET: api/<ProjectController>
         [HttpGet]
-        public IEnumerable<TaskDto> Get([FromQuery]string usecase, [FromServices] GetTasksQueryHandler handler)
+        public IEnumerable<TaskDto> Get(
+    [FromQuery] PTaskStatus[] status,
+    [FromQuery] int? projectID,
+    [FromQuery] bool? overdue,
+    [FromQuery] DateTime? dueDateMin,
+    [FromQuery] DateTime? dueDateMax,
+    [FromQuery] DateTime? plannedStartMin,
+    [FromQuery] DateTime? plannedStartMax,
+     [FromQuery] DateTime? createdAtMin,
+    [FromQuery] DateTime? createdAtMax,
+    [FromQuery] DateTime? completedAtMin,
+    [FromQuery] DateTime? completedAtMax,
+    [FromQuery] string? orderBy,
+    [FromQuery] bool? desc,
+    [FromServices] GetTasksQueryHandler handler)
         {
-            return handler.Handle(new GetTasksQuery() {}, CancellationToken.None).Result;
+            var query = new GetTasksQuery
+            {
+                Statuses = status.ToList(),
+                ProjectID = projectID,
+                DueDateMin = dueDateMin,
+                DueDateMax = dueDateMax,
+                PlannedStartMin = plannedStartMin,
+                PlannedStartMax = plannedStartMax,
+                CreatedAtMin = createdAtMin,
+                CreatedAtMax = createdAtMax,
+                CompletedAtMin = completedAtMin,
+                CompletedAtMax = completedAtMax,
+                IsOverdue = overdue,
+                OrderByProperty = string.IsNullOrWhiteSpace(orderBy) ? nameof(PTask.CreatedAt) : orderBy,
+                isDescending = desc ?? true
+            };
+            return handler.Handle(query, CancellationToken.None).Result;
            
 
         }
@@ -47,7 +79,14 @@ namespace FreelancerProjectManager.Server.Api.Controllers
         [HttpPost("{taskId}/markas")]
         public async Task MarkAs(int taskId, [FromBody] MarkTaskAsCommand value, [FromServices] MarkTaskAsCommandHandler handler)
         {
-            await handler.Handle(new MarkTaskAsCommand() { ID = taskId, Intent = value.Intent }, CancellationToken.None);
+            try
+            {
+                await handler.Handle(new MarkTaskAsCommand() { ID = taskId, Intent = value.Intent }, CancellationToken.None);
+            }
+            catch (EntityNotFoundException err)
+            {
+                NotFound();
+            }
         }
 
 

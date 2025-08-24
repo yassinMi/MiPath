@@ -6,7 +6,9 @@ using System.Reflection.Metadata.Ecma335;
 namespace FreelancerProjectManager.Server.Application.TaskManagement.Queries
 {
     
-
+    /// <summary>
+    /// todo; instead of list of dto, return a projection that is optimized for the thisWeek dashboard
+    /// </summary>
     public class GetThisWeekOverviewQueryHandler: IQueryHandler<GetThisWeekOverviewQuery, List<TaskDto>>
     {
         private readonly ITaskRepository _taskRepository;

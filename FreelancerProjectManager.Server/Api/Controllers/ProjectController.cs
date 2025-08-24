@@ -43,7 +43,7 @@ namespace FreelancerProjectManager.Server.Api.Controllers
         [HttpGet("{projectId}/tasks")]
         public IEnumerable<TaskDto> GetTasksForProject(int projectId, [FromServices] GetTasksQueryHandler handler)
         {
-            return handler.Handle(new GetTasksQuery() { ByProject = projectId }, CancellationToken.None).Result;
+            return handler.Handle(new GetTasksQuery() { ProjectID = projectId }, CancellationToken.None).Result;
             
         }
         #endregion
