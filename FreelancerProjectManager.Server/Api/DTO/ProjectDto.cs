@@ -11,6 +11,13 @@
 
         public List<TaskDto> Tasks { get; set; } = new();
         public string Status { get; set; }
+        public int LoggedMinutes { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime LastUpdatedAt { get; set; }
+        public int TaskCount { get; set; }
+        public decimal? EstimateValue { get; set; }
+        
+
     }
     public class ClientDto
     {
@@ -26,5 +33,11 @@
 
         public int ProjectID { get; set; }
         public int? EstimateMinute { get; set; }
+        public DateTime? DueDate { get; set; }
+        public DateTime? PlannedStart { get; set; }
+        public string Status { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? CompletedAt { get; set; }
+
     }
 }

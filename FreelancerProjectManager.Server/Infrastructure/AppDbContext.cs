@@ -10,9 +10,22 @@ namespace FreelancerProjectManager.Server.Infrastructure
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
             configurationBuilder
-                .Properties<Project.ProjectStatus>()
+                .Properties<ProjectStatus>()
                 .HaveConversion<string>()
                 .HaveMaxLength(20);
+            configurationBuilder
+                .Properties<PTaskStatus>()
+                .HaveConversion<string>()
+                .HaveMaxLength(20);
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            //we handle this in the create command instead
+            //modelBuilder.Entity<PTask>()
+            //    .Property(u => u.CreatedAt)
+            //    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'")
+            //    .ValueGeneratedOnAdd();
         }
         public DbSet<Project> Project { get; set; }
         public DbSet<PTask> Tasks { get; set; }

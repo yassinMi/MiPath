@@ -28,7 +28,6 @@ namespace FreelancerProjectManager.Server.Api.DTO
             {
                 ID = client.ID,
                 Name = client.Name
-                // omit Projects to avoid circular refs
             };
         }
 
@@ -42,52 +41,20 @@ namespace FreelancerProjectManager.Server.Api.DTO
                 Title = task.Title,
                 Description = task.Description,
                 ProjectID = task.ProjectID,
-                EstimateMinute = task.EstimateMinute
+                EstimateMinute = task.EstimateMinute,
+                DueDate = task.DueDate,
+                PlannedStart = task.PlannedStart,
+                Status = task.Status.ToString(),
+                CreatedAt = task.CreatedAt,
+                CompletedAt = task.CompletedAt
             };
         }
 
-        // Reverse Mapping (DTO → Entity)
-        public static Project ToEntity(this ProjectDto dto)
-        {
-            if (dto == null) return null;
+        
 
-            return new Project
-            {
-                ID = dto.ID,
-                Name = dto.Name,
-                Description = dto.Description,
-                ClientID = dto.ClientID,
-                Client = dto.Client?.ToEntity(),
-                Tasks = dto.Tasks?.Select(t => t.ToEntity()).ToList() ?? new List<PTask>(),
-                Status = (Project.ProjectStatus)Enum.Parse<Project.ProjectStatus>(dto.Status)
-            };
-        }
+      
 
-        public static Client ToEntity(this ClientDto dto)
-        {
-            if (dto == null) return null;
-
-            return new Client
-            {
-                ID = dto.ID,
-                Name = dto.Name
-                // omit Projects to avoid circular refs
-            };
-        }
-
-        public static PTask ToEntity(this TaskDto dto)
-        {
-            if (dto == null) return null;
-
-            return new PTask
-            {
-                ID = dto.ID,
-                Title = dto.Title,
-                Description = dto.Description,
-                ProjectID = dto.ProjectID,
-                EstimateMinute = dto.EstimateMinute
-            };
-        }
+       
     }
 
 }

@@ -2,6 +2,7 @@
 using FreelancerProjectManager.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using System.Text.Json.Serialization;
 
 namespace FreelancerProjectManager.Server
 {
@@ -22,7 +23,15 @@ namespace FreelancerProjectManager.Server
                     );
         });
         });
-            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+
+
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
+            builder.Services.AddSwaggerGen();
+
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
@@ -39,9 +48,11 @@ namespace FreelancerProjectManager.Server
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
-            }
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }      
 
-            app.UseHttpsRedirection();
+                app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
