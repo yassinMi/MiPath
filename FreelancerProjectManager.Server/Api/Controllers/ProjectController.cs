@@ -1,6 +1,10 @@
-﻿using FreelancerProjectManager.Server.Api.Command;
-using FreelancerProjectManager.Server.Api.DTO;
-using FreelancerProjectManager.Server.Infrastructure;
+﻿using FreelancerProjectManager.Server.Application.DTO;
+using FreelancerProjectManager.Server.Application.PorojectManagement.Commands;
+using FreelancerProjectManager.Server.Application.PorojectManagement.Queries;
+using FreelancerProjectManager.Server.Application.PorojectManagement.Queries.Dto;
+using FreelancerProjectManager.Server.Application.TaskManagement.Commands;
+using FreelancerProjectManager.Server.Application.TaskManagement.Queries;
+using FreelancerProjectManager.Server.Application.TaskManagement.Queries.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,50 +12,39 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FreelancerProjectManager.Server.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/projects")]
     [ApiController]
     public class ProjectController : ControllerBase
     {
-        readonly AppDbContext dbContext;
-        public ProjectController(AppDbContext dbContext)
+        public ProjectController()
         {
-            this.dbContext = dbContext;
+
         }
         #region queries
         // GET: api/<ProjectController>
         [HttpGet]
-        public IEnumerable<ProjectDto> Get()
+        public async Task<IEnumerable<ProjectDto>> Get([FromServices] GetProjectsQueryHandler handler)
         {
-            return dbContext.Project
-                .Include(p => p.Client)
-                .Select(p => new ProjectDto()
-                {
-                    ID = p.ID,
-                    Name = p.Name,
-                    Description = p.Description,
-                    ClientID = p.ClientID,
-                    Client = p.Client.ToDto(),
-                    Status = p.Status.ToString(),
-                    TaskCount = p.Tasks.Count,
-                });
-
+           
+            return await handler.Handle(new GetProjectsQuery() { }, CancellationToken.None);
         }
 
         // GET api/<ProjectController>/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult Get(int id, [FromServices] GetProjectByIdQueryHandler hadnler)
         {
-            var res = dbContext.Project.Include(p => p.Client).FirstOrDefault(p=>p.ID==id)?.ToDto();
+            var res = hadnler.Handle(new GetProjectByIdQuery() { ProjectID = id}, cancellationToken: CancellationToken.None).Result;
             if (res == null)
             { 
                 return NotFound();
             }
             return Ok(res);
         }
-        [HttpGet("{projectId}/task")]
-        public IEnumerable<TaskDto> GetTasksForProject(int projectId)
+        [HttpGet("{projectId}/tasks")]
+        public IEnumerable<TaskDto> GetTasksForProject(int projectId, [FromServices] GetTasksQueryHandler handler)
         {
-            return dbContext.Tasks.Where(t=>t.ProjectID==projectId).Select(t=>t.ToDto());
+            return handler.Handle(new GetTasksQuery() { ByProject = projectId }, CancellationToken.None).Result;
+            
         }
         #endregion
 
@@ -73,82 +66,24 @@ namespace FreelancerProjectManager.Server.Api.Controllers
         // POST api/<ProjectController>
         [Route("create")]
         [HttpPost]
-        public int Create([FromBody] CreateProjectCommand value)
+        public async Task<int> Create([FromBody] CreateProjectCommand value,[FromServices] CreateProjectCommandHandler handler)
         {
-            var p = new Domain.ProjectManagement.Project();
-            if(value.ClientID==null && string.IsNullOrWhiteSpace(value.NewClientName))
-            {
-                throw new ArgumentException("ClientID or ClientName must be provided");
-            }
-            else if(value.ClientID!=null)
-            {
-                var client = dbContext.Clients.Find(value.ClientID);
-                if(client==null)
-                {
-                    throw new ArgumentException("ClientID not found");
-                }
-                p.ClientID = client.ID;
-            }
-            else if(value.NewClientName!=null)
-            {
-                p.Client = new Domain.ProjectManagement.Client() { Name = value.NewClientName };
-            }
-            p.Name =  value.Name;
-            p.Description = value.Description??"";
-            p.Status = value.Status == ProjectCreationStatus.Active ? Domain.ProjectManagement.ProjectStatus.Active : Domain.ProjectManagement.ProjectStatus.Scoping;
-            p.CreatedAt = DateTime.UtcNow;
-            
-
-            dbContext.Project.Add(p);
-            dbContext.SaveChanges();
-            return p.ID;
+             return await handler.Handle(value, CancellationToken.None);
         }
 
 
         [HttpPost]
         [Route("{projectId}/closeas")]
-        public void CloseAs(int projectId, CloseProjectAsCommand value)
+        public async Task CloseAs(int projectId,[FromBody] CloseProjectAsCommand value, [FromServices] CloseProjectAsCommandHandler handler)
         {
-            //once closed, cannot be reopened
-            var project = dbContext.Project.Find(projectId);
-            if(project==null)
-            {
-                throw new ArgumentException("ProjectID not found");
-            }
-            if(project.Status == Domain.ProjectManagement.ProjectStatus.Canceled
-                || project.Status == Domain.ProjectManagement.ProjectStatus.Completed)
-            {
-                throw new InvalidOperationException("Project is already closed");
-            }
-            project.Status = value.Reason== CloseProjectAsCommand.CloseAs.Completed? Domain.ProjectManagement.ProjectStatus.Completed
-                : value.Reason == CloseProjectAsCommand.CloseAs.Canceld ? Domain.ProjectManagement.ProjectStatus.Canceled
-                :throw new ArgumentException("unknown close reason");
-
-            //todo consider updating child tasks's availability for fast queriying 
-            dbContext.SaveChanges();
+           await handler.Handle(value, CancellationToken.None);
         }
 
         [HttpPost]
         [Route("{projectId}/addtask")]
-        public int AddTask(int projectId, CreateTaskCommand value)
+        public async Task<int> AddTask(int projectId, [FromBody] CreateTaskCommand value, [FromServices] CreateTaskCommandHandler handler)
         {
-            var project = dbContext.Project.Find(projectId);
-            if (project == null)
-            {
-                throw new ArgumentException("ProjectID not found");
-            }
-            var p = new Domain.ProjectManagement.PTask();
-            p.Title = value.Title;
-            p.Description = value.Description;
-            p.ProjectID = projectId;
-            p.EstimateMinute = value.EstimateMinute;
-            p.DueDate = value.DueDate;
-            p.PlannedStart = value.PlannedStart;
-            p.CreatedAt = DateTime.UtcNow;
-            p.Status = Domain.ProjectManagement.PTaskStatus.ToDo;
-            dbContext.Tasks.Add(p);
-            dbContext.SaveChanges();
-            return p.ID;
+            return await handler.Handle(value, CancellationToken.None);
         }
 
 
@@ -156,9 +91,10 @@ namespace FreelancerProjectManager.Server.Api.Controllers
 
         // DELETE api/<ProjectController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(int id, [FromServices] DeleteProjectCommandHandler handler)
         {
-            dbContext.Project.Remove(new Domain.ProjectManagement.Project() { ID = id });
+            handler.Handle(new DeleteProjectCommand() { ID = id }, CancellationToken.None).Wait();
+            
         }
         #endregion
     }

@@ -1,5 +1,8 @@
 
+using FreelancerProjectManager.Server.Application.DependencyInjection;
+using FreelancerProjectManager.Server.Application.Interfaces;
 using FreelancerProjectManager.Server.Infrastructure;
+using FreelancerProjectManager.Server.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Text.Json.Serialization;
@@ -34,7 +37,10 @@ namespace FreelancerProjectManager.Server
 
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
-
+            builder.Services.AddApplicationCommandAndQueryHandlers();
+            builder.Services.AddScoped<ITaskRepository, EfTaskRepository>();
+            builder.Services.AddScoped<IProjectRepository, EfProjectRepository>();
+            builder.Services.AddScoped<IClientRepository, EfClientRepository>();
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())
             {

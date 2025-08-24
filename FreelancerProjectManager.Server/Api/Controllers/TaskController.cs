@@ -1,7 +1,10 @@
-﻿using FreelancerProjectManager.Server.Api.Command;
-using FreelancerProjectManager.Server.Api.DTO;
-using FreelancerProjectManager.Server.Infrastructure;
+﻿using FreelancerProjectManager.Server.Application.DTO;
+using FreelancerProjectManager.Server.Application.PorojectManagement.Commands;
+using FreelancerProjectManager.Server.Application.TaskManagement.Commands;
+using FreelancerProjectManager.Server.Application.TaskManagement.Queries;
+using FreelancerProjectManager.Server.Application.TaskManagement.Queries.Dto;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -11,93 +14,48 @@ namespace FreelancerProjectManager.Server.Api.Controllers
     [ApiController]
     public class TaskController : ControllerBase
     {
-        readonly AppDbContext dbContext;
-        public TaskController(AppDbContext dbContext)
+        public TaskController()
         {
-            this.dbContext = dbContext;
         }
         #region queries
         // GET: api/<ProjectController>
         [HttpGet]
-        public IEnumerable<TaskDto> Get([FromQuery]string usecase)
+        public IEnumerable<TaskDto> Get([FromQuery]string usecase, [FromServices] GetTasksQueryHandler handler)
         {
-            var res = dbContext.Tasks.AsQueryable();
-            if(usecase == "today")
-            {
-                res = res.Where(t => true);//todo we need fields PlannedStart, PlannedEnd, CompetedAt
-            }
-            else if(usecase == "thisweek")
-            {
-                res = res.Where(t => true);//todo we need fields PlannedStart, PlannedEnd, CompetedAt
-            }
-            return res.Select(p => p.ToDto());
+            return handler.Handle(new GetTasksQuery() {}, CancellationToken.None).Result;
+           
 
         }
-       
-        // GET api/<ProjectController>/5
-        [HttpGet("{id}")]
-        public TaskDto Get(int id)
+        [HttpGet("overview/thisweek")]
+        public async Task<List<TaskDto>> GetThisWeekOverview([FromServices] GetThisWeekOverviewQueryHandler handler)
         {
-            return dbContext.Tasks.Find(id).ToDto();
+           return await handler.Handle(new GetThisWeekOverviewQuery() { }, CancellationToken.None);
         }
+        [HttpGet("overview/today")]
+        public async Task<List<TaskDto>> GetTodayOverview([FromServices] GetTodayOverviewQueryHandler handler)
+        {
+            return await handler.Handle(new GetTodayOverviewQuery() { }, CancellationToken.None);
+        }
+
+        
 
         #endregion
 
         #region commands
-        // POST api/<ProjectController>
-        [HttpPost]
-        public void Create([FromBody] CreateTaskCommand value)
-        {
-            //note: handled in ProjectController.AddTask
-            throw new NotImplementedException("use ProjectController.AddTask instead");
-        }
+       
 
         [HttpPost("{taskId}/markas")]
-        public void MarkAs(int taskId, MarkTaskAsCommand value)
+        public async Task MarkAs(int taskId, [FromBody] MarkTaskAsCommand value, [FromServices] MarkTaskAsCommandHandler handler)
         {
-            var task = dbContext.Tasks.Find(taskId);
-            if(task == null)
-            {
-                throw new ArgumentException("task not found");
-            }
-            switch (value.Status)
-            {
-                case MarkTaskAsCommand.MarkAs.InProgress:
-                    task.Status = Domain.ProjectManagement.PTaskStatus.InProgress;
-                    break;
-                case MarkTaskAsCommand.MarkAs.Completed:
-                    task.Status = Domain.ProjectManagement.PTaskStatus.Done;
-                    break;
-                case MarkTaskAsCommand.MarkAs.ReOpen:
-                    task.Status = Domain.ProjectManagement.PTaskStatus.ToDo;
-                    break;
-                default:
-                    throw new ArgumentException("unknown action");
-            }
-            if(value.Status == MarkTaskAsCommand.MarkAs.Completed)
-            {
-                task.CompletedAt = DateTime.UtcNow;
-            }
-            else
-            {
-                task.CompletedAt = null;
-            }
-            dbContext.SaveChanges();
+            await handler.Handle(new MarkTaskAsCommand() { ID = taskId, Intent = value.Intent }, CancellationToken.None);
         }
 
 
         [HttpDelete("{taskId}")]
-        public void Delete(int taskId)
+        public async Task Delete(int taskId, [FromServices] DeleteTaskCommandHandler handler)
         {
-           
-            var task = dbContext.Tasks.Find(taskId);
-            if(task == null)
-            {
-                throw new ArgumentException("task not found");
-            }
-           
-            dbContext.Tasks.Remove(task);
-            dbContext.SaveChanges();
+           await handler.Handle( new DeleteTaskCommand() { ID= taskId}, CancellationToken.None);
+
         }
 
 

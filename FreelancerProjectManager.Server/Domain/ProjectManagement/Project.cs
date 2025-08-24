@@ -26,5 +26,14 @@ namespace FreelancerProjectManager.Server.Domain.ProjectManagement
         public int LoggedMinutes { get; set; }
         public decimal? EstimateValue { get; set; }
 
+        public decimal? GetActualHourlyRate()
+        {
+            if(EstimateValue==null || EstimateValue<=0 || LoggedMinutes<=0)
+            {
+                return null;
+            }
+            return (EstimateValue.Value/(LoggedMinutes/60m));
+        }
+
     }
 }

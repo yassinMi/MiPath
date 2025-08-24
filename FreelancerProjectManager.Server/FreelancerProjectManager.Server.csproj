@@ -24,6 +24,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="Scrutor" Version="6.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
   </ItemGroup>
 
@@ -34,8 +35,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Api\DTO\NewFolder\" />
-    <Folder Include="Application\PorojectManagement\" />
+    <Folder Include="Application\ClientManagement\Commands\" />
+    <Folder Include="Application\ClientManagement\Queries\" />
+    <Folder Include="Application\UserSettingsManagment\" />
   </ItemGroup>
 
 </Project>

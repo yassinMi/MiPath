@@ -1,6 +1,8 @@
-﻿using FreelancerProjectManager.Server.Domain.ProjectManagement;
+﻿using FreelancerProjectManager.Server.Application.PorojectManagement.Queries.Dto;
+using FreelancerProjectManager.Server.Application.TaskManagement.Queries.Dto;
+using FreelancerProjectManager.Server.Domain.ProjectManagement;
 
-namespace FreelancerProjectManager.Server.Api.DTO
+namespace FreelancerProjectManager.Server.Application.DTO
 {
     public static class DtoMapper
     {
