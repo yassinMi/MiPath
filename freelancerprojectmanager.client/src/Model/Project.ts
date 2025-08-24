@@ -17,12 +17,13 @@ export interface Client {
     name: string;
 }
 
-export interface Task {
-    id: string;
-    title: string;
-    description: string;
-    projectID: string;
-    estimateMinute?: number;
+export interface PTask {
+  id: number;
+  title: string;
+  description: string;
+  projectId: number;
+  project?: Project;
+  estimateMinute?: number;
 }
 
 export interface CreateProjectCommand {

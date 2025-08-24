@@ -1,7 +1,8 @@
 
-
+import HistoryIcon from "@mui/icons-material/HistoryToggleOff"
 function AppIcon() {
     const svg = ``
+    return <HistoryIcon sx={{width:"48px",height:"48px"}}></HistoryIcon>
     return <div
        
         
