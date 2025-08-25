@@ -12,11 +12,12 @@ namespace FreelancerProjectManager.Server
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public async static Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            //todo: provide con string in envirement variable instead
             builder.Services.AddDbContext<AppDbContext>(options =>
         { options.UseNpgsql("Host=db;Port=5432;Database=mydb;Username=myuser;Password=mypassword",npgsqlOptions =>
         {
@@ -49,6 +50,9 @@ namespace FreelancerProjectManager.Server
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 db.Database.Migrate();
+                
+                //add initial data for demonstration - ai generated file
+                await FreelancerProjectManager.Server.Infrastructure.SeedData.SeedDatabaseAsync(app.Services);
             }
             app.UseDefaultFiles();
             app.MapStaticAssets();
