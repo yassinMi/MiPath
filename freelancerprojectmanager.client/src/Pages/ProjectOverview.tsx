@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { Project } from '../Model/Project';
 import { useParams } from 'react-router-dom';
-import { Box, Button, Card, CircularProgress, Input, LinearProgress, linearProgressClasses, Modal, Paper, styled, TextField } from '@mui/material';
+import { Alert, Box, Button, Card, CircularProgress, Input, LinearProgress, linearProgressClasses, Modal, Paper, Snackbar, styled, TextField } from '@mui/material';
 
 import EditIcon from '@mui/icons-material/Edit'
 import NoteIcon from '@mui/icons-material/NoteAlt'
@@ -25,6 +25,8 @@ import { useProject } from '../hooks/useProject';
 import AddTaskForm from '../Components/AddTaskForm';
 import { apiAddTaske, apiCreateProject, apiFetchProject } from '../services/api';
 import type { CreateTaskCommand } from '../Model/Commands';
+import { truncateString } from '../services/utils';
+import { useSnackbar } from '../Components/SnackbarContext';
 
 
 const PaperM = styled(Paper)(({theme})=> ({
@@ -62,7 +64,8 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
    const [startDate, setStartDate] = useState<PickerValue|undefined>(dayjs("2022-04-04"))
    const [editabledDescription, setEditabledDescription] = useState<string | undefined>(undefined)
    const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
-
+   
+    const {showSnackbar} = useSnackbar()  
    /*const {data: projectPTasks, isLoading:isLoadingProjectPTasks,error: errorProjectPTasks} = useProjectPTasks(projectId,{enabled:!!projectId});*/
    const {data: project_, isLoading:isLoadingProject_,error: errorProject_} = useProject(projectId,{enabled:!!projectId});
 
@@ -82,6 +85,9 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
        //call api to create project
        try {
           const newProjId = await apiAddTaske(data);
+          var truncatedTitle = truncateString(data.title || "Unnamed Task", 30);
+
+            showSnackbar(`Added task: '${truncatedTitle}'`, "success")
           console.log("newProjId", newProjId)
          setAddTaskModalOpen(false);
          
@@ -89,6 +95,8 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
        }
        catch(err){
          console.error("Error creating task", err)
+         showSnackbar(`Error adding task: '${data.title}'`, "error")
+
        }
  
       
@@ -301,6 +309,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
 
 
          </div>
+        
       </div>
 
 

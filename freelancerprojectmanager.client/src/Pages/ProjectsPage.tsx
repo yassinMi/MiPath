@@ -15,6 +15,8 @@ import type { Project } from "../Model/Project";
 import type { CreateProjectCommand } from "../Model/Commands";
 import { data } from "react-router-dom";
 import { apiCreateProject, apiFetchProject } from "../services/api";
+import { useSnackbar } from "../Components/SnackbarContext";
+import { truncateString } from "../services/utils";
 
 
 
@@ -83,7 +85,7 @@ const ProjectsPage : FC = ({})=>{
   ) => {
     setViewMode(newMode);
   };
-
+  const {showSnackbar} = useSnackbar()
   useEffect(() => {
     if(projects_){
               console.log("projects assigned from cach", projects_)
@@ -113,9 +115,13 @@ const ProjectsPage : FC = ({})=>{
       try {
          const newProjId = await apiCreateProject(data);
          console.log("newProjId", newProjId)
+         var truncatedTitle = truncateString(data.name || "Unnamed Project", 30);
+         showSnackbar(`Created project: '${truncatedTitle}'`, "success")
+         
         //close modal
         setCreateProjectModalOpen(false);
         //push card to top of list without refetching 
+
 
         var newProject = await apiFetchProject (newProjId);
 

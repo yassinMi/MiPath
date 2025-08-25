@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import ProjectComponent from './Components/ProjectComponent';
 import ProjectsList from './Components/ProjectsList';
-import type { CreateProjectCommand, Project } from './Model/Project';
+import type { Project } from './Model/Project';
 import AppHeader from './Components/AppHeader';
 import AppIcon from './Components/AppIcon';
 import { createTheme, ThemeProvider, useColorScheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Outlet, Route, Routes } from 'react-router-dom';
+import { SnackbarContent } from '@mui/material';
+import { SnackbarProvider } from './Components/SnackbarContext';
 
 interface Forecast {
     date: string;
@@ -111,7 +113,10 @@ primary: {
 export default function ToggleColorMode() {
   return (
     <ThemeProvider theme={theme}>
+      <SnackbarProvider>
          <App />
+      </SnackbarProvider>
+       
     </ThemeProvider>
   );
 }
