@@ -36,7 +36,6 @@
 
   <ItemGroup>
     <Folder Include="Application\ClientManagement\Commands\" />
-    <Folder Include="Application\ClientManagement\Queries\" />
     <Folder Include="Application\UserSettingsManagment\" />
   </ItemGroup>
 
