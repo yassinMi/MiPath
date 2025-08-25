@@ -8,7 +8,7 @@ import NoteIcon from '@mui/icons-material/NoteAlt'
 import TasksIcon from '@mui/icons-material/TaskSharp'
 import InfoIcon from '@mui/icons-material/Info'
 import ControlPanelLayout from '../Components/ControlPanelLayout';
-import { SplitButton } from './ProjectsPage';
+import { SplitButton, StyledBox } from './ProjectsPage';
 import { Link } from 'react-router-dom';
 
 import ShowAllIcon from '@mui/icons-material/ChevronRight'
@@ -23,18 +23,23 @@ import { useProjectPTasks } from '../hooks';
 import type { ref } from 'process';
 import { useProject } from '../hooks/useProject';
 import AddTaskForm from '../Components/AddTaskForm';
-import { apiAddTaske, apiCreateProject, apiFetchProject } from '../services/api';
+import { apiAddTaske, apiCreateProject, apiFetchProject, apiFetchTask } from '../services/api';
 import type { CreateTaskCommand } from '../Model/Commands';
 import { truncateString } from '../services/utils';
 import { useSnackbar } from '../Components/SnackbarContext';
+import { useQueryClient } from '@tanstack/react-query';
+import type { PTask } from '../Model/PTask';
+import { ColorButton } from './HomeDashboard';
+import ArrowRight from '@mui/icons-material/ChevronRight';
 
 
-const PaperM = styled(Paper)(({theme})=> ({
-          backgroundColor: '#ffffffff',
-          ...theme.applyStyles('dark', {
-            backgroundColor: 'var(--color-gray-900)',
-          }),
-        }));
+
+const PaperM = styled(Paper)(({ theme }) => ({
+   backgroundColor: '#ffffffff',
+   ...theme.applyStyles('dark', {
+      backgroundColor: 'var(--color-gray-900)',
+   }),
+}));
 
 
 interface ProjectOverviewProps {
@@ -61,50 +66,63 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
 
    const { projectId } = useParams();
    /*const [project, setProject] = useState<Project | null>(null)*/
-   const [startDate, setStartDate] = useState<PickerValue|undefined>(dayjs("2022-04-04"))
+   const [startDate, setStartDate] = useState<PickerValue | undefined>(dayjs("2022-04-04"))
    const [editabledDescription, setEditabledDescription] = useState<string | undefined>(undefined)
    const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
-   
-    const {showSnackbar} = useSnackbar()  
+
+   const { showSnackbar } = useSnackbar()
    /*const {data: projectPTasks, isLoading:isLoadingProjectPTasks,error: errorProjectPTasks} = useProjectPTasks(projectId,{enabled:!!projectId});*/
-   const {data: project_, isLoading:isLoadingProject_,error: errorProject_} = useProject(projectId,{enabled:!!projectId});
+   const { data: project_, isLoading: isLoadingProject_, error: errorProject_, refetch:refetchProject_ } = useProject(projectId, { enabled: !!projectId });
 
+   const queryClient = useQueryClient();
+   const handleAddTaskModalOpen = () => {
 
-  const handleAddTaskModalOpen = () =>{
-       
-        setAddTaskModalOpen(true);
- 
-     }
-     const handleAddTaskModalClose = () => {
- 
-       setAddTaskModalOpen(false);
- 
-     }
-     const handleAddTaskSubmit = async (data:CreateTaskCommand) =>{
-       console.log("handleAddTaskSubmit", data)
-       //call api to create project
-       try {
-          const newProjId = await apiAddTaske(data);
-          var truncatedTitle = truncateString(data.title || "Unnamed Task", 30);
+      setAddTaskModalOpen(true);
 
-            showSnackbar(`Added task: '${truncatedTitle}'`, "success")
-          console.log("newProjId", newProjId)
-         setAddTaskModalOpen(false);
+   }
+   const handleAddTaskModalClose = () => {
+
+      setAddTaskModalOpen(false);
+
+   }
+   const handleAddTaskSubmit = async (data: CreateTaskCommand) => {
+      console.log("handleAddTaskSubmit", data)
+      //call api to create project
+      try {
+         const newProjId = await apiAddTaske(data);
+         var truncatedTitle = truncateString(data.title || "Unnamed Task", 30);
+
+         showSnackbar(`Added task: '${truncatedTitle}'`, "success")
+
+        /* queryClient.setQueryData(['project', projectId], (oldData: Project) => {
+            if (!oldData) return oldData;
+            return {
+               ...oldData,
+               tasks: oldData.tasks ? [...oldData.tasks, task] : [task],
+            };
+
+         });*/
+         refetchProject_()
          
-        
-       }
-       catch(err){
+
+
+         console.log("newProjId", newProjId)
+         setAddTaskModalOpen(false);
+
+
+      }
+      catch (err) {
          console.error("Error creating task", err)
          showSnackbar(`Error adding task: '${data.title}'`, "error")
 
-       }
- 
-      
-     
-     }
-     const handleSplitButtonClick = (index:number) => {
-       
-     }
+      }
+
+
+
+   }
+   const handleSplitButtonClick = (index: number) => {
+
+   }
 
    return (
       <div className='flex flex-1 flex-col gap-2 overflow-auto max-h-[calc(100vh-5rem)] '>
@@ -113,27 +131,27 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                <h1 className='text-xl font-bold'>{project_?.name}</h1>
             </div>
             <div className='flex flex-row gap-2 ml-auto'>
-                <Button onClick={handleAddTaskModalOpen} variant='contained' className='whitespace-nowrap' color='secondary'>Add Task</Button>
-            <SplitButton sx={{}} options={["Close As Complete", "Close As Canceled"]}></SplitButton>
+               <Button onClick={handleAddTaskModalOpen} variant='contained' className='whitespace-nowrap' color='secondary'>Add Task</Button>
+               <SplitButton sx={{}} options={["Close As Complete", "Close As Canceled"]}></SplitButton>
             </div>
-           
+
          </ControlPanelLayout>
 
-<Modal 
-  open={addTaskModalOpen}
-  onClose={handleAddTaskModalClose}
-  aria-labelledby="modal-modal-title"
-  aria-describedby="modal-modal-description"
->
-  <Box className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black border rounded-lg p-6">
-    {project_&&
-      <AddTaskForm  projectId={project_.id}  onSubmit={handleAddTaskSubmit}/>
-}
-  </Box>
-</Modal>
+         <Modal
+            open={addTaskModalOpen}
+            onClose={handleAddTaskModalClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+         >
+            <StyledBox >
+               {project_ &&
+                  <AddTaskForm projectId={project_.id} onSubmit={handleAddTaskSubmit} />
+               }
+            </StyledBox>
+         </Modal>
          <div className="flex flex-col md:flex-row flex-1 h-full min-h-80 overflow-auto  gap-2 p-6 mx-4 items-stretch" >
             <div className='flex-1 flex flex-col gap-4 overflow-auto'>
-              {false &&<div className='flex flex-row gap-2 flex-wrap pb-1 overflow-auto h-auto flex-grow-0 flex-shrink-1 justify max-h-1/3'>
+               {false && <div className='flex flex-row gap-2 flex-wrap pb-1 overflow-auto h-auto flex-grow-0 flex-shrink-1 justify max-h-1/3'>
                   {/* <PaperM className='card-paper-m h-auto flex-grow-0 flex-shrink-1 max-h-1/3'>
                   <div className='card-header-m'>
                      <InfoIcon fontSize='large'></InfoIcon>
@@ -147,53 +165,62 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
 
                </PaperM> */}
 
-               <PaperM className='flex px-4 flex-row gap-2 flex-1 items-center'>
-                        <PersonIcon></PersonIcon>
-                   <div className='font-bold'>YassinMi</div>
-               </PaperM>
-                <PaperM className='flex px-4 flex-row gap-2  flex-1 items-center'>
-                       <div className='flex flex-col p-2'>
-                  <div className='text-sm text-gray-500'>Work hours</div>
-                  <div className='font-bold text-amber-500'>54h</div>
+                  <PaperM className='flex px-4 flex-row gap-2 flex-1 items-center'>
+                     <PersonIcon></PersonIcon>
+                     <div className='font-bold'>{(project_?.client?.name??"YassinMi")}</div>
+                  </PaperM>
+                  <PaperM className='flex px-4 flex-row gap-2  flex-1 items-center'>
+                     <div className='flex flex-col p-2'>
+                        <div className='text-sm text-gray-500'>Work hours</div>
+                        <div className='font-bold text-amber-500'>54h</div>
+                     </div>
+                  </PaperM>
+
+                  <PaperM className='flex px-4 flex-row gap-2  flex-1 items-center'>
+                     <div className='flex flex-col p-2'>
+                        <div className='text-sm text-blue-500/80'>Avg. rate</div>
+                        <div className='font-bold text-blue-500'>4$/h</div>
+                     </div>
+                  </PaperM>
+
+                  <PaperM className='flex px-4 flex-row gap-2  flex-1 items-center'>
+                     <div className='flex flex-col p-2'>
+                        <div className='text-sm text-purple-500/80'>Progress</div>
+                        <div className='font-bold text-purple-500'>4$/h</div>
+                     </div>
+                  </PaperM>
+
+                  <PaperM className='flex px-4 flex-row gap-2  flex-1 items-center'>
+                     <div className='flex flex-col p-2'>
+                        <div className='text-sm text-green-500/80'>Valuee</div>
+                        <div className='font-bold text-green-500'>200$</div>
+                     </div>
+                  </PaperM>
                </div>
-               </PaperM>
-              
-<PaperM className='flex px-4 flex-row gap-2  flex-1 items-center'>
-                       <div className='flex flex-col p-2'>
-                  <div className='text-sm text-blue-500/80'>Avg. rate</div>
-                  <div className='font-bold text-blue-500'>4$/h</div>
-               </div>
-               </PaperM>
-                            
-<PaperM className='flex px-4 flex-row gap-2  flex-1 items-center'>
-                       <div className='flex flex-col p-2'>
-                  <div className='text-sm text-purple-500/80'>Progress</div>
-                  <div className='font-bold text-purple-500'>4$/h</div>
-               </div>
-               </PaperM>
-                            
-<PaperM className='flex px-4 flex-row gap-2  flex-1 items-center'>
-                       <div className='flex flex-col p-2'>
-                  <div className='text-sm text-green-500/80'>Valuee</div>
-                  <div className='font-bold text-green-500'>200$</div>
-               </div>
-               </PaperM>
-               </div>
-}
-               
-              
+               }
+
+
                <PaperM className='card-paper-m overflow-auto flex-1   '>
                   <div className='card-header-m text-gray-600 dark:text-gray-100'>
                      {/* <div className='bg-blue-200/20 text-blue-600 flex justify-center items-center rounded-lg size-8'>
                         <TasksIcon className='size-4 ' ></TasksIcon>
                      </div> */}
-                                  <TasksIcon className=''  fontSize='large'></TasksIcon>
+                     <TasksIcon className='' fontSize='large'></TasksIcon>
 
                      <span>Tasks</span>
-                    
+                     
+                      <Link className='ml-auto' state={{ pageType: "projectTasks", projectId: project_?.id, projectName: project_?.name, projectStatus: project_?.status } as LocationState} to={`/project/${project_?.id}/tasks`}>
+                         <ColorButton  variant="contained" color="success" onClick={()=>{
+                                              
+                                           }}>Show all
+                                           <ArrowRight sx={{transition:"all 200ms ease-in-out"}} className=" group-hover:translate-x-1 "></ArrowRight>
+                                           </ColorButton>
+                       
+                     </Link>
+
                   </div>
-                   <div className='flex flex-row gap-2 m-4 flex-wrap pb-1 overflow-auto h-auto flex-grow-0 flex-shrink-1 justify max-h-1/3'>
-                  {/* <PaperM className='card-paper-m h-auto flex-grow-0 flex-shrink-1 max-h-1/3'>
+                  <div className='flex flex-row gap-2 m-4 flex-wrap pb-1 overflow-auto h-auto flex-grow-0 flex-shrink-1 justify max-h-1/3'>
+                     {/* <PaperM className='card-paper-m h-auto flex-grow-0 flex-shrink-1 max-h-1/3'>
                   <div className='card-header-m'>
                      <InfoIcon fontSize='large'></InfoIcon>
                      <span>Info</span>
@@ -206,39 +233,39 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
 
                </PaperM> */}
 
-               <div  className='flex px-4 flex-row gap-2 flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
+                     <div className='flex px-4 flex-row gap-2 flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
                         <PersonIcon></PersonIcon>
-                   <div className='font-bold'>YassinMi</div>
-               </div>
-                <div className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
-                       <div className='flex flex-col p-2'>
-                  <div className='text-sm text-gray-500'>Work hours</div>
-                  <div className='font-bold text-amber-500'>54h</div>
-               </div>
-               </div>
-              
-<div  className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
-                       <div className='flex flex-col p-2'>
-                  <div className='text-sm text-blue-500/80'>Avg. rate</div>
-                  <div className='font-bold text-blue-500'>4$/h</div>
-               </div>
-               </div>
-                            
-<div  className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
-                       <div className='flex flex-col p-2'>
-                  <div className='text-sm text-purple-500/80'>Progress</div>
-                  <div className='font-bold text-purple-500'>4$/h</div>
-               </div>
-               </div>
-                            
-<div  className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
-                       <div className='flex flex-col p-2'>
-                  <div className='text-sm text-green-500/80'>Valuee</div>
-                  <div className='font-bold text-green-500'>200$</div>
-               </div>
-               </div>
-               </div>
-               
+                        <div className='font-bold'>{(project_?.client?.name??"YassinMi")}</div>
+                     </div>
+                     <div className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
+                        <div className='flex flex-col p-2'>
+                           <div className='text-sm text-gray-500'>Work hours</div>
+                           <div className='font-bold text-amber-500'>54h</div>
+                        </div>
+                     </div>
+
+                     <div className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
+                        <div className='flex flex-col p-2'>
+                           <div className='text-sm text-blue-500/80'>Avg. rate</div>
+                           <div className='font-bold text-blue-500'>4$/h</div>
+                        </div>
+                     </div>
+
+                     <div className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
+                        <div className='flex flex-col p-2'>
+                           <div className='text-sm text-purple-500/80'>Progress</div>
+                           <div className='font-bold text-purple-500'>4$/h</div>
+                        </div>
+                     </div>
+
+                     <div className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
+                        <div className='flex flex-col p-2'>
+                           <div className='text-sm text-green-500/80'>Valuee</div>
+                           <div className='font-bold text-green-500'>200$</div>
+                        </div>
+                     </div>
+                  </div>
+
                   <div className=' card-separator-m'></div>
                   <div className='m-4 mb-0 flex flex-shrink-0 flex-col items-center'>
 
@@ -252,49 +279,43 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                         <div className='max-h-100 flex flex-col overflow-auto gap-2 text-sm '>hi
                            <div className='flex flex-row items-center'>
                               <label className='flex-1'>Client:</label>
-                              <Input  className='flex-grow-0 w-20' placeholder="Name" aria-label='desc' />
+                              <Input className='flex-grow-0 w-20' placeholder="Name" aria-label='desc' />
                            </div>
                            <div className='flex flex-row items-center'>
                               <label className='flex-1'>Estimate Value:</label>
-                              <Input  className='flex-grow-0 w-20' value={"200$"} placeholder="Value" aria-label='desc' />
+                              <Input className='flex-grow-0 w-20' value={"200$"} placeholder="Value" aria-label='desc' />
                            </div>
-                            <div className='flex flex-row items-center mt-4'>
+                           <div className='flex flex-row items-center mt-4'>
                               {/* <label className='flex-1'>State Date:</label> */}
                               <LocalizationProvider dateAdapter={AdapterDayjs}>
-<DatePicker
-  label="Start Date"
-  value={startDate}
-  onChange={(newValue) => {setStartDate(newValue)}}
-/>                              </LocalizationProvider>
+                                 <DatePicker
+                                    label="Start Date"
+                                    value={startDate}
+                                    onChange={(newValue) => { setStartDate(newValue) }}
+                                 />                              </LocalizationProvider>
                            </div>
-                          
+
                            <div>property</div>
                         </div>
                      </div>
                      <div className='tasksPreview overflow-auto  p-2 border-1 flex flex-col items-stretch border-gray-700 flex-1 w-1/2 rounded-xl dark:bg-gray-900 text-sm'>
-                           {isLoadingProject_ &&<div className='self-center justify-center flex-1 flex flex-col items-center '> <CircularProgress className=''></CircularProgress></div>}
-                           {errorProject_ && <div className='text-red-500'>Error loading tasks</div>}
-                           {!isLoadingProject_ && !errorProject_ && project_ &&
+                        {isLoadingProject_ && <div className='self-center justify-center flex-1 flex flex-col items-center '> <CircularProgress className=''></CircularProgress></div>}
+                        {errorProject_ && <div className='text-red-500'>Error loading tasks</div>}
+                        {!isLoadingProject_ && !errorProject_ && project_ &&
                            <CompactTasksPreview pTasks={project_.tasks!}></CompactTasksPreview>}
-                           
+
                      </div>
                   </div>
                   <div className='card-separator-m'></div>
-                  <div className='card-footer h-12 px-4 flex flex-row justify-end items-center'>
-                     
-                      <Link state={{ pageType: "projectTasks", projectId: project_?.id, projectName: project_?.name, projectStatus: project_?.status } as LocationState} to={`/project/${project_?.id}/tasks`}>
-                        <Button variant='text'>
-                           Show all
-                        <ShowAllIcon></ShowAllIcon>
+                  {/* <div className='card-footer h-12 px-4 flex flex-row justify-end items-center'>
 
-                        </Button>
-                     </Link>
-                  </div>
+                    
+                  </div> */}
                </PaperM>
-               
-              
+
+
             </div>
-            <PaperM  className='card-paper-m flex-1'>
+            <PaperM className='card-paper-m flex-1'>
                <div className='card-header-m'>
                   <NoteIcon fontSize='large'></NoteIcon>
                   <span>Notes</span>
@@ -302,14 +323,14 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                <div className='card-separator-m'></div>
                <div style={{ padding: "8px", height: "100%" }}>
 
-                  <textarea  onChange={(e) => setEditabledDescription(e.target.value)} value={editabledDescription} className='h-full w-full outline-none resize-none'></textarea>
+                  <textarea placeholder='Write notes' onChange={(e) => setEditabledDescription(e.target.value)} value={editabledDescription} className='h-full w-full outline-none resize-none'></textarea>
                </div>
             </PaperM>
 
 
 
          </div>
-        
+
       </div>
 
 

@@ -71,3 +71,14 @@ export async function apiGetOverviewToday(): Promise<PTask[]> {
     if(!res.ok) throw new Error(`Error adding task: ${res.statusText}`);
     return await res.json();
 }
+
+export async function apiFetchTask(taskId:number): Promise<PTask> {
+    var res= await fetch(`/api/tasks/${taskId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    if(!res.ok) throw new Error(`Error fetching task: ${res.statusText}`);
+    return await res.json();
+}

@@ -1,6 +1,7 @@
 import { Button, Input, TextField, Typography } from "@mui/material";
 import type { CreateProjectCommand } from "../Model/Commands";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import React from "react";
 
 
 
@@ -96,10 +97,10 @@ const CreatProjectForm: React.FC<CreateProjectFormProps> = ({onSubmit}) => {
 
 
   }
-    return <div>
+    return <div className="flex flex-col m-4 gap-4 ">
       
       
-         <form>
+         <form className="flex flex-col m-4 gap-4 w-80">
            <Input  className='flex-grow-0 w-full' value={projectName}  onChange={(e) => setProjectName(e.target.value)} placeholder="Project Name" aria-label='desc' />
      
         <div>

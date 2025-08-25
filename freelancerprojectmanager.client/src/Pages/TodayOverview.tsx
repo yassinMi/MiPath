@@ -15,7 +15,7 @@ const TodayOverview : FC = ()=>{
         {errorPTasks?<>failed load tasks: {(errorPTasks as Error).message}</>:null}
         {pTasks?.length===0?<>No tasks for today</>:null}
         {pTasks?.length?
-       <KanbanBoard className="h-[50%]" tasks={pTasks}></KanbanBoard>   :null
+       <KanbanBoard showProjectNames={true} className="h-[50%]" tasks={pTasks}></KanbanBoard>   :null
         }
     </div>)
 

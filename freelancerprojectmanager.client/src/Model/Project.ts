@@ -7,7 +7,7 @@ export interface Project {
     id: number;
     name: string;
     description: string;
-    clientName?: string;
+    client?: Client;
     startDate?: Date;
     endDate?: Date;
     status: ProjectStatus;

@@ -1,6 +1,6 @@
-import { useEffect, useState, type FC } from "react";
+import { useCallback, useEffect, useState, type FC } from "react";
 import ProjectsList from "../Components/ProjectsList";
-import { Box, Button, ButtonGroup, CircularProgress, Menu, MenuItem, Modal, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { Box, Button, ButtonGroup, CircularProgress, Menu, MenuItem, Modal, styled, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 
 import ListIcon from "@mui/icons-material/ViewStream"
 import CardIcon from "@mui/icons-material/ViewModule"
@@ -19,6 +19,23 @@ import { useSnackbar } from "../Components/SnackbarContext";
 import { truncateString } from "../services/utils";
 
 
+export const StyledBox = styled(Box)(({theme})=>({
+   position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  backgroundColor: 'var(--color-gray-100)',
+  border: '1px solid',
+  borderRadius: 16,
+
+
+  p: 3,
+  ...theme.applyStyles('dark', {
+      backgroundColor: "var(--color-gray-950)",
+      borderColor: "var(--color-gray-700)",
+    })
+
+}));;
 
 const options_ = ["Create Project", "Create Pre-project"];
 export interface SplitButtonProps {
@@ -175,11 +192,11 @@ const ProjectsPage : FC = ({})=>{
   aria-labelledby="modal-modal-title"
   aria-describedby="modal-modal-description"
 >
-  <Box className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black border rounded-lg p-6">
+  <StyledBox >
     
       <CreatProjectForm  onSubmit={handleCreateProjectSubmit}/>
     
-  </Box>
+  </StyledBox>
 </Modal>
 
 {isLoadingProjects_?<div className="flex items-center justify-center h-[calc(100vh-200px)]">

@@ -1,5 +1,5 @@
 import { Button, Input, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CreateTaskCommand } from "../Model/Commands";
 
 
@@ -37,18 +37,32 @@ const AddTaskForm: React.FC<AddTaskFormProps> = ({onSubmit, projectId}) => {
 
 
   }
-    return <div>
+
+   const inputRef = useRef<HTMLInputElement>(null);
+   useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); 
+      handleSubmitClick(e);
+    }
+  };
+    return <div className="flex flex-col gap-4">
       
       
-         <form>
-           <Input  className='flex-grow-0 w-full' value={taskTitle}  onChange={(e) => setTaskTitle(e.target.value)} placeholder="Task Title" aria-label='desc' />
+         <form className="flex flex-col m-4 gap-4 w-80">
+           <Input inputRef={inputRef} multiline className='flex-grow-0 w-full' value={taskTitle}  onChange={(e) => setTaskTitle(e.target.value)} placeholder="Task Title" aria-label='desc' />
      
       
         <div>
-            <label>Description</label>
-             <div style={{ padding: "8px", height: "100%" }}>
+             <div className="h-40">
 
-                  <textarea  onChange={(e) => setDescription(e.target.value)} value={description} className='h-full w-full outline-none resize-none'></textarea>
+                  <textarea onKeyDown={handleKeyDown} placeholder="Description"  onChange={(e) => setDescription(e.target.value)} value={description} className='h-full w-full max-h-[50vh] outline-none resize-none'></textarea>
                </div>
         </div>
        

@@ -1,9 +1,10 @@
 import type React from "react";
 import type { PTask } from "../Model/PTask";
 export interface PTaskCardInKanbanBoardProps{
-    pTask: PTask
+    pTask: PTask,
+    showProjectName?:boolean
 }
-const PTaskCardInKanbanBoard: React.FC<PTaskCardInKanbanBoardProps> = ({ pTask }) => {
+const PTaskCardInKanbanBoard: React.FC<PTaskCardInKanbanBoardProps> = ({ pTask , showProjectName}) => {
   return (
     <div className="pTask-card border rounded  shadow p-4 mb-2 bg-white dark:bg-gray-800">
       <h3 className="font-bold text-lg">{pTask.title}</h3>
@@ -11,8 +12,8 @@ const PTaskCardInKanbanBoard: React.FC<PTaskCardInKanbanBoardProps> = ({ pTask }
       {pTask.estimateMinute && (
         <p className="text-sm text-gray-500 dark:text-gray-500">Estimate: {pTask.estimateMinute} min</p>
       )}
-      {pTask && (
-        <p className="text-sm text-gray-400 dark:text-gray-600">Project: {pTask.projectId}</p>
+      {pTask && showProjectName&& (
+        <p className="text-sm text-gray-400 dark:text-gray-600">Project: project name here - {pTask.projectId}</p>
       )}
     </div>
   );
