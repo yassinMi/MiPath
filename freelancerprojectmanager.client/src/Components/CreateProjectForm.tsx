@@ -1,7 +1,8 @@
-import { Button, Input, TextField, Typography } from "@mui/material";
+import { Button, Input, MenuItem, Select, TextField, Typography } from "@mui/material";
 import type { CreateProjectCommand } from "../Model/Commands";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import React from "react";
+import { useClients } from "../hooks/useClients";
 
 
 
@@ -68,6 +69,7 @@ const CreatProjectForm: React.FC<CreateProjectFormProps> = ({onSubmit}) => {
   const [newClientName, setNewClientName] = useState("");
   const [status, setStatus] = useState<"Scoping"|"Active">("Scoping");
 
+  const {data:clients, isLoading:isLoadingClients_, error:errorClients_, refetch: refetchClients, isRefetching:isRefetchingClients_} = useClients()
   const handleSubmitClick = (e:any) =>{
       e.preventDefault();
       //validate data and call onSubmit
@@ -97,27 +99,45 @@ const CreatProjectForm: React.FC<CreateProjectFormProps> = ({onSubmit}) => {
 
 
   }
+   const inputRef = useRef<HTMLInputElement>(null);
+     useEffect(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        inputRef.current.select();
+      }
+    }, []);
+  
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault(); 
+        handleSubmitClick(e);
+      }
+    };
     return <div className="flex flex-col m-4 gap-4 ">
       
       
          <form className="flex flex-col m-4 gap-4 w-80">
-           <Input  className='flex-grow-0 w-full' value={projectName}  onChange={(e) => setProjectName(e.target.value)} placeholder="Project Name" aria-label='desc' />
+           <Input inputRef={inputRef} className='flex-grow-0 w-full' value={projectName}  onChange={(e) => setProjectName(e.target.value)} placeholder="Project Name" aria-label='desc' />
      
         <div>
-            <label>Client</label>
-            <select name="clientID">
-                <option value="">Select a client</option>
-                {/* Options would be populated dynamically */}
-            </select>
+          <label>
+            Select client
+          </label>
+            <Select  className="w-full" value={clientID} onChange={(e)=>setClientID(e.target.value?Number(e.target.value):undefined)}>
+               
+                {isLoadingClients_&& <option value={undefined}>--loading--</option>}
+                <MenuItem className="opacity-40" value=""><em>None</em>
+                  </MenuItem>
+                {clients?.map((client:any)=><MenuItem key={client.id} value={client.id}>{client.name}</MenuItem>)}
+            </Select>
             <div>or</div>
-            <Input className='flex-grow-0 w-full' value={newClientName}  onChange={(e) => setNewClientName(e.target.value)} placeholder="New client Name" aria-label='desc'
+            <Input className='flex-grow-0 w-full' value={newClientName}  onChange={(e) => setNewClientName(e.target.value)} placeholder="Enter new client name" aria-label='desc'
                 />
         </div>
         <div>
-            <label>Description</label>
-             <div style={{ padding: "8px", height: "100%" }}>
+             <div className="h-40">
 
-                  <textarea  onChange={(e) => setDescription(e.target.value)} value={description} className='h-full w-full outline-none resize-none'></textarea>
+                  <textarea placeholder="Description" onKeyDown={handleKeyDown} onChange={(e) => setDescription(e.target.value)} value={description} className='h-full w-full outline-none resize-none'></textarea>
                </div>
         </div>
        
@@ -138,3 +158,4 @@ const CreatProjectForm: React.FC<CreateProjectFormProps> = ({onSubmit}) => {
 
 
 export default CreatProjectForm;
+

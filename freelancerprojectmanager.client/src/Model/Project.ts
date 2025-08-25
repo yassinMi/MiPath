@@ -1,3 +1,4 @@
+import type { Client } from "./Client";
 import type { ProjectStatus } from "./ProjectStatus";
 import type { PTask } from "./PTask";
 
@@ -16,12 +17,5 @@ export interface Project {
      * available when fetching a single project, not available when fetching all projects
      */
     tasks?:PTask[];
-}
-
-
-
-export interface Client {
-    id: string;
-    name: string;
 }
 

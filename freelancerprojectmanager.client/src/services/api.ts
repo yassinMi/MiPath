@@ -1,3 +1,4 @@
+import type { Client } from "../Model/Client";
 import type { CreateProjectCommand, CreateTaskCommand } from "../Model/Commands";
 import type { PTask } from "../Model/PTask";
 import { delay } from "./utils";
@@ -80,5 +81,17 @@ export async function apiFetchTask(taskId:number): Promise<PTask> {
         }
     });
     if(!res.ok) throw new Error(`Error fetching task: ${res.statusText}`);
+    return await res.json();
+}
+export async function apiGetClients(): Promise<Client[]> {
+    await delay(1000);
+    return [{id:1,name:"YassinMi"}, {id:4,name:"Yass"}, ]; // TODO remove this line when API is ready
+    var res= await fetch(`/api/clients`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    if(!res.ok) throw new Error(`Error fetching clients: ${res.statusText}`);
     return await res.json();
 }
