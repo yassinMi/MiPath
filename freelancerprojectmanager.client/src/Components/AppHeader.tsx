@@ -42,7 +42,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({ locationInf
             <Typography
                 sx={{ color: 'text.primary', display: 'flex', alignItems: 'center' }}
             >
-                <InfoIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+                <InfoIcon  sx={{ mr: 0.5 }} fontSize="inherit" />
                 About
             </Typography>
         </Breadcrumbs>)
@@ -50,19 +50,19 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({ locationInf
         case "projectTasks": return (
             <Breadcrumbs className={className} sx={{  overflow: "clip" }} aria-label="breadcrumb">
                 <RouterLink to={"project"}>
-                    <div className='p-1 rounded flex flex-row gap-2 items-center hover:bg-gray-100 dark:hover:bg-gray-800'>
-                        <FolderOpenIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+                    <div className='p-1 rounded flex flex-row gap-1 items-center hover:bg-gray-100 dark:hover:bg-gray-800'>
+                        <FolderOpenIcon  className="!hidden sm:!inline-block" sx={{ mr: 0.5}} fontSize="inherit" />
 
                         <div>Projects</div>
 
                     </div>
                 </RouterLink>
-                <RouterLink to={`project/${locationInfo.projectId}/overview`}>
-                    <div className='p-1 rounded flex flex-row gap-2 items-center hover:bg-gray-100 dark:hover:bg-gray-800'>
-                        <DashboardIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+                <RouterLink title={locationInfo?.projectName} to={`project/${locationInfo.projectId}/overview`}>
+                    <div className='p-1 max-w-32 md:max-w-48 lg:max-w-54 xl:max-w-72 rounded flex flex-row gap-1 items-center hover:bg-gray-100 dark:hover:bg-gray-800'>
+                        <DashboardIcon  className="!hidden sm:!inline-block" sx={{ mr: 0.5}} fontSize="inherit" />
 
-                        <div>{locationInfo?.projectName}</div>
-                        {locationInfo.projectStatus == "Scoping" ? <div className="text-xs font-bold  items-center min-w-0 truncate break-all justify-center bg-orange-500/10 text-orange-700 p-2 py-1 rounded-lg shadow">
+                        <div className=' truncate flex-1'>{locationInfo?.projectName}</div>
+                        {locationInfo.projectStatus == "Scoping" ? <div className="text-xs font-bold flex-shrink-0  items-center min-w-0 truncate break-all justify-center bg-orange-500/10 text-orange-700 p-2 py-1 rounded-lg shadow">
                             Scoping
                         </div> : null}
 
@@ -72,7 +72,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({ locationInf
                     sx={{ color: 'text.primary', display: 'flex', alignItems: 'center' }}
                 >
                     {locationInfo.pageType == "projectOverview" ? <> <InfoIcon sx={{ mr: 0.5 }} fontSize="inherit" />
-                        Overview</> : <><ListAltIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+                        <span className="hidden sm:block">Overview</span></> : <><ListAltIcon sx={{ mr: 0.5 }} fontSize="inherit" />
                         Tasks</>}
 
                 </Typography>
@@ -242,7 +242,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                 <div className="flex items-center min-w-0  space-x-3">
 
 
-                    <RouterLink to="/" state={{pageType:"home"} as LocationState}>
+                    <RouterLink className='hidden sm:block' to="/" state={{pageType:"home"} as LocationState}>
                                         <AppIcon ></AppIcon>
                     </RouterLink>
                     <div className='flex flex-col max-h-16 gap-0 items-stretch min-w-0 '>
@@ -254,7 +254,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                 </div>
 
                 {/* Search bar */}
-                <div className="flex-1 mx-6 max-w-lg">
+                <div className="flex-1 hidden md:block mx-6 max-w-lg">
                     <div className="relative dark:text-gray-600 text-gray-400 focus-within:text-gray-600">
                         <input autoComplete='tyer'
                             type="text"
@@ -273,7 +273,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                     </div>
                 </div>
 
-{ <ul className=" flex-row gap-4 p-4 hidden md:flex">
+{ <ul className=" flex-row gap-4 p-4 hidden lg:flex">
 
                     <li className="font-bold hover:underline cursor-pointer"><RouterLink className='truncate ' state={{ pageType: "todayOverview" }} to={"/today"} >Today</RouterLink></li>
                     <li className="font-bold hover:underline cursor-pointer"><RouterLink className='truncate ' state={{ pageType: "thisweekOverview" }} to={"/thisweek"} >This Week</RouterLink></li>
@@ -281,7 +281,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                 </ul>
                 }
                 <div className="flex flex-row gap-4  items-center">
-                    <ThemeSwitch onClick={onDarkToggle} isDark={isDark} ></ThemeSwitch>
+                    <ThemeSwitch className="hidden sm:block" onClick={onDarkToggle} isDark={isDark} ></ThemeSwitch>
                     <AccountButton userName="YassinMi" accountInitials="YM" onClick={() => { }}></AccountButton>
 
                 </div>

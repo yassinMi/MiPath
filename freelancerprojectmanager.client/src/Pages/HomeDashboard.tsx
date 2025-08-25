@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import type { Project, PTask } from '../Model/Project';
+import type { Project } from '../Model/Project';
 import { useParams } from 'react-router-dom';
 import ProjectComponent from '../Components/ProjectComponent';
 import { userProjects } from '../hooks';

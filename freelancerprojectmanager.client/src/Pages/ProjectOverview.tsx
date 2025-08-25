@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { Project } from '../Model/Project';
 import { useParams } from 'react-router-dom';
-import { Button, Card, CircularProgress, Input, LinearProgress, linearProgressClasses, Paper, styled, TextField } from '@mui/material';
+import { Box, Button, Card, CircularProgress, Input, LinearProgress, linearProgressClasses, Modal, Paper, styled, TextField } from '@mui/material';
 
 import EditIcon from '@mui/icons-material/Edit'
 import NoteIcon from '@mui/icons-material/NoteAlt'
@@ -22,6 +22,9 @@ import type { PickerValue } from '@mui/x-date-pickers/internals';
 import { useProjectPTasks } from '../hooks';
 import type { ref } from 'process';
 import { useProject } from '../hooks/useProject';
+import AddTaskForm from '../Components/AddTaskForm';
+import { apiAddTaske, apiCreateProject, apiFetchProject } from '../services/api';
+import type { CreateTaskCommand } from '../Model/Commands';
 
 
 const PaperM = styled(Paper)(({theme})=> ({
@@ -58,44 +61,69 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
    /*const [project, setProject] = useState<Project | null>(null)*/
    const [startDate, setStartDate] = useState<PickerValue|undefined>(dayjs("2022-04-04"))
    const [editabledDescription, setEditabledDescription] = useState<string | undefined>(undefined)
+   const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
 
    /*const {data: projectPTasks, isLoading:isLoadingProjectPTasks,error: errorProjectPTasks} = useProjectPTasks(projectId,{enabled:!!projectId});*/
    const {data: project_, isLoading:isLoadingProject_,error: errorProject_} = useProject(projectId,{enabled:!!projectId});
 
-   /*const eff = useEffect(() => {
 
-      let ignored = false;
-      const project = fetch(`/api/projects/${projectId}`).then((r) => {
-         r.json().then(r => {
-            if (!ignored) {
-               setProject(r)
-               setEditabledDescription(r.description)
-               setStartDate( dayjs("2022-04-04"))
-            }
-
-         });
-
-      });
-      return () => {
-         setProject(null)
-         setEditabledDescription(undefined)
-         ignored = true;
-      }
-   }
-      , [projectId])*/
-
-
+  const handleAddTaskModalOpen = () =>{
+       
+        setAddTaskModalOpen(true);
+ 
+     }
+     const handleAddTaskModalClose = () => {
+ 
+       setAddTaskModalOpen(false);
+ 
+     }
+     const handleAddTaskSubmit = async (data:CreateTaskCommand) =>{
+       console.log("handleAddTaskSubmit", data)
+       //call api to create project
+       try {
+          const newProjId = await apiAddTaske(data);
+          console.log("newProjId", newProjId)
+         setAddTaskModalOpen(false);
+         
+        
+       }
+       catch(err){
+         console.error("Error creating task", err)
+       }
+ 
+      
+     
+     }
+     const handleSplitButtonClick = (index:number) => {
+       
+     }
 
    return (
       <div className='flex flex-1 flex-col gap-2 overflow-auto max-h-[calc(100vh-5rem)] '>
-         <ControlPanelLayout className='flex-shrink-0 flex-grow-0'>
+         <ControlPanelLayout className='flex-shrink-0 flex-grow-0 flex-wrap'>
             <div className='flex mx-2 mb-0 flex-row gap-1'>
                <h1 className='text-xl font-bold'>{project_?.name}</h1>
             </div>
+            <div className='flex flex-row gap-2 ml-auto'>
+                <Button onClick={handleAddTaskModalOpen} variant='contained' className='whitespace-nowrap' color='secondary'>Add Task</Button>
             <SplitButton sx={{}} options={["Close As Complete", "Close As Canceled"]}></SplitButton>
+            </div>
+           
          </ControlPanelLayout>
 
-         <div className="flex flex-1 h-full min-h-80 overflow-auto flex-row gap-2 p-6 mx-4 items-stretch" >
+<Modal 
+  open={addTaskModalOpen}
+  onClose={handleAddTaskModalClose}
+  aria-labelledby="modal-modal-title"
+  aria-describedby="modal-modal-description"
+>
+  <Box className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black border rounded-lg p-6">
+    {project_&&
+      <AddTaskForm  projectId={project_.id}  onSubmit={handleAddTaskSubmit}/>
+}
+  </Box>
+</Modal>
+         <div className="flex flex-col md:flex-row flex-1 h-full min-h-80 overflow-auto  gap-2 p-6 mx-4 items-stretch" >
             <div className='flex-1 flex flex-col gap-4 overflow-auto'>
               {false &&<div className='flex flex-row gap-2 flex-wrap pb-1 overflow-auto h-auto flex-grow-0 flex-shrink-1 justify max-h-1/3'>
                   {/* <PaperM className='card-paper-m h-auto flex-grow-0 flex-shrink-1 max-h-1/3'>
@@ -239,7 +267,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                            {isLoadingProject_ &&<div className='self-center justify-center flex-1 flex flex-col items-center '> <CircularProgress className=''></CircularProgress></div>}
                            {errorProject_ && <div className='text-red-500'>Error loading tasks</div>}
                            {!isLoadingProject_ && !errorProject_ && project_ &&
-                           <CompactTasksPreview pTasks={project_.tasks}></CompactTasksPreview>}
+                           <CompactTasksPreview pTasks={project_.tasks!}></CompactTasksPreview>}
                            
                      </div>
                   </div>

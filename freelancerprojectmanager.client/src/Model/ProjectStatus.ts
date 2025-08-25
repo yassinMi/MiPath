@@ -1,8 +1,7 @@
 
 export type ProjectStatus =
-    | "Scoping"
-    | "NotStarted"
-    | "InProgress"
-    | "Completed"
-    | "OnHold"
-    | "Cancelled";
+  | "Scoping"
+  | "Active"
+  | "OnHold"
+  | "Completed"
+  | "Canceled";

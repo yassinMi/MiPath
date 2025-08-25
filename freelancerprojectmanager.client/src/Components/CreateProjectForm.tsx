@@ -1,9 +1,12 @@
+import { Button, Input, TextField, Typography } from "@mui/material";
+import type { CreateProjectCommand } from "../Model/Commands";
+import { useState } from "react";
 
 
 
 
 export interface CreateProjectFormProps {
-
+   onSubmit?: (data:CreateProjectCommand)=>void
 }
 /* "/api/projects/create": {
       "post": {
@@ -56,18 +59,49 @@ export interface CreateProjectFormProps {
         },
         "additionalProperties": false
       },*/
-const CreatProjectForm: React.FC<CreateProjectFormProps> = ({}) => {
+const CreatProjectForm: React.FC<CreateProjectFormProps> = ({onSubmit}) => {
+
+  const [projectName, setProjectName] = useState("New Project (1)");
+  const [description, setDescription] = useState("");
+  const [clientID, setClientID] = useState<number|undefined>(undefined);
+  const [newClientName, setNewClientName] = useState("");
+  const [status, setStatus] = useState<"Scoping"|"Active">("Scoping");
+
+  const handleSubmitClick = (e:any) =>{
+      e.preventDefault();
+      //validate data and call onSubmit
+      console.log("submit clicked")
+      
+      if(clientID===undefined && newClientName.trim()===""){
+        alert("Please provide either a client ID or a new client name.");
+        return;
+      }
+      if(clientID&& newClientName.trim()!==""){
+        alert("Please provide either a client ID or a new client name, not both.");
+        return;
+      }
+      if(projectName.trim()===""){
+        alert("Project name is required.");
+        return;
+      }
+      const data:CreateProjectCommand = {
+        name: projectName,
+        description,
+        clientID,
+        newClientName: clientID?undefined:newClientName,
+        status
+      }
+      console.log("submit command:", data);
+      if(onSubmit) onSubmit(data);
+
+
+  }
     return <div>
-       <div>Create New Project</div>
+      
+      
          <form>
-        <div>
-            <label>Project Name</label>
-            <input type="text" name="name" />
-        </div>
-        <div>
-            <label>Description</label>
-            <textarea name="description" />
-        </div>
+           <Input  className='flex-grow-0 w-full' value={projectName}  onChange={(e) => setProjectName(e.target.value)} placeholder="Project Name" aria-label='desc' />
+     
         <div>
             <label>Client</label>
             <select name="clientID">
@@ -75,18 +109,25 @@ const CreatProjectForm: React.FC<CreateProjectFormProps> = ({}) => {
                 {/* Options would be populated dynamically */}
             </select>
             <div>or</div>
-            <input type="text" name="newClientName" placeholder="New Client Name"
+            <Input className='flex-grow-0 w-full' value={newClientName}  onChange={(e) => setNewClientName(e.target.value)} placeholder="New client Name" aria-label='desc'
                 />
         </div>
         <div>
+            <label>Description</label>
+             <div style={{ padding: "8px", height: "100%" }}>
+
+                  <textarea  onChange={(e) => setDescription(e.target.value)} value={description} className='h-full w-full outline-none resize-none'></textarea>
+               </div>
+        </div>
+       
+        <div>
             <label>Status</label>
             <select name="status">
-                <option value="NotStarted">Not Started</option>
-                <option value="InProgress">In Progress</option>
-                <option value="Completed">Completed</option>
+                <option value="Scoping">Scoping (pre-project)</option>
+                <option value="Active">Active</option>
             </select>
         </div>
-        <button type="submit">Create Project</button>
+        <Button className="w-full" variant="contained" color="success" onClick={handleSubmitClick} type="submit">Create Project</Button>
         
 
          

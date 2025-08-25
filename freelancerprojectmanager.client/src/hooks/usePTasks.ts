@@ -2,17 +2,16 @@
 
 
 import {useQuery} from "@tanstack/react-query"
+import type { GetTasksQuery } from "../Model/Commands";
+import type { PTask } from "../Model/PTask";
 
 
-export interface UsePTasksFilter {
-    useCase:"today"|"week"
-}
 
-export function usePTasks(filter:UsePTasksFilter){
+export function usePTasks(query: GetTasksQuery, options?:any){
 
-    return useQuery({queryKey:["pTasks",filter.useCase], queryFn:async ()=>{
+    return useQuery<PTask[]>({queryKey:["pTasks",query], queryFn:async ()=>{
 
-            const res = await fetch(`/api/tasks?usecase=${filter.useCase}`)
+            const res = await fetch(`/api/tasks?`+new URLSearchParams(query as any).toString())
             if (!res.ok) {
                 throw new Error(`failed req: ${res.status}`);
             }

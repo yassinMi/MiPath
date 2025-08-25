@@ -1,4 +1,5 @@
 import type { ProjectStatus } from "./ProjectStatus";
+import type { PTask } from "./PTask";
 
 export interface Project {
     estimateValue?: number;
@@ -11,6 +12,10 @@ export interface Project {
     endDate?: Date;
     status: ProjectStatus;
     loggedMinutes?: number;
+    /**
+     * available when fetching a single project, not available when fetching all projects
+     */
+    tasks?:PTask[];
 }
 
 
@@ -20,38 +25,3 @@ export interface Client {
     name: string;
 }
 
-export interface PTask {
-  id: number;
-  title: string;
-  description: string;
-  projectId: number;
-  project?: Project;
-  estimateMinute?: number;
-}
-
-export interface CreateProjectCommand {
-    name: string;
-    description?: string;
-    clientID?: string;
-    clientName?: string;
-}
-
-export interface UpdateProjectCommand {
-    id: string;
-    name: string;
-    description: string;
-}
-
-export interface CreateTaskCommand {
-    title: string;
-    description: string;
-    projectID: string;
-    estimateMinute?: number;
-}
-
-export interface UpdateTaskCommand {
-    id: string;
-    title: string;
-    description: string;
-    estimateMinute?: number;
-}
