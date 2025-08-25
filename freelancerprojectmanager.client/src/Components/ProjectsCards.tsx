@@ -25,7 +25,7 @@ const ProjectsCards: React.FC<ProjectsCardsProps> = ({ projects, onSelectProject
           
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                   {projects.map(project => (
-                      <ProjectComponent projectId={project.id} clientName={project.clientName} projectName={project.name} description={project.description} status={project.status}
+                      <ProjectComponent projectId={project.id} clientName={project.client?.name} projectName={project.name} description={project.description} status={project.status}
                           key={project.id} project={project}
                           
                       >

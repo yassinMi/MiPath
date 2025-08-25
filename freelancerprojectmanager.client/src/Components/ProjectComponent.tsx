@@ -5,6 +5,10 @@ import MoreVertIcon from '@mui/icons-material/MoreHoriz';
 import { useNavigate } from 'react-router-dom';
 import type { LocationState } from '../Model/LocationState';
 import type { Project } from '../Model/Project';
+import { useSnackbar } from './SnackbarContext';
+import { apiDeleteProject } from '../services/api';
+import { truncateString } from '../services/utils';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface ProjectComponentProps {
   projectId: number;
@@ -125,8 +129,10 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({
   project
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const {showSnackbar} = useSnackbar()
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
+  const queryClient  = useQueryClient()
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation()
@@ -142,9 +148,46 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({
   const handleClose = () => {
     setAnchorEl(null);
   };
-   const handleDeleteMenuItemClick: React.MouseEventHandler<HTMLLIElement> = (e :React.MouseEvent<HTMLLIElement>) => {
+   const handleDeleteMenuItemClick: React.MouseEventHandler<HTMLLIElement> =async (e :React.MouseEvent<HTMLLIElement>) => {
     e.stopPropagation()
     handleClose()
+
+    try{
+    await apiDeleteProject(projectId)
+    var truncateTitle = truncateString(projectName,20)
+        showSnackbar(`Deleted project: ${truncateTitle}`,"success")
+        queryClient.invalidateQueries({ queryKey: ['projects'] });
+        queryClient.invalidateQueries({ queryKey: ['pTasks'] });
+        queryClient.setQueryData(['projects' ], (oldData: Project[]) => {
+          if (!oldData) return oldData;
+          return oldData.filter(project => project.id !== projectId);
+        });
+
+
+    }
+    catch(err){
+      showSnackbar((err as Error).message,"error")
+      return
+    }
+
+  };
+  const handleCloseAsCanceledClick: React.MouseEventHandler<HTMLLIElement> = (e :React.MouseEvent<HTMLLIElement>) => {
+    e.stopPropagation()
+    handleClose()
+          showSnackbar("not implemented","error")
+
+  };
+  const handleCloseAsCompletedClick: React.MouseEventHandler<HTMLLIElement> = (e :React.MouseEvent<HTMLLIElement>) => {
+    e.stopPropagation()
+    handleClose()
+              showSnackbar("not implemented","error")
+
+  };
+  const handleSetOnHoldClick: React.MouseEventHandler<HTMLLIElement> = (e :React.MouseEvent<HTMLLIElement>) => {
+    e.stopPropagation()
+    handleClose()
+              showSnackbar("not implemented","error")
+
   };
   return (
       <div data-status={(status)} onClick={handleCardClick} className="project-component group cursor-pointer h-48  flex flex-col gap-2  bg-white dark:bg-[#060606] rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300  
@@ -174,9 +217,9 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({
         }}
       >
         <MenuItem onClick={handleDeleteMenuItemClick}>Delete project</MenuItem>
-        <MenuItem onClick={handleDeleteMenuItemClick}>Close as canceled</MenuItem>
-        <MenuItem onClick={handleDeleteMenuItemClick}>Close as completed</MenuItem>
-        <MenuItem onClick={handleDeleteMenuItemClick}>Set on hold</MenuItem>
+        <MenuItem onClick={handleCloseAsCanceledClick}>Close as canceled</MenuItem>
+        <MenuItem onClick={handleCloseAsCompletedClick}>Close as completed</MenuItem>
+        <MenuItem onClick={handleSetOnHoldClick}>Set on hold</MenuItem>
       </Menu>
           </div>
           <div className="separator h-px bg-gray-300 dark:bg-gray-900 mx-4 pointer-events-none"></div>

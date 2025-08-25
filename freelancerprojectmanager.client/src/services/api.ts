@@ -85,7 +85,6 @@ export async function apiFetchTask(taskId:number): Promise<PTask> {
 }
 export async function apiGetClients(): Promise<Client[]> {
     await delay(1000);
-    return [{id:1,name:"YassinMi"}, {id:4,name:"Yass"}, ]; // TODO remove this line when API is ready
     var res= await fetch(`/api/clients`, {
         method: 'GET',
         headers: {
@@ -94,4 +93,15 @@ export async function apiGetClients(): Promise<Client[]> {
     });
     if(!res.ok) throw new Error(`Error fetching clients: ${res.statusText}`);
     return await res.json();
+}
+
+export async function apiDeleteProject(projectId:number): Promise<void> {
+    var res= await fetch(`/api/projects/${projectId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    if(!res.ok) throw new Error(`Error deleting project: ${res.statusText}`);
+    return;
 }
