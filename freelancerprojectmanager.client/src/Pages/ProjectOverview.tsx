@@ -21,6 +21,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import type { PickerValue } from '@mui/x-date-pickers/internals';
 import { useProjectPTasks } from '../hooks';
 import type { ref } from 'process';
+import { useProject } from '../hooks/useProject';
 
 
 const PaperM = styled(Paper)(({theme})=> ({
@@ -54,16 +55,17 @@ const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
 
    const { projectId } = useParams();
-   const [project, setProject] = useState<Project | null>(null)
+   /*const [project, setProject] = useState<Project | null>(null)*/
    const [startDate, setStartDate] = useState<PickerValue|undefined>(dayjs("2022-04-04"))
    const [editabledDescription, setEditabledDescription] = useState<string | undefined>(undefined)
 
-   const {data: projectPTasks, isLoading:isLoadingProjectPTasks,error: errorProjectPTasks} = useProjectPTasks(projectId,{enabled:!!projectId});
+   /*const {data: projectPTasks, isLoading:isLoadingProjectPTasks,error: errorProjectPTasks} = useProjectPTasks(projectId,{enabled:!!projectId});*/
+   const {data: project_, isLoading:isLoadingProject_,error: errorProject_} = useProject(projectId,{enabled:!!projectId});
 
-   const eff = useEffect(() => {
+   /*const eff = useEffect(() => {
 
       let ignored = false;
-      const project = fetch(`/api/project/${projectId}`).then((r) => {
+      const project = fetch(`/api/projects/${projectId}`).then((r) => {
          r.json().then(r => {
             if (!ignored) {
                setProject(r)
@@ -80,13 +82,15 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
          ignored = true;
       }
    }
-      , [projectId])
+      , [projectId])*/
+
+
 
    return (
       <div className='flex flex-1 flex-col gap-2 overflow-auto max-h-[calc(100vh-5rem)] '>
          <ControlPanelLayout className='flex-shrink-0 flex-grow-0'>
             <div className='flex mx-2 mb-0 flex-row gap-1'>
-               <h1 className='text-xl font-bold'>{project?.name}</h1>
+               <h1 className='text-xl font-bold'>{project_?.name}</h1>
             </div>
             <SplitButton sx={{}} options={["Close As Complete", "Close As Canceled"]}></SplitButton>
          </ControlPanelLayout>
@@ -231,18 +235,18 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                            <div>property</div>
                         </div>
                      </div>
-                     <div className='tasksPreview overflow-auto  p-2 border-1 border-gray-700 flex-1 w-1/2 rounded-xl dark:bg-gray-900 text-sm'>
-                           {isLoadingProjectPTasks && <CircularProgress></CircularProgress>}
-                           {errorProjectPTasks && <div className='text-red-500'>Error loading tasks</div>}
-                           {!isLoadingProjectPTasks && !errorProjectPTasks && projectPTasks &&
-                           <CompactTasksPreview pTasks={projectPTasks}></CompactTasksPreview>}
+                     <div className='tasksPreview overflow-auto  p-2 border-1 flex flex-col items-stretch border-gray-700 flex-1 w-1/2 rounded-xl dark:bg-gray-900 text-sm'>
+                           {isLoadingProject_ &&<div className='self-center justify-center flex-1 flex flex-col items-center '> <CircularProgress className=''></CircularProgress></div>}
+                           {errorProject_ && <div className='text-red-500'>Error loading tasks</div>}
+                           {!isLoadingProject_ && !errorProject_ && project_ &&
+                           <CompactTasksPreview pTasks={project_.tasks}></CompactTasksPreview>}
                            
                      </div>
                   </div>
                   <div className='card-separator-m'></div>
                   <div className='card-footer h-12 px-4 flex flex-row justify-end items-center'>
                      
-                      <Link state={{ pageType: "projectTasks", projectId: project?.id, projectName: project?.name, projectStatus: project?.status } as LocationState} to={`/project/${project?.id}/tasks`}>
+                      <Link state={{ pageType: "projectTasks", projectId: project_?.id, projectName: project_?.name, projectStatus: project_?.status } as LocationState} to={`/project/${project_?.id}/tasks`}>
                         <Button variant='text'>
                            Show all
                         <ShowAllIcon></ShowAllIcon>

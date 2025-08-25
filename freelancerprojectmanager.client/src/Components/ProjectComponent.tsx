@@ -4,6 +4,7 @@ import { IconButton, Menu, MenuItem } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreHoriz';
 import { useNavigate } from 'react-router-dom';
 import type { LocationState } from '../Model/LocationState';
+import type { Project } from '../Model/Project';
 
 interface ProjectComponentProps {
   projectId: number;
@@ -12,6 +13,7 @@ interface ProjectComponentProps {
     deadline?: string;
     status: ProjectStatus;
     description?:string;
+    project:Project
 }
 const projects = [
   {
@@ -119,7 +121,8 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({
   clientName,
   deadline,
   status,
-  description
+  description,
+  project
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -193,15 +196,15 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({
  <div className="text-xs font-bold  items-center min-w-0 truncate break-all justify-center bg-orange-500/10 text-orange-700 p-2 py-1 rounded-lg shadow">
     3/5 h
   </div>
-  <div className="text-xs font-bold  items-center min-w-0 truncate break-word justify-self-start justify-center bg-green-500/10 text-green-700 p-2 py-1 rounded-lg shadow">
-    3/9 tasks
-  </div>
-  <div className="text-xs font-bold  items-center truncate break-all justify-center bg-blue-500/10 text-blue-700 p-2 py-1 rounded-lg shadow">
-    200$
-  </div>
-  <div className="text-xs font-bold  items-center truncate break-all justify-center bg-purple-500/10 text-purple-700 p-2 py-1 rounded-lg shadow">
+  {project.taskCount>0&&<div className="text-xs font-bold  items-center min-w-0 truncate break-word justify-self-start justify-center bg-green-500/10 text-green-700 p-2 py-1 rounded-lg shadow">
+    0/{project.taskCount} tasks
+  </div>}
+  {project.estimateValue&&<div className="text-xs font-bold  items-center truncate break-all justify-center bg-blue-500/10 text-blue-700 p-2 py-1 rounded-lg shadow">
+    {project.estimateValue}$
+  </div>}
+  {<div className="text-xs font-bold  items-center truncate break-all justify-center bg-purple-500/10 text-purple-700 p-2 py-1 rounded-lg shadow">
     12$/h
-  </div>
+  </div>}
           </div>
     </div>
   );

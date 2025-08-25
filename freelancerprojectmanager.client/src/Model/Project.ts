@@ -1,6 +1,8 @@
 import type { ProjectStatus } from "./ProjectStatus";
 
 export interface Project {
+    estimateValue?: number;
+    taskCount: number;
     id: number;
     name: string;
     description: string;
@@ -8,6 +10,7 @@ export interface Project {
     startDate?: Date;
     endDate?: Date;
     status: ProjectStatus;
+    loggedMinutes?: number;
 }
 
 

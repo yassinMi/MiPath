@@ -10,7 +10,7 @@ const dummyTasks: PTask[] = [
     title: "Set up database",
     description: "Initialize PostgreSQL and create tables",
     projectId: 101,
-    project: { id: 101, name: "Freelancer Project", description:"", status:"InProgress" },
+    project: { id: 101, name: "Freelancer Project", description:"", status:"InProgress",taskCount:0 },
     estimateMinute: 120,
   },
   {
@@ -18,7 +18,7 @@ const dummyTasks: PTask[] = [
     title: "Implement login",
     description: "Add authentication with JWT",
     projectId: 101,
-    project: { id: 101, name: "Freelancer Project", description:"", status:"InProgress" },
+    project: { id: 101, name: "Freelancer Project", description:"", status:"InProgress",taskCount:0 },
     estimateMinute: 60,
   },
   {
@@ -26,7 +26,7 @@ const dummyTasks: PTask[] = [
     title: "Design Kanban UI",
     description: "Create mockups for the board",
     projectId: 101,
-    project: { id: 101, name: "Freelancer Project", description:"", status:"InProgress" },
+    project: { id: 101, name: "Freelancer Project", description:"", status:"InProgress",taskCount:0 },
     estimateMinute: 45,
   },
   {
@@ -34,7 +34,7 @@ const dummyTasks: PTask[] = [
     title: "Write unit tests",
     description: "Add tests for task service",
     projectId: 101,
-    project: { id: 101, name: "Freelancer Project", description:"", status:"InProgress" },
+    project: { id: 101, name: "Freelancer Project", description:"", status:"InProgress",taskCount:0 },
     estimateMinute: undefined, // optional
   },
 ];

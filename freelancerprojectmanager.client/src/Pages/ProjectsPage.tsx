@@ -10,6 +10,7 @@ import ProjectsCards from "../Components/ProjectsCards";
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ControlPanelLayout from "../Components/ControlPanelLayout";
+import { userProjects } from "../hooks";
 
 
 
@@ -67,6 +68,7 @@ const ProjectsPage : FC = ({})=>{
     const [projects, setProjects] = useState<Project[]>([]);
   const [viewMode, setViewMode] = React.useState<'listView'|'cardView'>('cardView');
   const [isLoadingProjects,setIsLoadingProjects  ] = useState<boolean>(false)
+  const {data:projects_, isLoading:isLoadingProjects_, error:errorProjects_} = userProjects()
 
   const handleViewModeChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -76,7 +78,7 @@ const ProjectsPage : FC = ({})=>{
   };
 
  useEffect(() => {
-        populateWeatherData();
+        //populateWeatherData();
     }, []);
      const handleCreateProject = async () => {
             try {
@@ -120,12 +122,13 @@ const ProjectsPage : FC = ({})=>{
      {/* <Button sx={{ ml: "auto" }} onClick={handleCreateProject} variant="contained">Create new</Button> */}
               </ControlPanelLayout>
 
-{isLoadingProjects?<div className="flex items-center justify-center h-[calc(100vh-200px)]">
+{isLoadingProjects_?<div className="flex items-center justify-center h-[calc(100vh-200px)]">
       <CircularProgress color="primary" />
-    </div>:
+    </div>: errorProjects_?<>Error loading projects: {(errorProjects_ as Error).message}</>:null}
+            {projects_ &&
 
-                viewMode=="cardView"? <ProjectsList handleCreate={handleCreateProject} projects={projects} ></ProjectsList>
-            :<ProjectsCards handleCreate={handleCreateProject} projects={projects} ></ProjectsCards>    
+                viewMode=="cardView"? <ProjectsCards handleCreate={handleCreateProject} projects={projects_} ></ProjectsCards>
+            :<ProjectsList handleCreate={handleCreateProject} projects={projects_} ></ProjectsList>    
             }
                   
 

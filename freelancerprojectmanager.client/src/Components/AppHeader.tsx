@@ -21,6 +21,8 @@ import DashboardIcon from "@mui/icons-material/Dashboard";           // Person /
 import ListAltIcon from "@mui/icons-material/ListAlt";           // Person / User
 import { useLocation } from 'react-router';
 import type { LocationState } from '../Model/LocationState';
+import { userProjects } from '../hooks';
+import { useProject } from '../hooks/useProject';
 export interface AppHeaderProps {
     title: string;
     subtitle?: string;
@@ -114,6 +116,11 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
 
     const [locationInfo, setLocactionInfo] = useState<LocationState | null>(null)
     const [scrolled, setScrolled] = useState<boolean>(false)
+    const {data:project, isLoading:isLoadingProject, error:errorProject} = useProject( locationInfo?.projectId??-1, {
+        enabled: locationInfo&&locationInfo.pageType==="projectOverview"
+        && locationInfo?.projectId&&locationInfo.projectId!==-1&&locationInfo.projectName===undefined
+
+    })
 
     const breadcrumbRef = useRef(null);
     useEffect(()=>{
@@ -140,8 +147,9 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
             let homeMatch = location.pathname.match(/^\/?$/);
 
             if (projOverviewMatch || projTaskswMatch) {
-                const projectNumber = projOverviewMatch?.[1] ?? projTaskswMatch?.[1];
-                fetch(`/api/project/${projectNumber}`).then((r) => {
+                const projectNumber = Number.parseInt(projOverviewMatch?.[1] ?? projTaskswMatch?.[1]??"-1");
+                setLocactionInfo({ pageType: "projectOverview", projectId: projectNumber, projectName:undefined, projectStatus:undefined })
+                /*fetch(`/api/project/${projectNumber}`).then((r) => {
                     r.json().then(r => {
                         if (!ignored) {
                             if (projOverviewMatch) {
@@ -155,7 +163,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
 
                     });
 
-                });
+                });*/
 
 
             }
@@ -176,6 +184,16 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
         }
 
     }, [location])
+   useEffect(() => {
+
+        if(project && locationInfo?.projectId&& locationInfo?.projectName===undefined && locationInfo.pageType==="projectOverview"){
+            setLocactionInfo({pageType:"projectOverview",projectId:locationInfo.projectId, projectName:project.name, projectStatus:project.status})
+        }
+        return ()=>{
+            
+        }
+
+    },[project,locationInfo])
 
     useEffect(() => {
         if (locationInfo) {
