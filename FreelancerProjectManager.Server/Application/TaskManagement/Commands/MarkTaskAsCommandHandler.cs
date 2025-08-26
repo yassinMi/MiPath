@@ -1,7 +1,4 @@
 ﻿using FreelancerProjectManager.Server.Application.Interfaces;
-using FreelancerProjectManager.Server.Infrastructure;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace FreelancerProjectManager.Server.Application.TaskManagement.Commands
 {

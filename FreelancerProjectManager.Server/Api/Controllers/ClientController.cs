@@ -1,6 +1,6 @@
 ﻿using FreelancerProjectManager.Server.Application;
 using FreelancerProjectManager.Server.Application.ClientManagement.Queries;
-using FreelancerProjectManager.Server.Application.DTO;
+using FreelancerProjectManager.Server.Application.ClientManagement.Queries.Dto;
 using FreelancerProjectManager.Server.Domain.ProjectManagement;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,7 +26,7 @@ namespace FreelancerProjectManager.Server.Api.Controllers
             {
                 WithProjectStatuses = WithProjectStatuses
             };
-            return handler.Handle(query, CancellationToken.None).Result;
+            return await handler.Handle(query, CancellationToken.None);
         }
 
         #endregion

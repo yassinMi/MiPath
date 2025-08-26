@@ -1,4 +1,4 @@
-﻿namespace FreelancerProjectManager.Server.Application.PorojectManagement.Commands
+﻿namespace FreelancerProjectManager.Server.Application.TaskManagement.Commands
 {
     public class DeleteTaskCommand
     {

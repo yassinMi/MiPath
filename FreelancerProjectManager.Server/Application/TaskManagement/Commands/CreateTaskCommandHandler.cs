@@ -1,6 +1,4 @@
 ﻿using FreelancerProjectManager.Server.Application.Interfaces;
-using FreelancerProjectManager.Server.Domain.ProjectManagement;
-using FreelancerProjectManager.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreelancerProjectManager.Server.Application.TaskManagement.Commands
@@ -16,12 +14,12 @@ namespace FreelancerProjectManager.Server.Application.TaskManagement.Commands
         }
         public async Task<int> Handle(CreateTaskCommand value, CancellationToken cancellationToken)
         {
-            var project = await projectRepository.GetByIdAsync(value.ProjectID);
-            if (project == null)
+            var projectExists = await projectRepository.Query().AnyAsync(p=>p.ID==value.ProjectID);
+            if (projectExists == false)
             {
                 throw new ArgumentException("ProjectID not found");
             }
-            var t = new Domain.ProjectManagement.PTask();
+            var t = new Domain.ProjectManagement.PTask() { Description=value.Description,Title=value.Title};
             t.Title = value.Title;
             t.Description = value.Description;
             t.ProjectID = value.ProjectID;

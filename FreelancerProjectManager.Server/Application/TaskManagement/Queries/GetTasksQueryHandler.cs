@@ -1,10 +1,8 @@
 ﻿using FreelancerProjectManager.Server.Application.DTO;
 using FreelancerProjectManager.Server.Application.Interfaces;
 using FreelancerProjectManager.Server.Application.TaskManagement.Queries.Dto;
-using FreelancerProjectManager.Server.Domain.ProjectManagement;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace FreelancerProjectManager.Server.Application.TaskManagement.Queries
 {
@@ -45,7 +43,7 @@ namespace FreelancerProjectManager.Server.Application.TaskManagement.Queries
                 tasks = tasks.Where(t => t.CompletedAt <= query.CompletedAtMax.Value);
 
             var result = await tasks
-                .ApplyOrder(query.OrderByProperty, query.isDescending)
+                .ApplyOrder(query.OrderByProperty, query.isDescending??false)
                 .Select(t => t.ToDto())
                 .ToListAsync(ct);
 
@@ -93,8 +91,8 @@ public static class IQueryableExtensions
                 )
                 .MakeGenericMethod(typeof(T), property.Type)
                 .Invoke(null, new object[] { query, lambda });
-
-            return (IQueryable<T>)result;
+            
+            return (IQueryable<T>)result!;
         }
     }
 

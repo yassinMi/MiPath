@@ -1,6 +1,7 @@
 ﻿using FreelancerProjectManager.Server.Application.DTO;
 using FreelancerProjectManager.Server.Application.Interfaces;
 using FreelancerProjectManager.Server.Application.TaskManagement.Queries.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace FreelancerProjectManager.Server.Application.TaskManagement.Queries
 {
@@ -15,7 +16,7 @@ namespace FreelancerProjectManager.Server.Application.TaskManagement.Queries
         public async Task<List<TaskDto>> Handle(GetTodayOverviewQuery request, CancellationToken cancellationToken)
         {
             var tasks = _taskRepository.GetAll();
-            return tasks.Select(t => t.ToDto()).ToList();
+            return await tasks.Select(t => t.ToDto()).ToListAsync();
         }
     }
 }

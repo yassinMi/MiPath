@@ -1,4 +1,5 @@
-﻿using FreelancerProjectManager.Server.Application.DTO;
+﻿using FreelancerProjectManager.Server.Application.ClientManagement.Queries.Dto;
+using FreelancerProjectManager.Server.Application.DTO;
 using FreelancerProjectManager.Server.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

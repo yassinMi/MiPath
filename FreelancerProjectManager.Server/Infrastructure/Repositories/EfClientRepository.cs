@@ -42,7 +42,7 @@ namespace FreelancerProjectManager.Server.Infrastructure.Repositories
         }
         public async Task DeleteAsync(int clientId)
         {
-            _dbContext.Clients.Remove(new Domain.ProjectManagement.Client() { ID = clientId });
+            _dbContext.Clients.Remove(new Domain.ProjectManagement.Client() { ID = clientId, Name=null! });
             await _dbContext.SaveChangesAsync();
         }
 

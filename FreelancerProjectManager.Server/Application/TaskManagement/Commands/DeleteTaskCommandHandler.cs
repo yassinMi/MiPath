@@ -1,8 +1,6 @@
 ﻿using FreelancerProjectManager.Server.Application.Interfaces;
-using FreelancerProjectManager.Server.Application.PorojectManagement.Commands;
-using FreelancerProjectManager.Server.Infrastructure;
 
-namespace FreelancerProjectManager.Server.Application.PorojectManagement.Commands
+namespace FreelancerProjectManager.Server.Application.TaskManagement.Commands
 {
     public class DeleteTaskCommandHandler:ICommandHandler<DeleteTaskCommand>
     {

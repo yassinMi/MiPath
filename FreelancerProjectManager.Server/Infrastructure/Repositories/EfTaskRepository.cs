@@ -53,7 +53,7 @@ namespace FreelancerProjectManager.Server.Infrastructure.Repositories
         }
         public async Task DeleteAsync(int taskId)
         {
-            _dbContext.Tasks.Remove(new Domain.ProjectManagement.PTask() { ID = taskId });
+            _dbContext.Tasks.Remove(new Domain.ProjectManagement.PTask() { ID = taskId, Description = null!, Title = null! });
             await _dbContext.SaveChangesAsync();
         }
 

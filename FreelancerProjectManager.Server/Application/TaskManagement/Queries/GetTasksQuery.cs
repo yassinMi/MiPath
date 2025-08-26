@@ -18,7 +18,7 @@ namespace FreelancerProjectManager.Server.Application.TaskManagement.Queries
         public DateTime? CompletedAtMax { get; set; }
 
         public int? ProjectID { get; set; }
-        public bool isDescending { get; set; }
-        public string OrderByProperty { get; set; }
+        public bool? isDescending { get; set; }
+        public string? OrderByProperty { get; set; }
     }
 }

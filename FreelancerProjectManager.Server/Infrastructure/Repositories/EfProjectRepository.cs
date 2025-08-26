@@ -25,7 +25,7 @@ namespace FreelancerProjectManager.Server.Infrastructure.Repositories
         }
         public async Task DeleteAsync(int projectId)
         {
-            _dbContext.Project.Remove(new Domain.ProjectManagement.Project() { ID = projectId });
+            _dbContext.Project.Remove(new Project() { ID = projectId, Client = null!, Description = null!, Name = null! });
             await _dbContext.SaveChangesAsync();
         }
         public async Task<Project> AddAsync(Project project)

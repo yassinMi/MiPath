@@ -55,13 +55,11 @@ namespace FreelancerProjectManager.Server.Api.Controllers
                 isDescending = desc ?? true
             };
             return handler.Handle(query, CancellationToken.None).Result;
-           
-
         }
         [HttpGet("overview/thisweek")]
         public async Task<List<TaskDto>> GetThisWeekOverview([FromServices] GetThisWeekOverviewQueryHandler handler)
         {
-           return await handler.Handle(new GetThisWeekOverviewQuery() { }, CancellationToken.None);
+            return await handler.Handle(new GetThisWeekOverviewQuery() { }, CancellationToken.None);
         }
         [HttpGet("overview/today")]
         public async Task<List<TaskDto>> GetTodayOverview([FromServices] GetTodayOverviewQueryHandler handler)
@@ -69,12 +67,12 @@ namespace FreelancerProjectManager.Server.Api.Controllers
             return await handler.Handle(new GetTodayOverviewQuery() { }, CancellationToken.None);
         }
 
-        
+
 
         #endregion
 
         #region commands
-       
+
 
         [HttpPost("{taskId}/markas")]
         public async Task MarkAs(int taskId, [FromBody] MarkTaskAsCommand value, [FromServices] MarkTaskAsCommandHandler handler)
@@ -83,7 +81,7 @@ namespace FreelancerProjectManager.Server.Api.Controllers
             {
                 await handler.Handle(new MarkTaskAsCommand() { ID = taskId, Intent = value.Intent }, CancellationToken.None);
             }
-            catch (EntityNotFoundException err)
+            catch (EntityNotFoundException)
             {
                 NotFound();
             }
@@ -93,8 +91,7 @@ namespace FreelancerProjectManager.Server.Api.Controllers
         [HttpDelete("{taskId}")]
         public async Task Delete(int taskId, [FromServices] DeleteTaskCommandHandler handler)
         {
-           await handler.Handle( new DeleteTaskCommand() { ID= taskId}, CancellationToken.None);
-
+            await handler.Handle(new DeleteTaskCommand() { ID = taskId }, CancellationToken.None);
         }
 
 

@@ -5,7 +5,6 @@ namespace FreelancerProjectManager.Server.Application.ClientManagement.Queries
 {
     public class GetClientsQuery
     {
-
-       public ProjectStatus[] WithProjectStatuses { get; set; }
+       public ProjectStatus[]? WithProjectStatuses { get; set; }
     }
 }

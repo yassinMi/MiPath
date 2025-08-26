@@ -25,26 +25,33 @@ namespace FreelancerProjectManager.Server.Api.Controllers
         [HttpGet]
         public async Task<IEnumerable<ProjectDto>> Get([FromServices] GetProjectsQueryHandler handler)
         {
-           
+
             return await handler.Handle(new GetProjectsQuery() { }, CancellationToken.None);
         }
 
         // GET api/<ProjectController>/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id, [FromServices] GetProjectByIdQueryHandler hadnler)
+        public async Task<IActionResult> Get(int id, [FromServices] GetProjectByIdQueryHandler hadnler)
         {
-            var res = hadnler.Handle(new GetProjectByIdQuery() { ProjectID = id}, cancellationToken: CancellationToken.None).Result;
+            var res = await hadnler.Handle(new GetProjectByIdQuery() { ProjectID = id }, cancellationToken: CancellationToken.None);
             if (res == null)
-            { 
+            {
                 return NotFound();
             }
             return Ok(res);
         }
         [HttpGet("{projectId}/tasks")]
-        public IEnumerable<TaskDto> GetTasksForProject(int projectId, [FromServices] GetTasksQueryHandler handler)
+        public async Task <IEnumerable<TaskDto>> GetTasksForProject(int projectId, [FromServices] GetTasksQueryHandler handler)
         {
-            return handler.Handle(new GetTasksQuery() { ProjectID = projectId }, CancellationToken.None).Result;
-            
+            return await handler.Handle(new GetTasksQuery() { ProjectID = projectId }, CancellationToken.None);
+
+        }
+
+        [HttpGet("{projectId}/progress")]
+        public async Task<ProjectProgressDto> GetTasksForProject(int projectId, [FromServices] GetProjectProgressSummaryQueryHandler handler)
+        {
+            return await handler.Handle(new GetProjectProgressSummaryQuery() { ProjectID = projectId }, CancellationToken.None);
+
         }
         #endregion
 
@@ -66,17 +73,17 @@ namespace FreelancerProjectManager.Server.Api.Controllers
         // POST api/<ProjectController>
         [Route("create")]
         [HttpPost]
-        public async Task<int> Create([FromBody] CreateProjectCommand value,[FromServices] CreateProjectCommandHandler handler)
+        public async Task<int> Create([FromBody] CreateProjectCommand value, [FromServices] CreateProjectCommandHandler handler)
         {
-             return await handler.Handle(value, CancellationToken.None);
+            return await handler.Handle(value, CancellationToken.None);
         }
 
 
         [HttpPost]
         [Route("{projectId}/closeas")]
-        public async Task CloseAs(int projectId,[FromBody] CloseProjectAsCommand value, [FromServices] CloseProjectAsCommandHandler handler)
+        public async Task CloseAs(int projectId, [FromBody] CloseProjectAsCommand value, [FromServices] CloseProjectAsCommandHandler handler)
         {
-           await handler.Handle(value, CancellationToken.None);
+            await handler.Handle(value, CancellationToken.None);
         }
 
         [HttpPost]
@@ -87,14 +94,14 @@ namespace FreelancerProjectManager.Server.Api.Controllers
         }
 
 
-      
+
 
         // DELETE api/<ProjectController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id, [FromServices] DeleteProjectCommandHandler handler)
+        public async Task Delete(int id, [FromServices] DeleteProjectCommandHandler handler)
         {
-            handler.Handle(new DeleteProjectCommand() { ID = id }, CancellationToken.None).Wait();
-            
+            await handler.Handle(new DeleteProjectCommand() { ID = id }, CancellationToken.None);
+
         }
         #endregion
     }

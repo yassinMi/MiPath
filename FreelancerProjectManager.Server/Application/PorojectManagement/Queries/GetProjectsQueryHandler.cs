@@ -25,8 +25,11 @@ namespace FreelancerProjectManager.Server.Application.PorojectManagement.Queries
                     Description = p.Description,
                     ClientID = p.ClientID,
                     Client = p.Client.ToDto(),
-                    Status = p.Status.ToString(),
-                    TaskCount = p.Tasks.Count,
+                    Status = p.Status,
+                    TaskCount = p.Tasks!.Count,
+                    CompletedTasksCount= p.Tasks.Count(t=>t.Status== Domain.ProjectManagement.PTaskStatus.Done),
+                    PlannedTasksCount = p.Tasks.Count(t=> t.Status== Domain.ProjectManagement.PTaskStatus.InProgress||t.Status== Domain.ProjectManagement.PTaskStatus.ToDo)
+
                 }).ToListAsync();
         }
 

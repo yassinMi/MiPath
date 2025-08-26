@@ -1,4 +1,5 @@
-﻿using FreelancerProjectManager.Server.Application.PorojectManagement.Queries.Dto;
+﻿using FreelancerProjectManager.Server.Application.ClientManagement.Queries.Dto;
+using FreelancerProjectManager.Server.Application.PorojectManagement.Queries.Dto;
 using FreelancerProjectManager.Server.Application.TaskManagement.Queries.Dto;
 using FreelancerProjectManager.Server.Domain.ProjectManagement;
 
@@ -8,7 +9,6 @@ namespace FreelancerProjectManager.Server.Application.DTO
     {
         public static ProjectDto ToDto(this Project project)
         {
-            if (project == null) return null;
 
             return new ProjectDto
             {
@@ -16,16 +16,14 @@ namespace FreelancerProjectManager.Server.Application.DTO
                 Name = project.Name,
                 Description = project.Description,
                 ClientID = project.ClientID,
-                Client = project.Client?.ToDto(),
+                Client = project.Client.ToDto(),
                 Tasks = project.Tasks?.Select(t => t.ToDto()).ToList() ?? new List<TaskDto>(),
-                Status = project.Status.ToString()
+                Status = project.Status
             };
         }
 
         public static ClientDto ToDto(this Client client)
         {
-            if (client == null) return null;
-
             return new ClientDto
             {
                 ID = client.ID,
@@ -35,8 +33,6 @@ namespace FreelancerProjectManager.Server.Application.DTO
 
         public static TaskDto ToDto(this PTask task)
         {
-            if (task == null) return null;
-
             return new TaskDto
             {
                 ID = task.ID,
@@ -46,7 +42,7 @@ namespace FreelancerProjectManager.Server.Application.DTO
                 EstimateMinute = task.EstimateMinute,
                 DueDate = task.DueDate,
                 PlannedStart = task.PlannedStart,
-                Status = task.Status.ToString(),
+                Status = task.Status,
                 CreatedAt = task.CreatedAt,
                 CompletedAt = task.CompletedAt
             };

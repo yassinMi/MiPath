@@ -13,12 +13,12 @@ namespace FreelancerProjectManager.Server.Domain.ProjectManagement
     public class PTask
     {
         public int ID { get; set; }
-        public string Title { get; set; }
+        public required string Title { get; set; }
         public PTaskStatus Status { get; set; }
-        public string Description { get; set; }
+        public required string Description { get; set; }
         [ForeignKey(nameof(ProjectID))]
         public int ProjectID { get; set; }
-        public Project Project {  get; set; }
+        public Project? Project {  get; set; }
         public int? EstimateMinute { get; set; }
         public DateTime? DueDate { get; set; }
         public DateTime? PlannedStart { get; set; }
