@@ -10,7 +10,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
+   
   db:
     image: postgres:15
     restart: always
@@ -21,9 +21,12 @@ services:
     ports:
       - "5450:5432"
     volumes:
-      - ./data.mi:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready --username=myuser --dbname=mydb"]
       interval: 5s
       timeout: 5s
       retries: 5
+
+volumes:
+  db_data:
