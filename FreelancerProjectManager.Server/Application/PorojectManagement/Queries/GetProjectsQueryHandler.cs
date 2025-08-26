@@ -28,7 +28,11 @@ namespace FreelancerProjectManager.Server.Application.PorojectManagement.Queries
                     Status = p.Status,
                     TaskCount = p.Tasks!.Count,
                     CompletedTasksCount= p.Tasks.Count(t=>t.Status== Domain.ProjectManagement.PTaskStatus.Done),
-                    PlannedTasksCount = p.Tasks.Count(t=> t.Status== Domain.ProjectManagement.PTaskStatus.InProgress||t.Status== Domain.ProjectManagement.PTaskStatus.ToDo)
+                    PlannedTasksCount = p.Tasks.Count(t=> t.Status== Domain.ProjectManagement.PTaskStatus.InProgress||t.Status== Domain.ProjectManagement.PTaskStatus.ToDo),
+                    CreatedAt = p.CreatedAt,
+                    EstimateValue = p.EstimateValue,
+                    LoggedMinutes= p.LoggedMinutes,
+                    
 
                 }).ToListAsync();
         }

@@ -238,18 +238,18 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({
 </div>
           </div>
           <div className="separator h-px bg-gray-300 dark:bg-gray-900 mx-4 pointer-events-none"></div>
-          <div className="project-card-footer items-center flex flex-row gap-2 h-4 m-4 pointer-events-none" >
- <div className="text-xs font-bold  items-center min-w-0 truncate break-all justify-center bg-orange-500/10 text-orange-700 p-2 py-1 rounded-lg shadow">
-    3/5 h
+          <div onClick={handleCardClick} className="project-card-footer items-center flex flex-row gap-2 h-4 m-4 " >
+ <div title={`logged hours (not implemented)`} className="text-xs font-bold  items-center min-w-0 truncate break-all justify-center bg-orange-500/10 text-orange-700 p-2 py-1 rounded-lg shadow">
+    3h
   </div>
-  {!!progressInfo?.plannedCount&&<div className="text-xs font-bold flex flex-row items-center min-w-0 truncate break-word justify-self-start justify-center bg-green-500/10 text-green-700 p-2 py-1 rounded-lg shadow">
+  {!!progressInfo?.plannedCount&&<div title={`tasks completed`} className="text-xs font-bold flex flex-row items-center min-w-0 truncate break-word justify-self-start justify-center bg-green-500/10 text-green-700 p-2 py-1 rounded-lg shadow">
     {progressInfo?.completedCount }/{progressInfo?.plannedCount} tasks
     <CircularBgProgress className='ml-1'  trackColor='#64b2643d' size={16} variant='determinate' value={Math.round((100*progressInfo.completedCount/progressInfo.plannedCount))}></CircularBgProgress>
   </div>}
-  {project.estimateValue&&<div className="text-xs font-bold  items-center truncate break-all justify-center bg-blue-500/10 text-blue-700 p-2 py-1 rounded-lg shadow">
+  {project.estimateValue&&<div title={`estimate value ${project.estimateValue}`} className="text-xs font-bold  items-center truncate break-all justify-center bg-blue-500/10 text-blue-700 p-2 py-1 rounded-lg shadow">
     {project.estimateValue}$
   </div>}
-  {<div className="text-xs font-bold  items-center truncate break-all justify-center bg-purple-500/10 text-purple-700 p-2 py-1 rounded-lg shadow">
+  {<div title={`hourly rate (not implemented)`} className="text-xs font-bold  items-center truncate break-all justify-center bg-purple-500/10 text-purple-700 p-2 py-1 rounded-lg shadow">
     12$/h
   </div>}
           </div>

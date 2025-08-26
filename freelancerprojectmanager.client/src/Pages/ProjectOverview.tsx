@@ -272,7 +272,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                   <div className='m-4 mb-0 flex flex-shrink-0 flex-col items-center'>
 
                      <BorderLinearProgress className='self-stretch ' variant="determinate" value={getProgressPercent()} />
-                     <div className=''>{getProgressPercent().toFixed(0)}%</div>
+                     {getProgressPercent()!==-1&&<div className=''>{getProgressPercent().toFixed(0)}%</div>}
 
                   </div>
                   <div className='flex flex-1 flex-row items-stretch overflow-auto m-4 gap-4 '>

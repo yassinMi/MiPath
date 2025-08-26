@@ -18,7 +18,11 @@ namespace FreelancerProjectManager.Server.Application.DTO
                 ClientID = project.ClientID,
                 Client = project.Client.ToDto(),
                 Tasks = project.Tasks?.Select(t => t.ToDto()).ToList() ?? new List<TaskDto>(),
-                Status = project.Status
+                Status = project.Status,
+                CreatedAt = project.CreatedAt,
+                EstimateValue = project.EstimateValue,
+                LoggedMinutes = project.LoggedMinutes,
+                
             };
         }
 
