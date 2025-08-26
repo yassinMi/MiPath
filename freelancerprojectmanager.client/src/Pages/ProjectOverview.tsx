@@ -23,12 +23,12 @@ import { useProjectPTasks } from '../hooks';
 import type { ref } from 'process';
 import { useProject } from '../hooks/useProject';
 import AddTaskForm from '../Components/AddTaskForm';
-import { apiAddTaske, apiCreateProject, apiFetchProject, apiFetchTask } from '../services/api';
-import type { CreateTaskCommand } from '../Model/Commands';
+import { apiAddTaske, apiCreateProject, apiFetchProject, apiFetchTask, apiMarkTaskAs } from '../services/api';
+import type { CreateTaskCommand, MarkAs } from '../Model/Commands';
 import { truncateString } from '../services/utils';
 import { useSnackbar } from '../Components/SnackbarContext';
 import { useQueryClient } from '@tanstack/react-query';
-import type { PTask } from '../Model/PTask';
+import type { PTask, PTaskStatus } from '../Model/PTask';
 import { ColorButton } from './HomeDashboard';
 import ArrowRight from '@mui/icons-material/ChevronRight';
 
@@ -123,6 +123,54 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
    const handleSplitButtonClick = (index: number) => {
 
    }
+   const getCompletedTasksCount = ()=>{
+      if(!project_?.tasks) return -1
+      return project_?.tasks?.filter(t=>t.status=="Done").length;
+   }
+   const getPlannedTaskCount = ()=>{
+            if(!project_?.tasks) return -1
+      return project_?.tasks?.filter(t=>t.status!=="Canceled").length;
+   }
+   const getProgressPercent = ()=>{
+      if(!project_?.tasks?.length) return -1
+
+      return 100* getCompletedTasksCount()/getPlannedTaskCount()
+   }
+   const handleTasStatusChangeRequested = async (taskid: number, newStatus: PTaskStatus)=>{
+      var intent = "ToDo" as MarkAs
+      if(newStatus=="Done") 
+         {intent = "Completed"}
+      else if(newStatus=="InProgress") 
+         {intent = "InProgress"}
+      else if(newStatus=="ToDo") 
+         {intent = "ReOpen"}
+      else{ 
+         showSnackbar("unknown intent", "error")
+      }
+      try {
+           await apiMarkTaskAs({id: taskid,intent:intent})
+                  showSnackbar("updated ", "success")
+         
+ queryClient.setQueryData(['project', projectId], (oldData: Project) => {
+            if (!oldData) return oldData;
+            var task = oldData.tasks?.find(t=>t.id==taskid)
+            if(task){
+               task.status = newStatus;
+            }
+            else{
+               return oldData;
+            }
+           
+            return {
+               ...oldData,
+              
+            };
+
+         });
+      } catch (error) {
+                  showSnackbar("failed to update task status: "+error, "error")
+      }
+   }
 
    return (
       <div className='flex flex-1 flex-col gap-2 overflow-auto max-h-[calc(100vh-5rem)] '>
@@ -131,7 +179,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                <h1 className='text-xl font-bold'>{project_?.name}</h1>
             </div>
             <div className='flex flex-row gap-2 ml-auto'>
-               <Button onClick={handleAddTaskModalOpen} variant='contained' className='whitespace-nowrap' color='secondary'>Add Task</Button>
+               <Button title="Add a task for this project" onClick={handleAddTaskModalOpen} variant='contained' className='whitespace-nowrap' color='secondary'>Add Task</Button>
                <SplitButton sx={{}} options={["Close As Complete", "Close As Canceled"]}></SplitButton>
             </div>
 
@@ -151,53 +199,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
          </Modal>
          <div className="flex flex-col md:flex-row flex-1 h-full min-h-80 overflow-auto  gap-2 p-6 mx-4 items-stretch" >
             <div className='flex-1 flex flex-col gap-4 overflow-auto'>
-               {false && <div className='flex flex-row gap-2 flex-wrap pb-1 overflow-auto h-auto flex-grow-0 flex-shrink-1 justify max-h-1/3'>
-                  {/* <PaperM className='card-paper-m h-auto flex-grow-0 flex-shrink-1 max-h-1/3'>
-                  <div className='card-header-m'>
-                     <InfoIcon fontSize='large'></InfoIcon>
-                     <span>Info</span>
-                  </div>
-                                 <div className='card-separator-m'></div>
-                  <div>
-                     <div>Client:</div>
-                     <div>{project?.clientName}</div>
-                  </div>
-
-               </PaperM> */}
-
-                  <PaperM className='flex px-4 flex-row gap-2 flex-1 items-center'>
-                     <PersonIcon></PersonIcon>
-                     <div className='font-bold'>{(project_?.client?.name??"YassinMi")}</div>
-                  </PaperM>
-                  <PaperM className='flex px-4 flex-row gap-2  flex-1 items-center'>
-                     <div className='flex flex-col p-2'>
-                        <div className='text-sm text-gray-500'>Work hours</div>
-                        <div className='font-bold text-amber-500'>54h</div>
-                     </div>
-                  </PaperM>
-
-                  <PaperM className='flex px-4 flex-row gap-2  flex-1 items-center'>
-                     <div className='flex flex-col p-2'>
-                        <div className='text-sm text-blue-500/80'>Avg. rate</div>
-                        <div className='font-bold text-blue-500'>4$/h</div>
-                     </div>
-                  </PaperM>
-
-                  <PaperM className='flex px-4 flex-row gap-2  flex-1 items-center'>
-                     <div className='flex flex-col p-2'>
-                        <div className='text-sm text-purple-500/80'>Progress</div>
-                        <div className='font-bold text-purple-500'>4$/h</div>
-                     </div>
-                  </PaperM>
-
-                  <PaperM className='flex px-4 flex-row gap-2  flex-1 items-center'>
-                     <div className='flex flex-col p-2'>
-                        <div className='text-sm text-green-500/80'>Valuee</div>
-                        <div className='font-bold text-green-500'>200$</div>
-                     </div>
-                  </PaperM>
-               </div>
-               }
+              
 
 
                <PaperM className='card-paper-m overflow-auto flex-1   '>
@@ -239,29 +241,29 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                      </div>
                      <div className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
                         <div className='flex flex-col p-2'>
-                           <div className='text-sm text-gray-500'>Work hours</div>
-                           <div className='font-bold text-amber-500'>54h</div>
+                           <div className='text-sm text-amber-500'>Work hours</div>
+                           <div className='font-bold text-amber-500'>-</div>
                         </div>
                      </div>
 
                      <div className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
                         <div className='flex flex-col p-2'>
-                           <div className='text-sm text-blue-500/80'>Avg. rate</div>
-                           <div className='font-bold text-blue-500'>4$/h</div>
+                           <div className='text-sm text-purple-500/80'>Avg. rate</div>
+                           <div className='font-bold text-purple-500'>-</div>
                         </div>
                      </div>
 
                      <div className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
                         <div className='flex flex-col p-2'>
-                           <div className='text-sm text-purple-500/80'>Progress</div>
-                           <div className='font-bold text-purple-500'>4$/h</div>
+                           <div className='text-sm text-green-500/80'>Progress</div>
+                           <div className='font-bold text-green-500'>{getCompletedTasksCount()}/{getPlannedTaskCount()}</div>
                         </div>
                      </div>
 
                      <div className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
                         <div className='flex flex-col p-2'>
-                           <div className='text-sm text-green-500/80'>Valuee</div>
-                           <div className='font-bold text-green-500'>200$</div>
+                           <div className='text-sm text-blue-500/80'>Value</div>
+                           <div className='font-bold text-blue-500'>200$</div>
                         </div>
                      </div>
                   </div>
@@ -269,14 +271,15 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                   <div className=' card-separator-m'></div>
                   <div className='m-4 mb-0 flex flex-shrink-0 flex-col items-center'>
 
-                     <BorderLinearProgress className='self-stretch ' variant="determinate" value={25} />
-                     <div className=''>task1</div>
+                     <BorderLinearProgress className='self-stretch ' variant="determinate" value={getProgressPercent()} />
+                     <div className=''>{getProgressPercent().toFixed(0)}%</div>
 
                   </div>
                   <div className='flex flex-1 flex-row items-stretch overflow-auto m-4 gap-4 '>
                      <div className='properties overflow-auto gap-2 w-1/2 flex flex-col flex-1  p-2 border-1 border-gray-700 rounded-xl dark:bg-gray-900  '>
                         <h2>Properties</h2>
-                        <div className='max-h-100 flex flex-col overflow-auto gap-2 text-sm '>hi
+                        <div>this section is not implemnted : view and set properties e.g. estimated value, hours, due date </div>
+                        {false &&<div className='max-h-100 flex flex-col overflow-auto gap-2 text-sm '>hi
                            <div className='flex flex-row items-center'>
                               <label className='flex-1'>Client:</label>
                               <Input className='flex-grow-0 w-20' placeholder="Name" aria-label='desc' />
@@ -296,13 +299,13 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                            </div>
 
                            <div>property</div>
-                        </div>
+                        </div>}
                      </div>
                      <div className='tasksPreview overflow-auto  p-2 border-1 flex flex-col items-stretch border-gray-700 flex-1 w-1/2 rounded-xl dark:bg-gray-900 text-sm'>
                         {isLoadingProject_ && <div className='self-center justify-center flex-1 flex flex-col items-center '> <CircularProgress className=''></CircularProgress></div>}
                         {errorProject_ && <div className='text-red-500'>Error loading tasks</div>}
                         {!isLoadingProject_ && !errorProject_ && project_ &&
-                           <CompactTasksPreview pTasks={project_.tasks!}></CompactTasksPreview>}
+                           <CompactTasksPreview onTaskStateChangeRequested={handleTasStatusChangeRequested} pTasks={project_.tasks!}></CompactTasksPreview>}
 
                      </div>
                   </div>

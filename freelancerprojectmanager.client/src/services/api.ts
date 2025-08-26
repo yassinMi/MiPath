@@ -1,5 +1,5 @@
 import type { Client } from "../Model/Client";
-import type { CreateProjectCommand, CreateTaskCommand } from "../Model/Commands";
+import type { CreateProjectCommand, CreateTaskCommand, MarkTaskAsCommand } from "../Model/Commands";
 import type { PTask } from "../Model/PTask";
 import { delay } from "./utils";
 
@@ -103,5 +103,17 @@ export async function apiDeleteProject(projectId:number): Promise<void> {
         }
     });
     if(!res.ok) throw new Error(`Error deleting project: ${res.statusText}`);
+    return;
+}
+
+export async function apiMarkTaskAs(data:MarkTaskAsCommand): Promise<void> {
+    var res= await fetch(`/api/tasks/${data.id}/markas`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+       body: JSON.stringify(data)
+    });
+    if(!res.ok) throw new Error(`Error posting command: ${res.statusText}`);
     return;
 }

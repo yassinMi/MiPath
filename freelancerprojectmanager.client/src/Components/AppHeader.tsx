@@ -23,6 +23,7 @@ import { useLocation } from 'react-router';
 import type { LocationState } from '../Model/LocationState';
 import { userProjects } from '../hooks';
 import { useProject } from '../hooks/useProject';
+import { useSnackbar } from './SnackbarContext';
 export interface AppHeaderProps {
     title: string;
     subtitle?: string;
@@ -121,6 +122,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
         && locationInfo?.projectId&&locationInfo.projectId!==-1&&locationInfo.projectName===undefined
 
     })
+    const {showSnackbar} = useSnackbar()
 
     const breadcrumbRef = useRef(null);
     useEffect(()=>{
@@ -233,6 +235,12 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
         }
     }, [locationInfo])
 
+    const hndleSearchInputKeyDown =  (e: React.KeyboardEvent<HTMLInputElement>) => {
+          if (e.key === "Enter") {
+            showSnackbar("search not implemented", "warning")
+          }
+        };
+
     return (
         <div className='h-20 z-30 sticky top-0 shrink-0 '>
   <header style={{transition:"height"}} className={`text-gray-900 min-w-0 dark:text-white flex top-0 group h-heade px-6 py-2 bg-white ${scrolled?"scrolled":""} dark:bg-gray-950 shadow-xl transition-height duration-500 ease-in-out`}>
@@ -253,10 +261,10 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                     </div>
                 </div>
 
-                {/* Search bar */}
+                {/* search: todo impl */}
                 <div className="flex-1 hidden md:block mx-6 max-w-lg">
                     <div className="relative dark:text-gray-600 text-gray-400 focus-within:text-gray-600">
-                        <input autoComplete='tyer'
+                        <input onKeyDown={hndleSearchInputKeyDown} autoComplete='tyer'
                             type="text"
                             placeholder="Search..."
                             className="block w-full pl-10 pr-4 py-2 border dark:border-gray-800 border-gray-200 rounded-lg dark:bg-gray-950 bg-gray-50 text-sm dark:placeholder-gray-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
@@ -282,7 +290,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                 }
                 <div className="flex flex-row gap-4  items-center">
                     <ThemeSwitch className="hidden sm:block" onClick={onDarkToggle} isDark={isDark} ></ThemeSwitch>
-                    <AccountButton userName="YassinMi" accountInitials="YM" onClick={() => { }}></AccountButton>
+                    <AccountButton userName="YassinMi" accountInitials="YM" onClick={() => {showSnackbar("feature not implemented","warning") }}></AccountButton>
 
                 </div>
 

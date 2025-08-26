@@ -87,21 +87,20 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({  }) => {
                       
                     }}>Clock in</Button>
                   </div>
-                  <div className='kpis-section  h-64 flex flex-row lg:flex-col items-center gap-4  flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
-                    <div className='h-32 w-48 bg-gray-500'>
+                  <div className='hidden sm:flex kpis-section text-gray-700 h-64  flex-row lg:flex-col items-stretch gap-4  flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
+                    <div className='min-h-22 flex flex-row items-center justify-center bg-gray-100 dark:bg-gray-900'>
+                      - indicator placeholder -
+                    </div>
+                     <div className='min-h-22 flex flex-row items-center justify-center bg-gray-100 dark:bg-gray-900'>
+                       - indicator placeholder -
 
                     </div>
-                     <div className='h-32 w-48 bg-gray-500'>
-
-                    </div>
-                     <div className='h-32 w-48 bg-gray-500'>
-
+                     <div className='min-h-22 flex flex-row items-center justify-center bg-gray-100 dark:bg-gray-900'>
+                         - indicator placeholder -
                     </div>
                     </div>
 
-                <div >
-                    
-                </div>
+                
                </div>
            <div className='tasks-overview-row row-start-3 row-end-4 col-start-1 col-end-5 lg:col-end-4 flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
 
