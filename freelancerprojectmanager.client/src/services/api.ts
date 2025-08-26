@@ -1,5 +1,6 @@
 import type { Client } from "../Model/Client";
 import type { CreateProjectCommand, CreateTaskCommand, MarkTaskAsCommand } from "../Model/Commands";
+import type { ProjectProgress } from "../Model/ProjectProgress";
 import type { PTask } from "../Model/PTask";
 import { delay } from "./utils";
 
@@ -116,4 +117,15 @@ export async function apiMarkTaskAs(data:MarkTaskAsCommand): Promise<void> {
     });
     if(!res.ok) throw new Error(`Error posting command: ${res.statusText}`);
     return;
+}
+
+export async function apiGetProjectProgress(projectId: number):Promise<ProjectProgress>{
+     var res= await fetch(`/api/projects/${projectId}/progress`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    if(!res.ok) throw new Error(`Error fetching progress: ${res.statusText}`);
+    return await res.json();
 }

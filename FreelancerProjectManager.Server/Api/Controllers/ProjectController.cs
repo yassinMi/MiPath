@@ -1,4 +1,5 @@
-﻿using FreelancerProjectManager.Server.Application.DTO;
+﻿using FreelancerProjectManager.Server.Application;
+using FreelancerProjectManager.Server.Application.DTO;
 using FreelancerProjectManager.Server.Application.PorojectManagement.Commands;
 using FreelancerProjectManager.Server.Application.PorojectManagement.Queries;
 using FreelancerProjectManager.Server.Application.PorojectManagement.Queries.Dto;
@@ -93,6 +94,21 @@ namespace FreelancerProjectManager.Server.Api.Controllers
             return await handler.Handle(value, CancellationToken.None);
         }
 
+        [HttpPost]
+        [Route("{projectId}/updateinfo")]
+        public async Task<IActionResult> AddTask(int projectId, [FromBody] UpdateProjectInfoCommand value, [FromServices] UpdateProjectInfoCommandHandler handler)
+        {
+            try
+            {
+                await handler.Handle(value, CancellationToken.None);
+                return Ok();
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
+            }
+          
+        }
 
 
 

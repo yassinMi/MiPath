@@ -67,6 +67,7 @@ namespace FreelancerProjectManager.Server.Infrastructure
         private static async Task SeedClientsAndProjectsAsync(IServiceScope scope)
         {
             var projectCommandHandler = scope.ServiceProvider.GetRequiredService<CreateProjectCommandHandler>();
+            var updateEstimateHandler = scope.ServiceProvider.GetRequiredService<UpdateProjectInfoCommandHandler>();
 
                          // Create projects with clients - varied names, descriptions, and statuses
              var projectCommands = new[]
@@ -131,6 +132,40 @@ namespace FreelancerProjectManager.Server.Infrastructure
             {
                 var projectId = await projectCommandHandler.Handle(command, CancellationToken.None);
                 projectIds.Add(projectId);
+            }
+
+            // Set realistic estimate values for projects
+            await SetProjectEstimatesAsync(scope, projectIds);
+        }
+
+        private static async Task SetProjectEstimatesAsync(IServiceScope scope, List<int> projectIds)
+        {
+            var updateEstimateHandler = scope.ServiceProvider.GetRequiredService<UpdateProjectInfoCommandHandler>();
+            
+            // Realistic project estimates - some projects have estimates, others don't (null)
+            var estimates = new[]
+            {
+                (projectIds[0], 250.00m), // E-commerce Redesign - Active project with estimate
+                (projectIds[1], 450.00m), // Fitness App - Active project with estimate
+                (projectIds[2], (decimal?)null), // Corporate Website - Scoping phase, no estimate yet
+                (projectIds[3], 350.00m), // API Dev - Active project with estimate
+                (projectIds[4], (decimal?)null), // BI Dashboard - Scoping phase, no estimate yet
+                (projectIds[5], 800.00m)  // Legacy Migration - Active project with estimate
+            };
+
+            foreach (var (projectId, estimate) in estimates)
+            {
+                // Only set estimates for projects that have them (not null)
+                if (estimate.HasValue)
+                {
+                    var updateCommand = new UpdateProjectInfoCommand
+                    {
+                        ID = projectId,
+                        EstimateValue = estimate.Value,
+                    };
+                    await updateEstimateHandler.Handle(updateCommand, CancellationToken.None);
+                }
+                // Projects with null estimates will keep their default null value
             }
         }
 

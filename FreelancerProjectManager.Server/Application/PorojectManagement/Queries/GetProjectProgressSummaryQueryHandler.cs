@@ -21,7 +21,7 @@ namespace FreelancerProjectManager.Server.Application.PorojectManagement.Queries
             var p = await projectRepository.Query().Include(p => p.Client).Include(p => p.Tasks).Where(p => p.ID == value.ProjectID).FirstOrDefaultAsync();
             if (p != null)
             {
-                return new ProjectProgressDto() { CompletedCount = p.GetCompletedTasksCount(), PlannedCount = p.GetCompletedTasksCount() };
+                return new ProjectProgressDto(){PlannedCount = p.GetPlannedTasksCount(), CompletedCount = p. GetCompletedTasksCount()};
             }
             else
             {

@@ -1,8 +1,8 @@
 ﻿namespace FreelancerProjectManager.Server.Application.PorojectManagement.Queries.Dto
 {
-    public record ProjectProgressDto
+    public class ProjectProgressDto
     {
-        public int CompletedCount;
-        public int PlannedCount;
+        public int CompletedCount { get; set; }
+        public int PlannedCount { get; set; }
     }
 }
