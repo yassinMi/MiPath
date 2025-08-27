@@ -67,13 +67,18 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
    const { projectId } = useParams();
    /*const [project, setProject] = useState<Project | null>(null)*/
    const [startDate, setStartDate] = useState<PickerValue | undefined>(dayjs("2022-04-04"))
-   const [editabledDescription, setEditabledDescription] = useState<string | undefined>(undefined)
    const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
 
    const { showSnackbar } = useSnackbar()
    /*const {data: projectPTasks, isLoading:isLoadingProjectPTasks,error: errorProjectPTasks} = useProjectPTasks(projectId,{enabled:!!projectId});*/
    const { data: project_, isLoading: isLoadingProject_, error: errorProject_, refetch:refetchProject_ } = useProject(projectId, { enabled: !!projectId });
+   const [editabledDescription, setEditabledDescription] = useState<string | undefined>(project_?.description)
 
+   useEffect(()=>{
+
+      if(project_)
+      setEditabledDescription( project_?.description)
+   },[project_])
    const queryClient = useQueryClient();
    const handleAddTaskModalOpen = () => {
 

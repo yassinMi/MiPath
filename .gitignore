@@ -1,6 +1,7 @@
 /data.mi/*
 
 *.yass
+*.yass.*
 bin/
 obj/
 *.user
