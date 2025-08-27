@@ -9,7 +9,7 @@ step 1: run:
 docker compose -f docker-compose.yml -f docker-compose.prod.yml -p yassfpm up  --build
 ```
 
-step 2: navigate to http://localhost:5452 or https://localhost:5452 (https requires configuring developer cert)
+step 2: navigate to http://localhost:5451 or https://localhost:5452 (https requires configuring developer cert)
 
 note: the api project will serve the frontend in this case
 
