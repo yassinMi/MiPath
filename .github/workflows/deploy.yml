@@ -1,6 +1,17 @@
-- name: trigger deploy in Yassinmi.Api repo
-  uses: peter-evans/repository-dispatch@v3
-  with:
-    token: ${{ secrets.YASSINMIAPI_REPO_ACCESS_TOKEN }}
-    repository: yassinMi/Yassinmi.Api
-    event-type: deploy
+name: trigger deploy
+
+on:
+  push:
+    branches:
+      - deploy
+
+jobs:
+  trigger-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: trigger deploy in Yassinmi.Api repo
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.YASSINMIAPI_REPO_ACCESS_TOKEN }}
+          repository: yassinMi/Yassinmi.Api
+          event-type: deploy
