@@ -10,9 +10,11 @@ step 1: run:
 docker compose -f docker-compose.yml -f docker-compose.prod.yml -p yassfpm up  --build
 ```
 
-step 2: navigate to http://localhost:5452 or https://localhost:5452 (https requires configuring developer cert)
+step 2: navigate to http://localhost:5451 or https://localhost:5452 (https requires configuring developer cert)
 
 note: the api project will serve the frontend in this case
+
+note: swagger UI available at /swagger/index.html 
 
 ## run in development (visual studio)
 alternatively you can debug using vite server and visual studio:
@@ -28,7 +30,23 @@ step3: navigate to the url displayed in the vite server command prompt
 
 
 ## Features
-- manage projects
-- manage child tasks in projects
-- overview pages: this week and today
-- filter/sort projects and tasks by status, priority and custom tags
+- [ ] manage projects:
+  - [x] create
+  - [ ] edit (description, title, estimate value, etc)
+  - [x] delete
+- [ ] manage child tasks in projects
+  - [x] create
+  - [ ] edit (description, title, plannedStart, estimateDuration)
+  - [x] move to state InProgree, Done, ToDo
+  - [ ] Delete
+- [ ] overview pages:
+  - [x] today:
+    - [x] kanban board
+    - [ ] roadmap
+  - [ ] this week
+    - [ ] kanban board
+    - [ ] roadmap
+- [ ] filter/sort projects and tasks by status, priority and custom tags
+- [x] main dashboard 
+- [ ] clock-in/clock-out, tracking hours per project
+ 
