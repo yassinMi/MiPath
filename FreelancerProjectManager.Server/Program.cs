@@ -15,20 +15,14 @@ namespace FreelancerProjectManager.Server
         public async static Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.WebHost.ConfigureKestrel(options =>
-{
-    options.ListenAnyIP(8080);
-    try{options.ListenAnyIP(8081, listenOptions => listenOptions.UseHttps());}
-    catch {
+            
+var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectionString");
 
-    }
-    
-});
 
             // Add services to the container.
             //todo: provide con string in envirement variable instead
             builder.Services.AddDbContext<AppDbContext>(options =>
-        { options.UseNpgsql("Host=db;Port=5432;Database=mydb;Username=myuser;Password=mypassword",npgsqlOptions =>
+        { options.UseNpgsql(connectionString,npgsqlOptions =>
         {
             npgsqlOptions.EnableRetryOnFailure(
                         maxRetryCount: 10,
@@ -74,7 +68,7 @@ namespace FreelancerProjectManager.Server
                 app.UseSwaggerUI();
             }      
 
-                app.UseHttpsRedirection();
+               //app.UseHttpsRedirection();
 
             app.UseAuthorization();
 
