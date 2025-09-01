@@ -1,13 +1,13 @@
 # Path - project managment and productivity tool for solo freelancers
 
 ## Live Demo
-Check it out here: [fpm.api.yassinmi.com](https://fpm.api.yassinmi.com) 
+Check it out here: [mipath.app.yassinmi.com](https://mipath.app.yassinmi.com) 
 
 ## run in development
 step 1: run:
 
 ```
-docker compose -f docker-compose.yml -f docker-compose.prod.yml -p yassfpm up  --build
+docker compose -f docker-compose.yml -f docker-compose.prod.yml -p mipath up  --build
 ```
 
 step 2: navigate to http://localhost:5451 or https://localhost:5452 (https requires configuring developer cert)
