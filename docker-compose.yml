@@ -1,9 +1,9 @@
 services:
   webApi:
-    image: freelancerprojectmanagerserver
+    image: mipathserver
     build:
       context: .
-      dockerfile: FreelancerProjectManager.Server/Dockerfile
+      dockerfile: MiPath.Server/Dockerfile
     ports:
       - "5451:8080"
       - "5452:8081"

@@ -1,4 +1,4 @@
-# Freelancer Project Manager
+# Path - project managment and productivity tool for solo freelancers
 
 ## Live Demo
 Check it out here: [fpm.api.yassinmi.com](https://fpm.api.yassinmi.com) 
@@ -23,7 +23,7 @@ step1: open the solution in Visual Studio and click "Start", this will run docke
 
 step2: run vite server
 ```
-cd freelancerprojectmanager.client
+cd mipath.client
 npm run dev
 ```
 step3: navigate to the url displayed in the vite server command prompt
