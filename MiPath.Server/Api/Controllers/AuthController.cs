@@ -16,8 +16,8 @@ namespace MiPath.Server.Api.Controllers
     public class AuthController : ControllerBase
     {
         readonly IConfiguration _config;
-        readonly ILogger logger;
-        public AuthController(IConfiguration config, ILogger logger)
+        readonly ILogger<AuthController> logger;
+        public AuthController(IConfiguration config, ILogger<AuthController> logger)
         {
             _config = config;
             this.logger = logger;
