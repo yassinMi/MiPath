@@ -24,12 +24,15 @@ import type { LocationState } from '../Model/LocationState';
 import { userProjects } from '../hooks';
 import { useProject } from '../hooks/useProject';
 import { useSnackbar } from './SnackbarContext';
+import { useAccountInfo } from '../hooks/useAccountInfo';
+import { getNameInitials } from '../services/utils';
 export interface AppHeaderProps {
     title: string;
     subtitle?: string;
     children?: React.ReactNode;
     onDarkToggle: () => void;
     isDark: boolean;
+    onGoogleLogin?: () => void;
 }
 export interface BreadcrumbsComponentProps {
     locationInfo: LocationState
@@ -111,7 +114,7 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({ locationInf
 
     }
 }
-const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDarkToggle, isDark }) => {
+const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDarkToggle, isDark,onGoogleLogin }) => {
 
     let location = useLocation() as Location<LocationState>
 
@@ -125,6 +128,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
     
     const [anchorEl, setAnchorEl] = React.useState<HTMLElement|null>(null);
 
+    const {data:accountInfo, isLoading:isLoadingAccountInfo, error: errorAccountInfo} = useAccountInfo();
     const [isAccountPopoverOpen, setIsAccountPopoverOpen] = useState<boolean>(false)
     const {showSnackbar} = useSnackbar()
 
@@ -238,30 +242,10 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
             document.title = "Path"
         }
     }, [locationInfo])
-function loginWithGoogle() {
-  const popup = window.open(
-    "https://localhost:50272/api/auth/google-login", 
-    "googleLogin", 
-    "width=500,height=600"
-  );
 
-  // Listen for message from backend
-  window.addEventListener("message", function handler(event) {
-    if (event.origin !== "https://localhost:50272") {
-        console.log("wrong origin")
-    };
-
-    const { token } = event.data;
-    if (token) {
-      localStorage.setItem("jwt", token);
-      window.removeEventListener("message", handler);
-      popup?.close();
-      showSnackbar("Login success", "success")
-    }
-  });
-}
     const handleLoginClick = ()=>{
-      loginWithGoogle()
+      
+      if(onGoogleLogin) onGoogleLogin();
     }
     const hndleSearchInputKeyDown =  (e: React.KeyboardEvent<HTMLInputElement>) => {
           if (e.key === "Enter") {
@@ -318,7 +302,7 @@ function loginWithGoogle() {
                 }
                 <div className="flex flex-row gap-4  items-center">
                     <ThemeSwitch className="hidden sm:block" onClick={onDarkToggle} isDark={isDark} ></ThemeSwitch>
-                    <AccountButton userName="YassinMi" accountInitials="YM" onClick={(e) => {setAnchorEl(e.currentTarget); setIsAccountPopoverOpen(!isAccountPopoverOpen) }}></AccountButton>
+                    <AccountButton userName={accountInfo?.name} accountInitials={getNameInitials(accountInfo?.name)} onClick={(e) => {setAnchorEl(e.currentTarget); setIsAccountPopoverOpen(!isAccountPopoverOpen) }}></AccountButton>
 
                 </div>
                 

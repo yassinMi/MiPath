@@ -8,6 +8,10 @@ import { Link } from 'react-router-dom';
 import { purple, grey,  } from '@mui/material/colors';
 import { ArrowLeft, ChevronLeft } from '@mui/icons-material';
 import ArrowRight from '@mui/icons-material/ChevronRight';
+import { useAccountInfo } from '../hooks/useAccountInfo';
+import LoginCard from '../Components/LoginCard';
+import { useSnackbar } from '../Components/SnackbarContext';
+import { QueryClient } from '@tanstack/react-query';
 export const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
   color: theme.palette.getContrastText(purple[500]),
   backgroundColor: 'var(--color-gray-900)',
@@ -22,21 +26,47 @@ export const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
 }));
 
 interface HomeDashboardProps {
+  
 }
 
 const HomeDashboard: React.FC<HomeDashboardProps> = ({  }) => {
   
   //useProjects
-  const {data: projects, error:errorProjects, isLoading:isLoadingProjects, refetch:refetchProjects} =  userProjects();
-  const {data: ugentTasks, error:errorUrgentTasks, isLoading:isLoadingUrgentTasks, refetch:refetcUrgentTasksh} =  userProjects();
-    
+  const {data:accountInfo, isLoading:isLoadingAccountInfo, error: errorAccountInfo} = useAccountInfo();
+  
+  const {data: projects, error:errorProjects, isLoading:isLoadingProjects, refetch:refetchProjects} =  userProjects({enabled:!isLoadingAccountInfo&&!errorAccountInfo});
+  const {data: ugentTasks, error:errorUrgentTasks, isLoading:isLoadingUrgentTasks, refetch:refetcUrgentTasksh} =  userProjects({enabled:!isLoadingAccountInfo&&!errorAccountInfo});
+  const {showSnackbar} = useSnackbar()
+  function loginWithGoogle() {
+    const popup = window.open(
+      "https://localhost:50272/api/auth/google-login",
+      "googleLogin",
+      "width=500,height=600"
+    );
+
+    window.addEventListener("message", function handler(event) {
+      if (event.origin !== "https://localhost:50272") {
+        console.log("wrong origin")
+      };
+
+      const { token } = event.data;
+      if (token) {
+        localStorage.setItem("jwt", token);
+        window.removeEventListener("message", handler);
+        popup?.close();
+        new QueryClient().invalidateQueries({queryKey: ["accountInfo"]})
+        showSnackbar("Login success", "success")
+      }
+    });
+  }
+
   return (
      <div className='flex flex-col gap-8 flex-1 overflow-auto '>
                 
                 
            
-           {isLoadingProjects||isLoadingUrgentTasks?<div className='flex-1 flex flex-col items-center justify-center'><CircularProgress/></div>:null}
-            {errorProjects||errorUrgentTasks? <div className='text-red-500'>Error loading : {(errorProjects as Error)?.message} {(errorUrgentTasks as  Error)?.message}</div>:null}
+           {(isLoadingProjects||isLoadingUrgentTasks||isLoadingAccountInfo)?<div className='flex-1 flex flex-col items-center justify-center'><CircularProgress/></div>:null}
+            {accountInfo?.email&&(errorProjects||errorUrgentTasks)? <div className='text-red-500'>Error loading : {(errorProjects as Error)?.message} {(errorUrgentTasks as  Error)?.message}</div>:null}
                {projects&&ugentTasks?
                
                 <div className='grid grid-cols-4 grid-rows-[auto_auto_auto] lg:grid-rows-[auto_1px_auto] gap-2 p-6'>
@@ -111,6 +141,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({  }) => {
                
                </div>
                :null}
+              {!accountInfo?<><LoginCard onGoogleLogin={loginWithGoogle}></LoginCard></>:null}
           
     
              

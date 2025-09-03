@@ -9,7 +9,8 @@ import { createTheme, ThemeProvider, useColorScheme } from '@mui/material/styles
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Outlet, Route, Routes } from 'react-router-dom';
 import { SnackbarContent } from '@mui/material';
-import { SnackbarProvider } from './Components/SnackbarContext';
+import { SnackbarProvider, useSnackbar } from './Components/SnackbarContext';
+import { QueryClient } from '@tanstack/react-query';
 
 interface Forecast {
     date: string;
@@ -22,6 +23,7 @@ function App() {
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     const [darkMode, setDarkMode] = useState(prefersDark);
      const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+     const {showSnackbar} = useSnackbar()
     const { mode, setMode } = useColorScheme();
     if(!mode){
         setMode("system")
@@ -36,7 +38,29 @@ function App() {
     
   }, [darkMode]);
 
-   
+    
+  function loginWithGoogle() {
+    const popup = window.open(
+      "https://localhost:50272/api/auth/google-login",
+      "googleLogin",
+      "width=500,height=600"
+    );
+
+    window.addEventListener("message", function handler(event) {
+      if (event.origin !== "https://localhost:50272") {
+        console.log("wrong origin")
+      };
+
+      const { token } = event.data;
+      if (token) {
+        localStorage.setItem("jwt", token);
+        window.removeEventListener("message", handler);
+        popup?.close();
+        new QueryClient().invalidateQueries({queryKey: ["accountInfo"]})
+        showSnackbar("Login success", "success")
+      }
+    });
+  }
     const onDarkToggle = () => {
         if (mode == "light") {
             setMode("dark")
@@ -52,7 +76,7 @@ function App() {
     return (
         <div style={{colorScheme:darkMode?"dark":"light"}} className={`app-main min-h-screen  scrollbar scrollbar-thumb-gray-300 scrollbar-track-gray-100
             dark:scrollbar-thumb-gray-700 dark:scrollbar-track-gray-800  flex flex-col text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-900 ${darkMode ? "dark" : "light"}`}>
-            <AppHeader onDarkToggle={onDarkToggle} isDark={darkMode} subtitle="Projects" title="Path"></AppHeader>
+            <AppHeader onGoogleLogin={loginWithGoogle} onDarkToggle={onDarkToggle} isDark={darkMode} subtitle="Projects" title="Path"></AppHeader>
               <Outlet></Outlet>
              
     
