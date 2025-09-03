@@ -7,17 +7,21 @@ namespace MiPath.Server.Application.TaskManagement.Commands
     {
         private readonly ITaskRepository taskRepository;
         private readonly IProjectRepository projectRepository;
-        public CreateTaskCommandHandler(ITaskRepository taskRepository, IProjectRepository projectRepository)
+        private readonly ICurrentUserService currentUser;
+
+        public CreateTaskCommandHandler(ITaskRepository taskRepository, IProjectRepository projectRepository, ICurrentUserService currentUser)
         {
             this.taskRepository = taskRepository;
             this.projectRepository = projectRepository;
+            this.currentUser = currentUser;
         }
         public async Task<int> Handle(CreateTaskCommand value, CancellationToken cancellationToken)
         {
-            var projectExists = await projectRepository.Query().AnyAsync(p=>p.ID==value.ProjectID);
+            if (currentUser?.UserId == null) throw new InvalidOperationException("no current user");
+            var projectExists = await projectRepository.Query().AnyAsync(p=>p.ID==value.ProjectID && currentUser.UserId== p.UserID);
             if (projectExists == false)
             {
-                throw new ArgumentException("ProjectID not found");
+                throw new ArgumentException("ProjectID not found or not owned by the current user");
             }
             var t = new Domain.ProjectManagement.PTask() { Description=value.Description,Title=value.Title};
             t.Title = value.Title;

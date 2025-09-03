@@ -12,13 +12,16 @@ namespace MiPath.Server.Application.TaskManagement.Queries
     public class GetThisWeekOverviewQueryHandler: IQueryHandler<GetThisWeekOverviewQuery, List<TaskDto>>
     {
         private readonly ITaskRepository _taskRepository;
-        public GetThisWeekOverviewQueryHandler(ITaskRepository taskRepository)
+        private readonly ICurrentUserService currentUser;
+
+        public GetThisWeekOverviewQueryHandler(ITaskRepository taskRepository, ICurrentUserService currentUser)
         {
             _taskRepository = taskRepository;
+            this.currentUser = currentUser;
         }
         public async Task<List<TaskDto>> Handle(GetThisWeekOverviewQuery request, CancellationToken cancellationToken)
         {
-            var tasks = _taskRepository.GetAll();
+            var tasks = _taskRepository.GetAll().Where(t=>t.Project.UserID==currentUser.UserId);
             return await tasks.Select(t => t.ToDto()).ToListAsync();
         }
     }

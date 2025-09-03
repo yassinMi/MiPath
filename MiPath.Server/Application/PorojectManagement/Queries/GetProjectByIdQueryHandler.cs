@@ -11,13 +11,21 @@ namespace MiPath.Server.Application.PorojectManagement.Queries
     public class GetProjectByIdQueryHandler: IQueryHandler<GetProjectByIdQuery, ProjectDto?>
     {
         private readonly IProjectRepository projectRepository;
-        public GetProjectByIdQueryHandler(IProjectRepository projectRepository)
+        private readonly ICurrentUserService currentUser;
+
+        public GetProjectByIdQueryHandler(IProjectRepository projectRepository, ICurrentUserService currentUser)
         {
             this.projectRepository = projectRepository;
+            this.currentUser = currentUser;
         }
         public async Task<ProjectDto?> Handle(GetProjectByIdQuery value, CancellationToken cancellationToken)
         {
-            return (await projectRepository.Query().Include(p=>p.Client).Include(p=>p.Tasks).Where(p=>p.ID==value.ProjectID).FirstOrDefaultAsync())?.ToDto();
+            var proj = (await projectRepository.Query().Include(p => p.Client).Include(p => p.Tasks).Where(p => p.ID == value.ProjectID).FirstOrDefaultAsync());
+            if (proj != null)
+            {
+                if (proj.UserID != currentUser.UserId) throw new InvalidOperationException($"project is not owned by the current user '{currentUser.UserId}'");
+            }
+            return proj?.ToDto();
         }
     }
 

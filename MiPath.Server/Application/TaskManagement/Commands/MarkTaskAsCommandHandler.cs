@@ -5,9 +5,12 @@ namespace MiPath.Server.Application.TaskManagement.Commands
     public class MarkTaskAsCommandHandler:ICommandHandler<MarkTaskAsCommand>
     {
         private readonly ITaskRepository taskRepository;
-        public MarkTaskAsCommandHandler(ITaskRepository taskRepository)
+        private readonly ICurrentUserService currentUser;
+
+        public MarkTaskAsCommandHandler(ITaskRepository taskRepository, ICurrentUserService currentUser)
         {
             this.taskRepository = taskRepository;
+            this.currentUser = currentUser;
         }
 
         public async Task Handle(MarkTaskAsCommand value, CancellationToken cancellationToken)
@@ -17,6 +20,9 @@ namespace MiPath.Server.Application.TaskManagement.Commands
             {
                 throw new EntityNotFoundException("task",value.ID);
             }
+            var existsAndAllowed = taskRepository.GetAll().Any(t => t.ID == value.ID && t.Project!.UserID == currentUser.UserId);
+            if (!existsAndAllowed) { throw new InvalidOperationException("task not found or not owned by the current user"); }
+
             //todo enforce business rules per intent
             switch (value.Intent)
             {

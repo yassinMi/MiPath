@@ -5,7 +5,7 @@ import React from 'react';
 export interface AccountButtonProps {
     accountInitials: string;
     userName?: string;
-    onClick: () => void
+    onClick: React.MouseEventHandler<HTMLButtonElement>
 }
 const AccountButton: React.FC<AccountButtonProps> = ({ accountInitials, userName, onClick }) => { 
 

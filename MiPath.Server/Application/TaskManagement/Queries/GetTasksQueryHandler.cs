@@ -9,13 +9,17 @@ namespace MiPath.Server.Application.TaskManagement.Queries
     public class GetTasksQueryHandler:IQueryHandler<GetTasksQuery, List<TaskDto>>
     {
         private readonly ITaskRepository _taskRepository;
-        public GetTasksQueryHandler(ITaskRepository taskRepository)
+        private readonly ICurrentUserService currentUser;
+
+        public GetTasksQueryHandler(ITaskRepository taskRepository, ICurrentUserService currentUser)
         {
             _taskRepository = taskRepository;
+            this.currentUser = currentUser;
         }
         public async Task<List<TaskDto>> Handle(GetTasksQuery query, CancellationToken ct)
         {
-            var tasks = _taskRepository.GetAll().AsQueryable();
+            if (currentUser?.UserId == null) throw new InvalidOperationException("no current user");
+            var tasks = _taskRepository.GetAll().AsQueryable().Where(t=>t.Project.UserID== currentUser.UserId);
             if (query.Statuses.Any())
                 tasks = tasks.Where(t => query.Statuses.Contains(t.Status));
 

@@ -8,16 +8,19 @@ namespace MiPath.Server.Application.PorojectManagement.Queries
     public class GetProjectsQueryHandler:IQueryHandler<GetProjectsQuery, List<ProjectDto>>
     {
         private readonly IProjectRepository projectRepository;
-        public GetProjectsQueryHandler(IProjectRepository projectRepository)
+        private readonly ICurrentUserService currentUser;
+
+        public GetProjectsQueryHandler(IProjectRepository projectRepository, ICurrentUserService currentUser)
         {
             this.projectRepository = projectRepository;
+            this.currentUser = currentUser;
         }
         public async Task<List<ProjectDto>> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
         {
 
+            if (currentUser.UserId == null) throw new InvalidOperationException("no user");
 
-
-            return await projectRepository.Query().Include(p => p.Client)
+            return await projectRepository.Query().Where(p=>p.UserID== currentUser.UserId). Include(p => p.Client)
                 .Select(p => new ProjectDto()
                 {
                     ID = p.ID,

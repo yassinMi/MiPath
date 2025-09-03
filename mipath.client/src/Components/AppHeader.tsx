@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import AppIcon from './AppIcon';
 import AccountButton from './AccountButton';
 import ThemeSwitch from './ThemeSwitch';
-import { Breadcrumbs, Link, Typography } from '@mui/material';
+import { Box, Breadcrumbs, Button, Link, Popover, Typography } from '@mui/material';
 import { Link as RouterLink, type Location, } from 'react-router';
 import HomeIcon from "@mui/icons-material/Home"
 import DarkModeIcon from "@mui/icons-material/DarkMode";       // Moon / Dark Mode
@@ -122,6 +122,10 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
         && locationInfo?.projectId&&locationInfo.projectId!==-1&&locationInfo.projectName===undefined
 
     })
+    
+    const [anchorEl, setAnchorEl] = React.useState<HTMLElement|null>(null);
+
+    const [isAccountPopoverOpen, setIsAccountPopoverOpen] = useState<boolean>(false)
     const {showSnackbar} = useSnackbar()
 
     const breadcrumbRef = useRef(null);
@@ -234,7 +238,31 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
             document.title = "Path"
         }
     }, [locationInfo])
+function loginWithGoogle() {
+  const popup = window.open(
+    "https://localhost:50272/api/auth/google-login", 
+    "googleLogin", 
+    "width=500,height=600"
+  );
 
+  // Listen for message from backend
+  window.addEventListener("message", function handler(event) {
+    if (event.origin !== "https://localhost:50272") {
+        console.log("wrong origin")
+    };
+
+    const { token } = event.data;
+    if (token) {
+      localStorage.setItem("jwt", token);
+      window.removeEventListener("message", handler);
+      popup?.close();
+      showSnackbar("Login success", "success")
+    }
+  });
+}
+    const handleLoginClick = ()=>{
+      loginWithGoogle()
+    }
     const hndleSearchInputKeyDown =  (e: React.KeyboardEvent<HTMLInputElement>) => {
           if (e.key === "Enter") {
             showSnackbar("search not implemented", "warning")
@@ -290,9 +318,44 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                 }
                 <div className="flex flex-row gap-4  items-center">
                     <ThemeSwitch className="hidden sm:block" onClick={onDarkToggle} isDark={isDark} ></ThemeSwitch>
-                    <AccountButton userName="YassinMi" accountInitials="YM" onClick={() => {showSnackbar("feature not implemented","warning") }}></AccountButton>
+                    <AccountButton userName="YassinMi" accountInitials="YM" onClick={(e) => {setAnchorEl(e.currentTarget); setIsAccountPopoverOpen(!isAccountPopoverOpen) }}></AccountButton>
 
                 </div>
+                
+                 <Popover color="red" 
+                   slotProps={{paper:{
+                    
+                          sx: {
+                            backgroundColor: "unset",
+                            backgroundImage:"unset",
+                            boxShadow: "none", 
+                          },
+                          
+                        
+                   }, transition:{
+                     timeout:0,
+                     
+                   }}}
+                  
+                  id={"idStr"}
+                  
+                  open={isAccountPopoverOpen}
+                  
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'center',
+                    horizontal: 'right',
+                  }} transformOrigin={{
+                    vertical: 'center',
+                    horizontal: 'left',
+                  }}
+                >
+                  
+                <Box>
+                    <Button onClick={handleLoginClick}>Login</Button>
+                    <Button>Logout</Button>
+                </Box>
+                  </Popover>
 
 
             </div>

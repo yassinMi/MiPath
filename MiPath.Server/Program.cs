@@ -1,5 +1,6 @@
 
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -53,8 +54,29 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
             builder.Services.AddScoped<IProjectRepository, EfProjectRepository>();
             builder.Services.AddScoped<IClientRepository, EfClientRepository>();
             builder.Services.AddScoped<IUserRepository, EfUserRepository>();
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+            builder.Services.AddAuthentication( options =>
+            {
+
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+
+            }).AddGoogle( options =>
+            {
+                options.ClientId = builder.Configuration["MPGoogle:ClientId"];
+                options.ClientSecret = builder.Configuration["MPGoogle:ClientSecret"];
+
+                // These events allow you to intercept the token after Google login
+                options.Events.OnCreatingTicket = ctx =>
+                {
+                    // ctx.Principal contains Google claims
+                    // You can generate your own JWT here if you want
+                    return Task.CompletedTask;
+                };
+            })
+            
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -66,7 +88,7 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(builder.Configuration["MPJwt:Key"] ??throw new Exception("MPJwt:Key not set")))
         };
-    });
+    }).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
            
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
@@ -80,6 +102,9 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
                 //add initial data for demonstration - ai generated file
                 await MiPath.Server.Infrastructure.SeedData.SeedDatabaseAsync(app.Services);
             }
+
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseDefaultFiles();
             app.MapStaticAssets();
 
@@ -93,8 +118,6 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
 
             //app.UseHttpsRedirection();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
 
 
             app.MapControllers();
