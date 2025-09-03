@@ -1,11 +1,15 @@
 
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using MiPath.Server.Api;
 using MiPath.Server.Application.DependencyInjection;
 using MiPath.Server.Application.Interfaces;
 using MiPath.Server.Infrastructure;
 using MiPath.Server.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace MiPath.Server
@@ -48,6 +52,25 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
             builder.Services.AddScoped<ITaskRepository, EfTaskRepository>();
             builder.Services.AddScoped<IProjectRepository, EfProjectRepository>();
             builder.Services.AddScoped<IClientRepository, EfClientRepository>();
+            builder.Services.AddScoped<IUserRepository, EfUserRepository>();
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidIssuer = builder.Configuration["MPJwt:Issuer"],
+            ValidAudience = builder.Configuration["MPJwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["MPJwt:Key"] ??throw new Exception("MPJwt:Key not set")))
+        };
+    });
+           
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
             var app = builder.Build();
             using (var scope = app.Services.CreateScope())
             {
@@ -66,10 +89,11 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
                 app.MapOpenApi();
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }      
+            }
 
-               //app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

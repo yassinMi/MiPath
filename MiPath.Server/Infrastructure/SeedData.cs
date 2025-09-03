@@ -1,16 +1,21 @@
 // AI-Generated Mock Data for Database Seeding
 // This file contains realistic sample data to demonstrate the application's capabilities
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using MiPath.Server.Application;
+using MiPath.Server.Application.DependencyInjection;
 using MiPath.Server.Application.Interfaces;
 using MiPath.Server.Application.PorojectManagement.Commands;
 using MiPath.Server.Application.TaskManagement.Commands;
+using MiPath.Server.Application.UserManagement.Commands;
+using MiPath.Server.Application.UserManagement.Queries;
 using MiPath.Server.Domain.ProjectManagement;
+using MiPath.Server.Domain.UserManagement;
 using MiPath.Server.Infrastructure;
 using MiPath.Server.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace MiPath.Server.Infrastructure
 {
@@ -25,10 +30,14 @@ namespace MiPath.Server.Infrastructure
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
                 logger = scope.ServiceProvider.GetRequiredService<ILogger<AppDbContext>>();
 
+                
+
                 // Check if database already has data
                 if (await dbContext.Clients.AnyAsync() ||
                     await dbContext.Project.AnyAsync() ||
-                    await dbContext.Tasks.AnyAsync())
+                    await dbContext.Tasks.AnyAsync() ||
+                    await dbContext.Users.AnyAsync()
+                    )
                 {
                     logger.LogInformation("Database already contains data. Skipping seed operation.");
                     return;
@@ -38,8 +47,24 @@ namespace MiPath.Server.Infrastructure
 
                 try
                 {
-                    await SeedClientsAndProjectsAsync(scope);
-                    await SeedTasksAsync(scope);
+                    var createUserCommand = new CreateUserCommand() { Email = "yass.mi2016@gmail.com", Name = "YassineMi" };
+                    var handler = (CreateUserCommandHandler)scope.ServiceProvider.GetRequiredService(typeof(CreateUserCommandHandler));
+                    var id = await handler.Handle(createUserCommand,CancellationToken.None );
+                    IUserRepository userRepo = (IUserRepository)scope.ServiceProvider.GetRequiredService(typeof(IUserRepository));
+
+                    var user = await userRepo.GetByIdAsync(id) ?? throw new Exception("err") ;
+                    ServiceCollection sv = new ServiceCollection();
+                    sv.AddScoped<ICurrentUserService>(_ => new InstanceBasedCurrentUserService(user));
+                    sv.AddScoped(_=>scope.ServiceProvider.GetRequiredService<IUserRepository>());
+                    sv.AddScoped(_=>scope.ServiceProvider.GetRequiredService<IClientRepository>());
+                    sv.AddScoped(_=>scope.ServiceProvider.GetRequiredService<ITaskRepository>());
+                    sv.AddScoped(_=>scope.ServiceProvider.GetRequiredService<IProjectRepository>());
+                        sv.AddApplicationCommandAndQueryHandlers();
+                    var childScope = sv.BuildServiceProvider();
+
+
+                    await SeedClientsAndProjectsAsync(childScope);
+                    await SeedTasksAsync(childScope);
 
                     logger.LogInformation("Database seeding completed successfully.");
                 }
@@ -64,11 +89,10 @@ namespace MiPath.Server.Infrastructure
             
         }
 
-        private static async Task SeedClientsAndProjectsAsync(IServiceScope scope)
+        private static async Task SeedClientsAndProjectsAsync(IServiceProvider scope)
         {
-            var projectCommandHandler = scope.ServiceProvider.GetRequiredService<CreateProjectCommandHandler>();
-            var updateEstimateHandler = scope.ServiceProvider.GetRequiredService<UpdateProjectInfoCommandHandler>();
-
+            var projectCommandHandler = (CreateProjectCommandHandler)scope.GetRequiredService<CreateProjectCommandHandler>();
+            var updateEstimateHandler = scope.GetRequiredService<UpdateProjectInfoCommandHandler>();
                          // Create projects with clients - varied names, descriptions, and statuses
              var projectCommands = new[]
              {
@@ -138,9 +162,9 @@ namespace MiPath.Server.Infrastructure
             await SetProjectEstimatesAsync(scope, projectIds);
         }
 
-        private static async Task SetProjectEstimatesAsync(IServiceScope scope, List<int> projectIds)
+        private static async Task SetProjectEstimatesAsync(IServiceProvider scope, List<int> projectIds)
         {
-            var updateEstimateHandler = scope.ServiceProvider.GetRequiredService<UpdateProjectInfoCommandHandler>();
+            var updateEstimateHandler = scope.GetRequiredService<UpdateProjectInfoCommandHandler>();
             
             // Realistic project estimates - some projects have estimates, others don't (null)
             var estimates = new[]
@@ -169,11 +193,11 @@ namespace MiPath.Server.Infrastructure
             }
         }
 
-        private static async Task SeedTasksAsync(IServiceScope scope)
+        private static async Task SeedTasksAsync(IServiceProvider scope)
         {
-            var taskCommandHandler = scope.ServiceProvider.GetRequiredService<CreateTaskCommandHandler>();
-            var markTaskAsHandler = scope.ServiceProvider.GetRequiredService<MarkTaskAsCommandHandler>();
-            var projectRepository = scope.ServiceProvider.GetRequiredService<IProjectRepository>();
+            var taskCommandHandler = scope.GetRequiredService<CreateTaskCommandHandler>();
+            var markTaskAsHandler = scope.GetRequiredService<MarkTaskAsCommandHandler>();
+            var projectRepository = scope.GetRequiredService<IProjectRepository>();
             var projects = await projectRepository.Query().ToListAsync();
 
             foreach (var project in projects)

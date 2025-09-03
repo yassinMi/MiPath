@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using MiPath.Server.Domain.UserManagement;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiPath.Server.Domain.ProjectManagement
 {
@@ -14,6 +15,9 @@ namespace MiPath.Server.Domain.ProjectManagement
     {
        
         public int ID { get; set; }
+        [ForeignKey(nameof(User))]
+        public int UserID { get; set; }
+        public User? User { get; set; }
         public ProjectStatus Status { get; set; }
         public required string Name { get; set; }
         public required string Description { get; set; }

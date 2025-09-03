@@ -1,7 +1,9 @@
 ﻿using MiPath.Server.Application.ClientManagement.Queries.Dto;
 using MiPath.Server.Application.PorojectManagement.Queries.Dto;
 using MiPath.Server.Application.TaskManagement.Queries.Dto;
+using MiPath.Server.Application.UserManagement.Queries.Dto;
 using MiPath.Server.Domain.ProjectManagement;
+using MiPath.Server.Domain.UserManagement;
 
 namespace MiPath.Server.Application.DTO
 {
@@ -52,11 +54,19 @@ namespace MiPath.Server.Application.DTO
             };
         }
 
-        
+        public static UserDto ToDto(this User u)
+        {
+            return new UserDto
+            {
+                ID = u.ID,
+                Name = u.Name,
+                Email = u.Email,
+            };
+        }
 
-      
 
-       
+
+
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿using MiPath.Server.Domain.ProjectManagement;
 using Microsoft.EntityFrameworkCore;
 using System;
+using MiPath.Server.Domain.UserManagement;
 
 namespace MiPath.Server.Infrastructure
 {
@@ -30,5 +31,6 @@ namespace MiPath.Server.Infrastructure
         public DbSet<Project> Project { get; set; }
         public DbSet<PTask> Tasks { get; set; }
         public DbSet<Client> Clients { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }

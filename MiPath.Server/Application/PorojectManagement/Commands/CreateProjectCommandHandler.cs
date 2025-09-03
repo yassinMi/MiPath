@@ -3,6 +3,7 @@ using MiPath.Server.Application.PorojectManagement.Commands;
 using MiPath.Server.Domain.ProjectManagement;
 using MiPath.Server.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using MiPath.Server.Domain.UserManagement;
 
 namespace MiPath.Server.Application.PorojectManagement.Commands
 {
@@ -10,15 +11,18 @@ namespace MiPath.Server.Application.PorojectManagement.Commands
     {
         private readonly IProjectRepository projectRepository;
         private readonly IClientRepository clientRepository;
-        public CreateProjectCommandHandler(IProjectRepository projectRepository, IClientRepository clientRepository)
+        private readonly ICurrentUserService currentUser;
+        public CreateProjectCommandHandler(ICurrentUserService _currentUser, IProjectRepository projectRepository, IClientRepository clientRepository)
         {
             this.projectRepository = projectRepository;
             this.clientRepository = clientRepository;
+            currentUser = _currentUser;
 
         }
         public async Task<int> Handle(CreateProjectCommand value, CancellationToken cancellationToken)
         {
             Client? client = null;
+            var userId = currentUser.UserId ?? throw new InvalidOperationException("no user");
             if (value.ClientID == null && string.IsNullOrWhiteSpace(value.NewClientName))
             {
                 throw new ArgumentException("ClientID or ClientName must be provided");
@@ -34,9 +38,10 @@ namespace MiPath.Server.Application.PorojectManagement.Commands
             }
             else if (value.NewClientName != null)
             {
-                client = new Domain.ProjectManagement.Client() { Name = value.NewClientName };
+                if (currentUser.UserId == null) throw new Exception("no user");
+                client = new Domain.ProjectManagement.Client() { UserID = currentUser.UserId.Value, Name = value.NewClientName };
             }
-            var p = new Project() { Name = value.Name, Client = client!, Description = value.Description ?? "" };
+            var p = new Project() {UserID=userId, Name = value.Name, Client = client!, Description = value.Description ?? "" };
            
             p.Status = value.Status == CreateProjectCommand.ProjectCreationStatus.Active
                 ? Domain.ProjectManagement.ProjectStatus.Active
