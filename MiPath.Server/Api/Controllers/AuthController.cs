@@ -16,20 +16,25 @@ namespace MiPath.Server.Api.Controllers
     public class AuthController : ControllerBase
     {
         readonly IConfiguration _config;
-        public AuthController(IConfiguration config)
+        readonly ILogger logger;
+        public AuthController(IConfiguration config, ILogger logger)
         {
             _config = config;
+            this.logger = logger;
         }
         [HttpGet("google-login")]
         public ChallengeResult Login()
         {
-            var redirectUrl = Url.Action("GoogleResponse", "Auth"); // where Google redirects back
+            logger.LogInformation("login request");
+            var redirectUrl = Url.Action("GoogleResponse", "Auth");
+            logger.LogInformation($"redirecting to {redirectUrl}");
             var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
         [HttpGet("signin-google")]
         public async Task<IActionResult> GoogleResponse([FromServices] CreateUserCommandHandler createUserHangler, [FromServices] GetUserByEmailQueryHandler queryUserByEmailHandler)
         {
+            logger.LogInformation($"GoogleResponse called");
             var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
             if (!result.Succeeded)
                 return Unauthorized();
@@ -46,15 +51,17 @@ namespace MiPath.Server.Api.Controllers
             var maybeUser = await queryUserByEmailHandler.Handle(new GetUserByEmailQuery() { Email = email }, CancellationToken.None);
             if (maybeUser == null)
             {
+                logger.LogInformation($"user doesn't exist, creating a new one");
                 var newUserCommand = new CreateUserCommand() { Email = email, Name = userName };
                 var userId = await createUserHangler.Handle(newUserCommand, CancellationToken.None);
+                logger.LogInformation($"user created with id: {userId}");
                 token = GenerateJwtToken(userId.ToString(), email, userName);
 
             }
             else
             {
-               
                 var userId = maybeUser.ID;
+                logger.LogInformation($"user exists with is ${userId}");
                 token = GenerateJwtToken(userId.ToString(), email, userName);
             }
 

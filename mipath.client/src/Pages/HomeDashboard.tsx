@@ -46,16 +46,20 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({  }) => {
   const top = window.screenY + (window.outerHeight - height) / 2;
 
   const popup = window.open(
-    "https://localhost:50272/api/auth/google-login",
+    "/api/auth/google-login",
     "googleLogin",
     `width=${width},height=${height},left=${left},top=${top},resizable,scrollbars`
   );
 
 
     window.addEventListener("message", function handler(event) {
-      if (event.origin !== "https://localhost:50272") {
-        console.log("wrong origin")
-      };
+     const expectedOrigin = window.location.origin;
+
+  if (event.origin !== expectedOrigin) {
+    console.warn("unexpected origin:", event.origin);
+    return;
+  }
+
 
       const { token } = event.data;
       if (token) {

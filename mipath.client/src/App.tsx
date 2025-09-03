@@ -41,16 +41,26 @@ function App() {
 
     
   function loginWithGoogle() {
-    const popup = window.open(
-      "https://localhost:50272/api/auth/google-login",
-      "googleLogin",
-      "width=500,height=600"
-    );
+    const width = 500;
+  const height = 600;
 
+  const left = window.screenX + (window.outerWidth - width) / 2;
+  const top = window.screenY + (window.outerHeight - height) / 2;
+
+  const popup = window.open(
+    "/api/auth/google-login",
+    "googleLogin",
+    `width=${width},height=${height},left=${left},top=${top},resizable,scrollbars`
+  );
+
+      
     window.addEventListener("message", function handler(event) {
-      if (event.origin !== "https://localhost:50272") {
-        console.log("wrong origin")
-      };
+ const expectedOrigin = window.location.origin;
+
+  if (event.origin !== expectedOrigin) {
+    console.warn("unexpected origin:", event.origin);
+    return;
+  }
 
       const { token } = event.data;
       if (token) {
