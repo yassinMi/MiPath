@@ -9,7 +9,7 @@ const LoginCard: React.FC<LoginCardProps> = ({  onGoogleLogin}) => {
     return  <div className="flex justify-center items-center h-full">
       <button
         onClick={onGoogleLogin}
-        className="flex items-center px-6 py-3 bg-white border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 text-gray-700 font-medium"
+        className="cursor-pointer flex items-center px-6 py-3 bg-white border border-gray-300 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 text-gray-700 font-medium"
       >
         <img
           src="https://www.svgrepo.com/show/475656/google-color.svg"

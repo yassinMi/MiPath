@@ -10,7 +10,7 @@ import type { AccountInfo } from "../Model/AccountInfo";
 
 export function useAccountInfo(options?:any){
 
-    return useQuery<AccountInfo|undefined>({queryKey:["accountInfo"], queryFn:async ()=>{
+    return useQuery<AccountInfo>({queryKey:["accountInfo"], queryFn:async ()=>{
 
            return await apiGetAccountInfo()
     }})

@@ -26,6 +26,7 @@ createRoot(document.getElementById("root")!).render(
                 <Route path='today' element={<TodayOverview ></TodayOverview>}></Route>
                 <Route path='thisweek' element={<WeekOverview ></WeekOverview>}></Route>
                 <Route path='/' element={<HomeDashboard ></HomeDashboard>}></Route>
+                <Route path='/login' element={<HomeDashboard ></HomeDashboard>}></Route>
                  <Route path="/about" element={<About />} />
             </Route>
                

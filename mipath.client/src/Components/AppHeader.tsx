@@ -3,7 +3,7 @@ import AppIcon from './AppIcon';
 import AccountButton from './AccountButton';
 import ThemeSwitch from './ThemeSwitch';
 import { Box, Breadcrumbs, Button, Link, Popover, Typography } from '@mui/material';
-import { Link as RouterLink, type Location, } from 'react-router';
+import { Link as RouterLink, useNavigate, type Location, } from 'react-router';
 import HomeIcon from "@mui/icons-material/Home"
 import DarkModeIcon from "@mui/icons-material/DarkMode";       // Moon / Dark Mode
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";   // Project / Folder
@@ -26,6 +26,8 @@ import { useProject } from '../hooks/useProject';
 import { useSnackbar } from './SnackbarContext';
 import { useAccountInfo } from '../hooks/useAccountInfo';
 import { getNameInitials } from '../services/utils';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
+import { ColoredBox } from './CompactsTasksPreview';
 export interface AppHeaderProps {
     title: string;
     subtitle?: string;
@@ -131,7 +133,8 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
     const {data:accountInfo, isLoading:isLoadingAccountInfo, error: errorAccountInfo} = useAccountInfo();
     const [isAccountPopoverOpen, setIsAccountPopoverOpen] = useState<boolean>(false)
     const {showSnackbar} = useSnackbar()
-
+    const navigate = useNavigate()
+    const queryClient = useQueryClient()
     const breadcrumbRef = useRef(null);
     useEffect(()=>{
 
@@ -244,9 +247,24 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
     }, [locationInfo])
 
     const handleLoginClick = ()=>{
-      
+      handleAccountPopoverClose()
       if(onGoogleLogin) onGoogleLogin();
     }
+    const handleAccountPopoverClose = ()=>{
+        setIsAccountPopoverOpen(false)
+        setAnchorEl(null)
+    }
+    const handleLogoutClick = ()=>{
+        handleAccountPopoverClose()
+        logout()
+    }
+    function logout() {
+        localStorage.removeItem("jwt");
+       //queryClient.invalidateQueries({queryKey:["accountInfo"]})
+        queryClient.clear()
+          navigate(`/login`, {state :{pageType:"home"} as LocationState})
+  
+        }
     const hndleSearchInputKeyDown =  (e: React.KeyboardEvent<HTMLInputElement>) => {
           if (e.key === "Enter") {
             showSnackbar("search not implemented", "warning")
@@ -303,10 +321,8 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                 <div className="flex flex-row gap-4  items-center">
                     <ThemeSwitch className="hidden sm:block" onClick={onDarkToggle} isDark={isDark} ></ThemeSwitch>
                     <AccountButton userName={accountInfo?.name} accountInitials={getNameInitials(accountInfo?.name)} onClick={(e) => {setAnchorEl(e.currentTarget); setIsAccountPopoverOpen(!isAccountPopoverOpen) }}></AccountButton>
-
-                </div>
-                
-                 <Popover color="red" 
+                      <Popover color="red" 
+                      onClose={handleAccountPopoverClose}
                    slotProps={{paper:{
                     
                           sx: {
@@ -327,20 +343,31 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                   
                   anchorEl={anchorEl}
                   anchorOrigin={{
-                    vertical: 'center',
-                    horizontal: 'right',
+                    vertical: 'bottom',
+                    horizontal: 'center',
                   }} transformOrigin={{
-                    vertical: 'center',
-                    horizontal: 'left',
+                    vertical: 'top',
+                    horizontal: 'center',
                   }}
                 >
                   
-                <Box>
-                    <Button onClick={handleLoginClick}>Login</Button>
-                    <Button>Logout</Button>
-                </Box>
+                <ColoredBox sx={{marginTop:"8px"}} >
+                <div className='flex flex-col items-stretch w-40 gap-2 p-4'>
+                    
+                    <div className='text-bold flex flex-col items-stretch'> 
+                        
+                        {accountInfo?.name}
+                    </div>
+                    {accountInfo?.isGuest&& <Button onClick={handleLoginClick}>Login</Button>}
+                    {accountInfo?.name&&<Button  onClick={handleLogoutClick}>Logout</Button>}
+                </div>
+                   
+                </ColoredBox>
                   </Popover>
 
+                </div>
+                
+                
 
             </div>
         </header>

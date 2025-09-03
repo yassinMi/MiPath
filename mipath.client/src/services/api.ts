@@ -157,9 +157,9 @@ export async function apiGetProjectProgress(projectId: number):Promise<ProjectPr
     return await res.json();
 }
 
-export async function apiGetAccountInfo():Promise<AccountInfo|undefined>{
+export async function apiGetAccountInfo():Promise<AccountInfo>{
     const token = localStorage.getItem("jwt"); 
-    if(!token) return undefined;
+    if(!token) return {isGuest:true};
     var res= await fetch(`/api/account/me`, {
         method: 'GET',
         headers: {

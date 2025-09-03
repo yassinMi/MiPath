@@ -11,7 +11,7 @@ import ArrowRight from '@mui/icons-material/ChevronRight';
 import { useAccountInfo } from '../hooks/useAccountInfo';
 import LoginCard from '../Components/LoginCard';
 import { useSnackbar } from '../Components/SnackbarContext';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
 export const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
   color: theme.palette.getContrastText(purple[500]),
   backgroundColor: 'var(--color-gray-900)',
@@ -34,15 +34,23 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({  }) => {
   //useProjects
   const {data:accountInfo, isLoading:isLoadingAccountInfo, error: errorAccountInfo} = useAccountInfo();
   
-  const {data: projects, error:errorProjects, isLoading:isLoadingProjects, refetch:refetchProjects} =  userProjects({enabled:!isLoadingAccountInfo&&!errorAccountInfo});
-  const {data: ugentTasks, error:errorUrgentTasks, isLoading:isLoadingUrgentTasks, refetch:refetcUrgentTasksh} =  userProjects({enabled:!isLoadingAccountInfo&&!errorAccountInfo});
+  const {data: projects, error:errorProjects, isLoading:isLoadingProjects, refetch:refetchProjects} =  userProjects({enabled:!isLoadingAccountInfo&&!errorAccountInfo&&!accountInfo?.isGuest});
+  const {data: ugentTasks, error:errorUrgentTasks, isLoading:isLoadingUrgentTasks, refetch:refetcUrgentTasksh} =  userProjects({enabled:!isLoadingAccountInfo&&!errorAccountInfo&&!accountInfo?.isGuest});
   const {showSnackbar} = useSnackbar()
+  const queryClient = useQueryClient();
   function loginWithGoogle() {
-    const popup = window.open(
-      "https://localhost:50272/api/auth/google-login",
-      "googleLogin",
-      "width=500,height=600"
-    );
+      const width = 500;
+  const height = 600;
+
+  const left = window.screenX + (window.outerWidth - width) / 2;
+  const top = window.screenY + (window.outerHeight - height) / 2;
+
+  const popup = window.open(
+    "https://localhost:50272/api/auth/google-login",
+    "googleLogin",
+    `width=${width},height=${height},left=${left},top=${top},resizable,scrollbars`
+  );
+
 
     window.addEventListener("message", function handler(event) {
       if (event.origin !== "https://localhost:50272") {
@@ -54,7 +62,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({  }) => {
         localStorage.setItem("jwt", token);
         window.removeEventListener("message", handler);
         popup?.close();
-        new QueryClient().invalidateQueries({queryKey: ["accountInfo"]})
+        queryClient.invalidateQueries({queryKey: ["accountInfo"]})
         showSnackbar("Login success", "success")
       }
     });
@@ -141,7 +149,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({  }) => {
                
                </div>
                :null}
-              {!accountInfo?<><LoginCard onGoogleLogin={loginWithGoogle}></LoginCard></>:null}
+              {accountInfo?.isGuest?<div className='flex flex-col flex-1 items-center justify-center'><LoginCard onGoogleLogin={loginWithGoogle}></LoginCard></div>:null}
           
     
              

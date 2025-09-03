@@ -10,7 +10,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Outlet, Route, Routes } from 'react-router-dom';
 import { SnackbarContent } from '@mui/material';
 import { SnackbarProvider, useSnackbar } from './Components/SnackbarContext';
-import { QueryClient } from '@tanstack/react-query';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
 
 interface Forecast {
     date: string;
@@ -24,6 +24,7 @@ function App() {
     const [darkMode, setDarkMode] = useState(prefersDark);
      const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
      const {showSnackbar} = useSnackbar()
+     const queryClient = useQueryClient()
     const { mode, setMode } = useColorScheme();
     if(!mode){
         setMode("system")
@@ -56,7 +57,7 @@ function App() {
         localStorage.setItem("jwt", token);
         window.removeEventListener("message", handler);
         popup?.close();
-        new QueryClient().invalidateQueries({queryKey: ["accountInfo"]})
+        queryClient.invalidateQueries({queryKey: ["accountInfo"]})
         showSnackbar("Login success", "success")
       }
     });
