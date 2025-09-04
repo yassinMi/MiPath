@@ -26,7 +26,7 @@ namespace MiPath.Server.Api.Controllers
         public ChallengeResult Login()
         {
             logger.LogInformation("login request");
-            var redirectUrl = Url.Action("GoogleResponse", "Auth");
+            var redirectUrl = Url.Action("GoogleResponse", "Auth", null, "https");
             logger.LogInformation($"redirecting to {redirectUrl}");
             var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
