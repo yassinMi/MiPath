@@ -14,6 +14,8 @@ import ProjectOverview from './Pages/ProjectOverview.tsx'
 import ProjectTasks from './Pages/ProjectTasks.tsx'
 import HomeDashboard from './Pages/HomeDashboard.tsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import Privacy from './Pages/Privacy.tsx'
+import Terms from './Pages/Terms.tsx'
 createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <QueryClientProvider client={new QueryClient()}>
@@ -27,7 +29,9 @@ createRoot(document.getElementById("root")!).render(
                 <Route path='thisweek' element={<WeekOverview ></WeekOverview>}></Route>
                 <Route path='/' element={<HomeDashboard ></HomeDashboard>}></Route>
                 <Route path='/login' element={<HomeDashboard ></HomeDashboard>}></Route>
-                 <Route path="/about" element={<About />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/privacy" element={<Privacy />} />
             </Route>
                
             </Routes>
