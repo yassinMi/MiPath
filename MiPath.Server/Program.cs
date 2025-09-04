@@ -71,7 +71,6 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
             {
                 options.ClientId = builder.Configuration["MPGoogle:ClientId"];
                 options.ClientSecret = builder.Configuration["MPGoogle:ClientSecret"];
-                options.CallbackPath = "/api/auth/signin-google";
                 
                 // These events allow you to intercept the token after Google login
                 options.Events.OnCreatingTicket = ctx =>
