@@ -112,21 +112,7 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
                 //add initial data for demonstration - ai generated file
                 await MiPath.Server.Infrastructure.SeedData.SeedDatabaseAsync(app.Services);
             }
-            app.Use(async (c, next) =>
-            {
-                await next();
-
-                if (c.Response.Headers.ContainsKey("Location"))
-                {
-                    var location = c.Response.Headers["Location"];
-                    if (!location.Any(c => c.Contains("redirect_uri=https")))
-                    {
-                        var newLocation = location.Select(c =>
-                        c.Replace("redirect_uri=http", "redirect_uri=https"));
-                        c.Response.Headers["Location"] = new StringValues(newLocation.ToArray());
-                    }
-                }
-            });
+           
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseDefaultFiles();
