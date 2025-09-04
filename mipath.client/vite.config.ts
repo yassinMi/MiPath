@@ -54,9 +54,11 @@ export default defineConfig({
             '/api': {
                 target,
                 changeOrigin: true,
-                secure: false
+                secure: false,
             }
         },
+        
+      
         port: parseInt(env.DEV_SERVER_PORT || '50272'),
         https: {
             key: fs.readFileSync(keyFilePath),

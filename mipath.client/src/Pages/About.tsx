@@ -2,12 +2,10 @@ import { Link } from "react-router-dom";
 
 function About() {
   const features = [
-    "Login with email",
     "Create/Delete projects",
     "Create/Delete tasks",
-    'View "This Week" tasks summary',
+    "Mark tasks as ToDo/InProgress/Done",
     'View "Today" tasks summary',
-    "Filter projects and tasks by custom attributes",
   ];
 
   return (
@@ -28,6 +26,18 @@ function About() {
           className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
         >
           &larr; Back to app
+        </Link>
+         <Link
+          to="/terms"
+          className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+        >
+          Terms
+        </Link>
+         <Link
+          to="/privacy"
+          className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+        >
+          Privacy
         </Link>
 
         <a

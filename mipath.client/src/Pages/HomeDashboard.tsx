@@ -57,7 +57,6 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({  }) => {
 
   if (event.origin !== expectedOrigin) {
     console.warn("unexpected origin:", event.origin);
-    return;
   }
 
 

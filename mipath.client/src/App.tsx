@@ -59,7 +59,6 @@ function App() {
 
   if (event.origin !== expectedOrigin) {
     console.warn("unexpected origin:", event.origin);
-    return;
   }
 
       const { token } = event.data;
