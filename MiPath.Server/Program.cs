@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using MiPath.Server.Api;
 using MiPath.Server.Application.DependencyInjection;
@@ -70,7 +71,8 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
             {
                 options.ClientId = builder.Configuration["MPGoogle:ClientId"];
                 options.ClientSecret = builder.Configuration["MPGoogle:ClientSecret"];
-
+                options.CallbackPath = "/api/auth/signin-google";
+                
                 // These events allow you to intercept the token after Google login
                 options.Events.OnCreatingTicket = ctx =>
                 {
@@ -110,7 +112,21 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
                 //add initial data for demonstration - ai generated file
                 await MiPath.Server.Infrastructure.SeedData.SeedDatabaseAsync(app.Services);
             }
+            app.Use(async (c, next) =>
+            {
+                await next();
 
+                if (c.Response.Headers.ContainsKey("Location"))
+                {
+                    var location = c.Response.Headers["Location"];
+                    if (!location.Any(c => c.Contains("redirect_uri=https")))
+                    {
+                        var newLocation = location.Select(c =>
+                        c.Replace("redirect_uri=http", "redirect_uri=https"));
+                        c.Response.Headers["Location"] = new StringValues(newLocation.ToArray());
+                    }
+                }
+            });
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseDefaultFiles();
