@@ -43,6 +43,9 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
+            builder.Logging.AddDebug();
             builder.Services.AddSwaggerGen(c =>
             {
                 c.SchemaFilter<TaskFieldsSchemaFilter>();

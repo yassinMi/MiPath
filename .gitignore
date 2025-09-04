@@ -1,4 +1,5 @@
 /data.mi/*
+.env.staging.secrets
 
 *.yass
 *.yass.*
