@@ -12,6 +12,7 @@ import { useAccountInfo } from '../hooks/useAccountInfo';
 import LoginCard from '../Components/LoginCard';
 import { useSnackbar } from '../Components/SnackbarContext';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
+import Clock from '../Components/Clock';
 export const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
   color: theme.palette.getContrastText(purple[500]),
   backgroundColor: 'var(--color-gray-900)',
@@ -123,7 +124,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({  }) => {
  <div className='utils-row gap-2 row-start-2 row-end-3 col-start-1 col-end-5 lg:row-start-1 lg:row-end-4 lg:col-start-4 lg:col-end-4 flex flex-row lg:flex-col flex-shrink-0 lg:self-start  '>
                   <div className='clock-section   flex flex-col items-center gap-4  flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
                     
-                    <div className='font-thin flex-shrink-0 text-4xl'>12:54 AM</div>
+                    <Clock></Clock>
                     <Button variant="contained" className='self-stretch flex-shrink-0 font-bold' color='secondary' onClick={()=>{
                       
                     }}>Clock in</Button>
