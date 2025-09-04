@@ -135,7 +135,15 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
                 //add initial data for demonstration - ai generated file
                 await MiPath.Server.Infrastructure.SeedData.SeedDatabaseAsync(app.Services);
             }
-           
+            if (logger.IsEnabled(LogLevel.Debug))
+            {
+                logger.LogDebug("logging request UseForwardedHeaders after details is enabled");
+                app.Use(async (context, next) =>
+                {
+                    logger.LogDebug($"request: {context.Request.Scheme},{context.Request.Host},{context.Request.Path},{context.Request.QueryString}");
+                    await next();
+                });
+            }
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseDefaultFiles();
