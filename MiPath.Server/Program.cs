@@ -98,6 +98,10 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
            
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
 
             var app = builder.Build();
             var logger = app.Services.GetRequiredService<ILogger<Program>>();
