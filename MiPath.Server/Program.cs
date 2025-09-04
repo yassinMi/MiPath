@@ -39,7 +39,7 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
         });
         });
             builder.Services.AddEndpointsApiExplorer();
-
+           
 
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
@@ -100,10 +100,33 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
             builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             var app = builder.Build();
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
+            if (logger.IsEnabled(LogLevel.Debug))
+            {
+                logger.LogDebug("logging request details is enabled");
+                app.Use(async (context, next) =>
+                {
+                    logger.LogDebug($"request: {context.Request.Scheme},{context.Request.Host},{context.Request.Path},{context.Request.QueryString}");
+                    foreach (var header in context.Request.Headers)
+                    {
+                        logger.LogDebug("Header: {Key} = {Value}", header.Key, header.Value);
+                    }
+
+                    await next();
+                });
+            }
+            else
+            {
+                logger.LogInformation("logging request details is not enabled");
+            }
+            var options = new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-            });
+            };
+            options.KnownProxies.Clear();
+            options.KnownNetworks.Clear();
+
+            app.UseForwardedHeaders(options);
             using (var scope = app.Services.CreateScope())
             {
                 var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
