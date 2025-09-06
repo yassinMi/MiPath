@@ -23,7 +23,7 @@ import { useProjectPTasks } from '../hooks';
 import type { ref } from 'process';
 import { useProject } from '../hooks/useProject';
 import AddTaskForm from '../Components/AddTaskForm';
-import { apiAddTaske, apiCreateProject, apiFetchProject, apiFetchTask, apiMarkTaskAs } from '../services/api';
+import { apiAddTaske, apiCreateProject, apiFetchProject, apiFetchTask, apiMarkTaskAs, apiUpdateProjectInfo } from '../services/api';
 import type { CreateTaskCommand, MarkAs } from '../Model/Commands';
 import { truncateString } from '../services/utils';
 import { useSnackbar } from '../Components/SnackbarContext';
@@ -73,11 +73,22 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
    /*const {data: projectPTasks, isLoading:isLoadingProjectPTasks,error: errorProjectPTasks} = useProjectPTasks(projectId,{enabled:!!projectId});*/
    const { data: project_, isLoading: isLoadingProject_, error: errorProject_, refetch:refetchProject_ } = useProject(projectId, { enabled: !!projectId });
    const [editabledDescription, setEditabledDescription] = useState<string | undefined>(project_?.description)
+   const [isEditabledDescriptionDirty, setIsEditabledDescriptionDirty] = useState<boolean>(false)
+   const [editabledName, setEditabledName] = useState<string | undefined>(project_?.name)
+   const [isEditingName, setIsEditingName] = useState<boolean>(false)
+
 
    useEffect(()=>{
+     
 
-      if(project_)
+   }, [editabledDescription,project_])
+   useEffect(()=>{
+
+      if(project_){
       setEditabledDescription( project_?.description)
+      setEditabledName( project_?.name)
+
+      }
    },[project_])
    const queryClient = useQueryClient();
    const handleAddTaskModalOpen = () => {
@@ -177,11 +188,37 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
       }
    }
 
+
+
+   const onDescriptionChange = (value: string)=>{
+      setEditabledDescription(value)
+     setIsEditabledDescriptionDirty(true)
+   }
+   const onSaveDescriptionClick = async()=>{
+      if(!projectId) throw new Error("no project id")
+      await apiUpdateProjectInfo({id:Number(projectId)!, description:editabledDescription??"",name:project_?.name??"-"})
+      queryClient.invalidateQueries({queryKey:["project",projectId]})
+      showSnackbar("Updated project description", "success")
+      setIsEditabledDescriptionDirty(false)
+   }
+   const onSaveTitle = async ()=>{
+      setIsEditingName(false);
+      if(!projectId) throw new Error("no project id")
+      await apiUpdateProjectInfo({id:Number(projectId)!, description:project_?.description??"",name:editabledName??""})
+      queryClient.invalidateQueries({queryKey:["project",projectId]})
+      showSnackbar("Updated project name", "success")
+   }
+
    return (
       <div className='flex flex-1 flex-col gap-2 overflow-auto max-h-[calc(100vh-5rem)] '>
          <ControlPanelLayout className='flex-shrink-0 flex-grow-0 flex-wrap'>
             <div className='flex mx-2 mb-0 flex-row gap-1'>
-               <h1 className='text-xl font-bold'>{project_?.name}</h1>
+            {isEditingName?<input autoFocus
+      value={editabledName}
+      onChange={(e) => setEditabledName(e.target.value)}
+      onBlur={() => onSaveTitle()}
+      onKeyDown={(e) => e.key === "Enter" && onSaveTitle()}></input>:<h1 onClick={() => setIsEditingName(true)} className={(`text-xl font-bold ${!project_?.name?"italic opacity-40":""}`)}>{project_?.name? project_.name:"Untitled"}</h1> }
+               
             </div>
             <div className='flex flex-row gap-2 ml-auto'>
                <Button title="Add a task for this project" onClick={handleAddTaskModalOpen} variant='contained' className='whitespace-nowrap' color='secondary'>Add Task</Button>
@@ -327,11 +364,18 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                <div className='card-header-m'>
                   <NoteIcon fontSize='large'></NoteIcon>
                   <span>Notes</span>
+                  {isEditabledDescriptionDirty&& project_?.description!==editabledDescription&&  <div className='ml-auto' >
+ <ColorButton  variant="contained" color="success" onClick={onSaveDescriptionClick}>Save Description
+                                           </ColorButton>
+                  </div> }
+               
+                        
+                       
                </div>
                <div className='card-separator-m'></div>
                <div style={{ padding: "8px", height: "100%" }}>
 
-                  <textarea placeholder='Write notes' onChange={(e) => setEditabledDescription(e.target.value)} value={editabledDescription} className='h-full w-full outline-none resize-none'></textarea>
+                  <textarea placeholder='Write notes' onChange={(e) => onDescriptionChange(e.target.value)} value={editabledDescription} className='h-full w-full outline-none resize-none'></textarea>
                </div>
             </PaperM>
 

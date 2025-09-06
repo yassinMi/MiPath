@@ -87,7 +87,7 @@ namespace MiPath.Server.Api.Controllers
             }
         }
 
-        [HttpPost("{taskId}/udpate-due-date")]
+        [HttpPost("{taskId}/update-due-date")]
         public async Task UpdateDueDate(int taskId, [FromBody] UpdateTaskDueDateCommand value, [FromServices] UpdateTaskDueDateCommandHandler handler)
         {
             try
@@ -105,7 +105,7 @@ namespace MiPath.Server.Api.Controllers
         }
 
 
-        [HttpPost("{taskId}/udpate-planned-start")]
+        [HttpPost("{taskId}/update-planned-start")]
         public async Task UpdatePlannedStart(int taskId, [FromBody] UpdateTaskPlannedStartCommand value, [FromServices] UpdateTaskPlannedStartCommandHandler handler)
         {
             try
@@ -122,7 +122,7 @@ namespace MiPath.Server.Api.Controllers
             }
         }
 
-        [HttpPost("{taskId}/udpate-estimate-minute")]
+        [HttpPost("{taskId}/update-estimate-minute")]
         public async Task UpdateEstimateMinute(int taskId, [FromBody] UpdateTaskEstimateMinuteCommand value, [FromServices] UpdateTaskEstimateMinuteCommandHandler handler)
         {
             try
@@ -139,7 +139,7 @@ namespace MiPath.Server.Api.Controllers
             }
         }
 
-        [HttpPost("{taskId}/udpate-info")]
+        [HttpPost("{taskId}/update-info")]
         public async Task UpdateInfo(int taskId, [FromBody] UpdateTaskInfoCommand value, [FromServices] UpdateTaskInfoCommandHandler handler)
         {
             try

@@ -22,9 +22,9 @@ namespace MiPath.Server.Application.TaskManagement.Queries
         {
             if (currentUser.UserId == null) { throw new UnauthorizedAccessException("User not authenticated"); }
             
-            var today = DateTime.Today;
+            var today = DateTime.UtcNow.Date;
             var tasks = _taskRepository.GetAll()
-                .Where(t => t.Project.UserID == currentUser.UserId)
+                .Where(t => t.Project!.UserID == currentUser.UserId)
                 .Where(t => (t.DueDate.HasValue && t.DueDate.Value.Date == today) || 
                            (t.PlannedStart.HasValue && t.PlannedStart.Value.Date == today));
             

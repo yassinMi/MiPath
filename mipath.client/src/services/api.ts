@@ -1,6 +1,6 @@
 import type { AccountInfo } from "../Model/AccountInfo";
 import type { Client } from "../Model/Client";
-import type { CreateProjectCommand, CreateTaskCommand, MarkTaskAsCommand } from "../Model/Commands";
+import type { CreateProjectCommand, CreateTaskCommand, MarkTaskAsCommand, UpdateProjectEstimateValueCommand, UpdateProjectInfoCommand, UpdateTaskDueDateCommand, UpdateTaskEstimateMinuteCommand, UpdateTaskInfoCommand, UpdateTaskPlannedStartCommand } from "../Model/Commands";
 import type { ProjectProgress } from "../Model/ProjectProgress";
 import type { PTask } from "../Model/PTask";
 import { delay } from "./utils";
@@ -169,4 +169,89 @@ export async function apiGetAccountInfo():Promise<AccountInfo>{
     });
     if(!res.ok) throw new Error(`Error fetching progress: ${res.statusText}`);
     return await res.json();
+}
+
+export async function apiUpdateProjectInfo(data:UpdateProjectInfoCommand): Promise<void> {
+    const token = localStorage.getItem("jwt");
+    var res= await fetch(`/api/projects/${data.id}/updateinfo`, {
+        method: 'POST',
+        headers: {
+            "Authorization": token ? `Bearer ${token}` : "",
+            'Content-Type': 'application/json'
+        },
+       body: JSON.stringify(data)
+    });
+    if(!res.ok) throw new Error(`Error posting command: ${res.statusText}`);
+    return;
+}
+
+
+export async function apiUpdateProjectEstimateValue(data:UpdateProjectEstimateValueCommand): Promise<void> {
+    const token = localStorage.getItem("jwt");
+    var res= await fetch(`/api/projects/${data.id}/update-estimate`, {
+        method: 'POST',
+        headers: {
+            "Authorization": token ? `Bearer ${token}` : "",
+            'Content-Type': 'application/json'
+        },
+       body: JSON.stringify(data)
+    });
+    if(!res.ok) throw new Error(`Error posting command: ${res.statusText}`);
+    return;
+}
+
+
+export async function apiUpdateTaskEstimateMinute(data:UpdateTaskEstimateMinuteCommand): Promise<void> {
+    const token = localStorage.getItem("jwt");
+    var res= await fetch(`/api/tasks/${data.id}/update-estimate-minute`, {
+        method: 'POST',
+        headers: {
+            "Authorization": token ? `Bearer ${token}` : "",
+            'Content-Type': 'application/json'
+        },
+       body: JSON.stringify(data)
+    });
+    if(!res.ok) throw new Error(`Error posting command: ${res.statusText}`);
+    return;
+}
+
+export async function apiUpdateTaskPlannedStart(data:UpdateTaskPlannedStartCommand): Promise<void> {
+    const token = localStorage.getItem("jwt");
+    var res= await fetch(`/api/tasks/${data.id}/update-planned-start`, {
+        method: 'POST',
+        headers: {
+            "Authorization": token ? `Bearer ${token}` : "",
+            'Content-Type': 'application/json'
+        },
+       body: JSON.stringify(data)
+    });
+    if(!res.ok) throw new Error(`Error posting command: ${res.statusText}`);
+    return;
+}
+
+export async function apiUpdateTaskDueDate(data:UpdateTaskDueDateCommand): Promise<void> {
+    const token = localStorage.getItem("jwt");
+    var res= await fetch(`/api/tasks/${data.id}/update-due-date`, {
+        method: 'POST',
+        headers: {
+            "Authorization": token ? `Bearer ${token}` : "",
+            'Content-Type': 'application/json'
+        },
+       body: JSON.stringify(data)
+    });
+    if(!res.ok) throw new Error(`Error posting command: ${res.statusText}`);
+    return;
+}
+export async function apiUpdateTaskInfo(data:UpdateTaskInfoCommand): Promise<void> {
+    const token = localStorage.getItem("jwt");
+    var res= await fetch(`/api/tasks/${data.id}/update-info`, {
+        method: 'POST',
+        headers: {
+            "Authorization": token ? `Bearer ${token}` : "",
+            'Content-Type': 'application/json'
+        },
+       body: JSON.stringify(data)
+    });
+    if(!res.ok) throw new Error(`Error posting command: ${res.statusText}`);
+    return;
 }

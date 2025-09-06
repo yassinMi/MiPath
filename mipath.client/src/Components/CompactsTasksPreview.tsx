@@ -13,7 +13,18 @@ import CheckIcon from '@mui/icons-material/CheckCircle';
 import UndoIcon from '@mui/icons-material/Undo'; 
 import BackIcon from '@mui/icons-material/ArrowBack';
 import PauseIcon from '@mui/icons-material/Pause';
+import { CompactTaskItem } from "./CompactTaskItem";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs, { Dayjs } from "dayjs";
+import { DateTimePicker } from "@mui/x-date-pickers";
+import { apiUpdateTaskDueDate, apiUpdateTaskPlannedStart } from "../services/api";
+import { useSnackbar } from "./SnackbarContext";
+import { useQueryClient } from "@tanstack/react-query";
+import utc from "dayjs/plugin/utc";
 
+dayjs.extend(utc); 
 export const ColoredBox = styled(Box)(({theme})=>({
 
   
@@ -31,36 +42,7 @@ export const ColoredBox = styled(Box)(({theme})=>({
 }));;
 
 
-type CompactTaskItemProps  ={
-   task:PTask
-}& React.HTMLAttributes<HTMLDivElement>
-export const CompactTaskItem: React.FC<CompactTaskItemProps> = ({task:t, onClick})=>{
 
-
-    let idStr = "task-compact-"+t.id.toString()
-
-    
-    const handlePopoverClose = ()=>{
-
-    }
-
-
-    return (
-<>
-                <div onClick={onClick} key={t.id} className="flex flex-row items-center group gap-1 p-2 hover:bg-gray-200 dark:hover:bg-gray-800  rounded cursor-pointer">
-                {t.status=="Done"?<CheckedIcon fontSize="small" color="success"></CheckedIcon>:
-                t.status=="InProgress"?<UncheckedIcon fontSize="small" sx={{color:"orange"}}></UncheckedIcon>
-                :t.status=="Canceled"?<UncheckedIcon fontSize="small" sx={{color:"gray"}}></UncheckedIcon>
-                :<UncheckedIcon fontSize="small" sx={{color:"gray"}}></UncheckedIcon>
-            }
-                <div title={t.title} className="truncate flex-1">{t.title}</div>
-                <CevronRightIcon className="opacity-0 group-hover:opacity-100" fontSize="small" ></CevronRightIcon>
-
-                </div>
-               
-                </>
-    )
-}
 
 const tasks = ['Research competitors','Wireframe homepage','Review color palette','Initial scoping','Draft layout','Implement dark mode','Responsive design','Data cleaning','Create sample charts','PDF export setup','Vendor contract review','Shipment data analysis']; 
 export interface CompactTasksPreviewProps {
@@ -70,18 +52,29 @@ export interface CompactTasksPreviewProps {
 }
 const CompactTasksPreview : React.FC<CompactTasksPreviewProps> = ({pTasks, onTaskStateChangeRequested})=>{
 
-
+type PopoverMode = "markas"|'set-due'|'set-planned-start'
 const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
-
-  const handlePopoverOpen = (event: React.MouseEvent<HTMLElement>, taskId: number) => {
-    setAnchorEl(event.currentTarget);
+const [popoverMode, setPopoverMode] = useState<PopoverMode>('markas')
+  const [dueDateValue, setDueDateValue] = useState<Dayjs|null>(dayjs());
+  const [plannedStartValue, setPlannedStartValue] = useState<Dayjs|null>(dayjs());
+  const queryClient = useQueryClient()
+  const {showSnackbar} = useSnackbar()
+  const handlePopoverOpen = (target: HTMLElement, taskId: number,mode: PopoverMode) => {
+    console.log("handle popover open",taskId, mode, target )
+    setAnchorEl(target);
     setSelectedTaskId(taskId)
+    setPopoverMode(mode)
+    var task = pTasks.find(t=>t.id==taskId);
+    if(!task) throw new Error("cannot find task in the list")
+    setDueDateValue(task.dueDate===undefined?null: dayjs( task.dueDate,{utc:true}))
+    setPlannedStartValue(task.plannedStart===undefined?null: dayjs( task.plannedStart, {utc:true}))
 
   };
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
 
   const handlePopoverClose = () => {
+    console.log("handle popover close")
     setAnchorEl(null);
     setSelectedTaskId(null)
   };
@@ -105,10 +98,40 @@ const handleDoneClick = ()=>{
 
       onTaskStateChangeRequested(selectedTaskId, "Done")
 }
+const onDueDateValueChangeRequest = async(date:Dayjs|null)=>{
+    date?.utc()
+    setDueDateValue(date);
+    if(!selectedTaskId) throw new Error("no task selected")
+      var task = pTasks.find(t=>t.id==selectedTaskId);
+    if(!task) throw new Error("cannot find task in the list")
+    var newDueDate = date?.toDate()??undefined
+    await apiUpdateTaskDueDate({id:selectedTaskId!,dueDate:newDueDate })
+    task.dueDate = newDueDate
+        queryClient.invalidateQueries({queryKey:["task",selectedTaskId]})
+   showSnackbar("Updated task due date", "success")
+}
+const onPlannedStartValueChangeRequest = async(date:Dayjs|null)=>{
+      date?.utc()
+
+   setPlannedStartValue(date);
+    if(!selectedTaskId) throw new Error("no task selected")
+       var task = pTasks.find(t=>t.id==selectedTaskId);
+    if(!task) throw new Error("cannot find task in the list")
+      console.log("setting date to", date)
+          var newplannedStart = date?.toDate()??undefined
+    await apiUpdateTaskPlannedStart({id:selectedTaskId!,plannedStart:newplannedStart})
+    task.plannedStart = newplannedStart
+    queryClient.invalidateQueries({queryKey:["task",selectedTaskId]})
+
+   showSnackbar(`Updated task planned Start: ${newplannedStart?.toUTCString()}`, "success")
+}
 
     return <div className="flex flex-col gap-0 p-0">
             {pTasks.map(t=>(
-                <CompactTaskItem onClick={(e)=>{handlePopoverOpen(e, t.id)}} key={t.id} task={t}></CompactTaskItem>
+                <CompactTaskItem onClick={(e)=>{handlePopoverOpen(e.currentTarget, t.id, "markas")}}
+                onSetDueDateClick={(e)=>{handlePopoverOpen(e, t.id, "set-planned-start")}}
+                onSetPlannedStartClick={(e)=>{handlePopoverOpen(e, t.id, "set-due")}}
+                 key={t.id} task={t}></CompactTaskItem>
             ))}
 
  <Popover color="red" 
@@ -140,7 +163,8 @@ const handleDoneClick = ()=>{
   }}
 >
   <ColoredBox className="overflow-clip">
-  <div className="p-1 flex items-stretch flex-col gap-2">
+  <LocalizationProvider dateAdapter={AdapterDayjs}>
+  {popoverMode=="markas"?<div className="p-1 flex items-stretch flex-col gap-2">
     <Button sx={{ textTransform: "none" }} onClick={handleTodoClick} className="flex flex-row !justify-start gap-2" color="warning">
             <BackIcon sx={{ fontSize: 16 }}></BackIcon>
 
@@ -158,6 +182,26 @@ const handleDoneClick = ()=>{
     </Button>
 
   </div>
+  :popoverMode=="set-due"?<div id="popover-with-mode" className=" p-1 flex items-stretch p-4 flex-col gap-2"> <DateTimePicker
+        label="Select due date"
+        value={dueDateValue}
+        
+        closeOnSelect ={false}
+        onChange={(newValue) => newValue&& setDueDateValue(newValue)}
+        onAccept={(newValue) => newValue&& onDueDateValueChangeRequest(newValue)}
+      /></div>  
+  :popoverMode=="set-planned-start"?<div className="p-1 flex items-stretch p-4 flex-col gap-2"><DateTimePicker
+        label="Select planned start"
+        value={plannedStartValue}
+        
+        closeOnSelect ={false}
+        onChange={(newValue) => newValue&& setPlannedStartValue(newValue)}
+        onAccept={(newValue) => newValue&& onPlannedStartValueChangeRequest(newValue)}
+
+      /></div>  
+  :null
+}
+</LocalizationProvider>
   </ColoredBox>
 
   </Popover>

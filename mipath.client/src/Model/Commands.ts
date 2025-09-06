@@ -27,7 +27,7 @@ export interface CloseProjectAsCommand {
 
 export interface UpdateProjectEstimateValueCommand {
   id: number;
-  estimateValue: number;
+  estimateValue?: number;
 }
 
 
@@ -51,13 +51,31 @@ export interface MarkTaskAsCommand {
   intent: MarkAs;
 }
 
-export interface UpdateTaskDescriptionCommand {
+export interface UpdateTaskInfoCommand {
   id: number;
   title: string;
   description: string;
-  estimateMinute?: number;
+}
+
+export interface UpdateTaskDueDateCommand {
+  id: number;
   dueDate?: Date;
+}
+
+export interface UpdateTaskPlannedStartCommand {
+  id: number;
   plannedStart?: Date;
+}
+
+export interface UpdateTaskEstimateMinuteCommand {
+  id: number;
+  estimateMinute?: number;
+}
+
+export interface UpdateProjectInfoCommand {
+  id: number;
+  name: string;
+  description: string;
 }
 
 
