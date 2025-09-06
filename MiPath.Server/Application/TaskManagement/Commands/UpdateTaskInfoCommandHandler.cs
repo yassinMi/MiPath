@@ -2,18 +2,18 @@
 
 namespace MiPath.Server.Application.TaskManagement.Commands
 {
-    public class UpdateTaskDescriptionCommandHandler : ICommandHandler<UpdateTaskDescriptionCommand>
+    public class UpdateTaskInfoCommandHandler : ICommandHandler<UpdateTaskInfoCommand>
     {
         private readonly ITaskRepository taskRepository;
         private readonly ICurrentUserService currentUser;
 
-        public UpdateTaskDescriptionCommandHandler(ITaskRepository taskRepository, ICurrentUserService currentUser)
+        public UpdateTaskInfoCommandHandler(ITaskRepository taskRepository, ICurrentUserService currentUser)
         {
             this.taskRepository = taskRepository;
             this.currentUser = currentUser;
         }
 
-        public async Task Handle(UpdateTaskDescriptionCommand value, CancellationToken cancellationToken)
+        public async Task Handle(UpdateTaskInfoCommand value, CancellationToken cancellationToken)
         {
             var task = await taskRepository.GetById(value.ID);
             if (task == null)

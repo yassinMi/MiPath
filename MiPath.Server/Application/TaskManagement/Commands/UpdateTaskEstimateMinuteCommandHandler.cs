@@ -2,18 +2,18 @@
 
 namespace MiPath.Server.Application.TaskManagement.Commands
 {
-    public class UpdateTaskEstimateCommandHandler : ICommandHandler<UpdateTaskEstimateCommand>
+    public class UpdateTaskEstimateMinuteCommandHandler : ICommandHandler<UpdateTaskEstimateMinuteCommand>
     {
         private readonly ITaskRepository taskRepository;
         private readonly ICurrentUserService currentUser;
 
-        public UpdateTaskEstimateCommandHandler(ITaskRepository taskRepository, ICurrentUserService currentUser)
+        public UpdateTaskEstimateMinuteCommandHandler(ITaskRepository taskRepository, ICurrentUserService currentUser)
         {
             this.taskRepository = taskRepository;
             this.currentUser = currentUser;
         }
 
-        public async Task Handle(UpdateTaskEstimateCommand value, CancellationToken cancellationToken)
+        public async Task Handle(UpdateTaskEstimateMinuteCommand value, CancellationToken cancellationToken)
         {
             var task = await taskRepository.GetById(value.ID);
             if (task == null)

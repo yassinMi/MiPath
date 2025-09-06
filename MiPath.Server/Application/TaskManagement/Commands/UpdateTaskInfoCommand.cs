@@ -1,6 +1,6 @@
 ﻿namespace MiPath.Server.Application.TaskManagement.Commands
 {
-    public class UpdateTaskDescriptionCommand
+    public class UpdateTaskInfoCommand
     {
         public int ID { get; set; }
         public required string Title { get; set; }

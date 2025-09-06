@@ -84,7 +84,7 @@ namespace MiPath.Server.Api.Controllers
         [Route("{projectId}/closeas")]
         public async Task CloseAs(int projectId, [FromBody] CloseProjectAsCommand value, [FromServices] CloseProjectAsCommandHandler handler)
         {
-            await handler.Handle(value, CancellationToken.None);
+            await handler.Handle(value, CancellationToken.None);//todo catch unauthorized
         }
 
         [HttpPost]
@@ -107,8 +107,33 @@ namespace MiPath.Server.Api.Controllers
             {
                 return NotFound();
             }
-          
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+
         }
+
+        [HttpPost]
+        [Route("{projectId}/update-estimate")]
+        public async Task<IActionResult> UpdateEstimate(int projectId, [FromBody] UpdateProjectEstimateValueCommand value, [FromServices] UpdateProjectEstimateValueCommandHandler handler)
+        {
+            try
+            {
+                await handler.Handle(value, CancellationToken.None);
+                return Ok();
+            }
+            catch (EntityNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return Unauthorized();
+            }
+
+        }
+
 
 
 

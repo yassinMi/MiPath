@@ -87,6 +87,74 @@ namespace MiPath.Server.Api.Controllers
             }
         }
 
+        [HttpPost("{taskId}/udpate-due-date")]
+        public async Task UpdateDueDate(int taskId, [FromBody] UpdateTaskDueDateCommand value, [FromServices] UpdateTaskDueDateCommandHandler handler)
+        {
+            try
+            {
+                await handler.Handle(value, CancellationToken.None);
+            }
+            catch (EntityNotFoundException)
+            {
+                NotFound();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Unauthorized();
+            }
+        }
+
+
+        [HttpPost("{taskId}/udpate-planned-start")]
+        public async Task UpdatePlannedStart(int taskId, [FromBody] UpdateTaskPlannedStartCommand value, [FromServices] UpdateTaskPlannedStartCommandHandler handler)
+        {
+            try
+            {
+                await handler.Handle(value, CancellationToken.None);
+            }
+            catch (EntityNotFoundException)
+            {
+                NotFound();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Unauthorized();
+            }
+        }
+
+        [HttpPost("{taskId}/udpate-estimate-minute")]
+        public async Task UpdateEstimateMinute(int taskId, [FromBody] UpdateTaskEstimateMinuteCommand value, [FromServices] UpdateTaskEstimateMinuteCommandHandler handler)
+        {
+            try
+            {
+                await handler.Handle(value, CancellationToken.None);
+            }
+            catch (EntityNotFoundException)
+            {
+                NotFound();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Unauthorized();
+            }
+        }
+
+        [HttpPost("{taskId}/udpate-info")]
+        public async Task UpdateInfo(int taskId, [FromBody] UpdateTaskInfoCommand value, [FromServices] UpdateTaskInfoCommandHandler handler)
+        {
+            try
+            {
+                await handler.Handle(value, CancellationToken.None);
+            }
+            catch (EntityNotFoundException)
+            {
+                NotFound();
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Unauthorized();
+            }
+        }
 
         [HttpDelete("{taskId}")]
         public async Task Delete(int taskId, [FromServices] DeleteTaskCommandHandler handler)
