@@ -1,21 +1,19 @@
-﻿using MiPath.Server.Application.Interfaces;
-using MiPath.Server.Application.PorojectManagement.Commands;
-using MiPath.Server.Infrastructure;
+using MiPath.Server.Application.Interfaces;
 
 namespace MiPath.Server.Application.PorojectManagement.Commands
 {
-    public class UpdateProjectInfoCommandHandler : ICommandHandler<UpdateProjectInfoCommand>
+    public class UpdateProjectEstimateValueCommandHandler : ICommandHandler<UpdateProjectEstimateValueCommand>
     {
         private readonly IProjectRepository projectRepository;
         private readonly ICurrentUserService currentUser;
 
-        public UpdateProjectInfoCommandHandler(IProjectRepository projectRepository, ICurrentUserService currentUser)
+        public UpdateProjectEstimateValueCommandHandler(IProjectRepository projectRepository, ICurrentUserService currentUser)
         {
             this.projectRepository = projectRepository;
             this.currentUser = currentUser;
         }
 
-        public async Task Handle(UpdateProjectInfoCommand value, CancellationToken ct)
+        public async Task Handle(UpdateProjectEstimateValueCommand value, CancellationToken cancellationToken)
         {
             var project = await projectRepository.GetByIdAsync(value.ID);
             if (project == null)
@@ -24,11 +22,8 @@ namespace MiPath.Server.Application.PorojectManagement.Commands
             }
             if (currentUser.UserId == null) { throw new UnauthorizedAccessException("User not authenticated"); }
             if (project.UserID != currentUser.UserId) { throw new InvalidOperationException("project not owned by the current user"); }
-           
-                project.Name = value.Name;
-                project.Description = value.Description;
-           
 
+            project.EstimateValue = value.EstimateValue;
             await projectRepository.UpdateAsync(project);
         }
     }

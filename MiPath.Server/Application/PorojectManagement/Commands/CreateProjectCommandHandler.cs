@@ -22,7 +22,8 @@ namespace MiPath.Server.Application.PorojectManagement.Commands
         public async Task<int> Handle(CreateProjectCommand value, CancellationToken cancellationToken)
         {
             Client? client = null;
-            var userId = currentUser.UserId ?? throw new InvalidOperationException("no user");
+            if (currentUser.UserId == null) { throw new UnauthorizedAccessException("User not authenticated"); }
+            var userId = currentUser.UserId.Value;
             if (value.ClientID == null && string.IsNullOrWhiteSpace(value.NewClientName))
             {
                 throw new ArgumentException("ClientID or ClientName must be provided");
@@ -38,7 +39,7 @@ namespace MiPath.Server.Application.PorojectManagement.Commands
             }
             else if (value.NewClientName != null)
             {
-                if (currentUser.UserId == null) throw new Exception("no user");
+                if (currentUser.UserId == null) { throw new UnauthorizedAccessException("User not authenticated"); }
                 client = new Domain.ProjectManagement.Client() { UserID = currentUser.UserId.Value, Name = value.NewClientName };
             }
             var p = new Project() {UserID=userId, Name = value.Name, Client = client!, Description = value.Description ?? "" };

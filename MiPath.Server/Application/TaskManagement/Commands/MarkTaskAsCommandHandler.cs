@@ -20,6 +20,7 @@ namespace MiPath.Server.Application.TaskManagement.Commands
             {
                 throw new EntityNotFoundException("task",value.ID);
             }
+            if (currentUser.UserId == null) { throw new UnauthorizedAccessException("User not authenticated"); }
             var existsAndAllowed = taskRepository.GetAll().Any(t => t.ID == value.ID && t.Project!.UserID == currentUser.UserId);
             if (!existsAndAllowed) { throw new InvalidOperationException("task not found or not owned by the current user"); }
 

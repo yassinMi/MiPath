@@ -2,18 +2,18 @@
 
 namespace MiPath.Server.Application.TaskManagement.Commands
 {
-    public class UpdateTaskDescriptionCommandHandler : ICommandHandler<UpdateTaskDescriptionCommand>
+    public class UpdateTaskDueDateCommandHandler : ICommandHandler<UpdateTaskDueDateCommand>
     {
         private readonly ITaskRepository taskRepository;
         private readonly ICurrentUserService currentUser;
 
-        public UpdateTaskDescriptionCommandHandler(ITaskRepository taskRepository, ICurrentUserService currentUser)
+        public UpdateTaskDueDateCommandHandler(ITaskRepository taskRepository, ICurrentUserService currentUser)
         {
             this.taskRepository = taskRepository;
             this.currentUser = currentUser;
         }
 
-        public async Task Handle(UpdateTaskDescriptionCommand value, CancellationToken cancellationToken)
+        public async Task Handle(UpdateTaskDueDateCommand value, CancellationToken cancellationToken)
         {
             var task = await taskRepository.GetById(value.ID);
             if (task == null)
@@ -24,8 +24,7 @@ namespace MiPath.Server.Application.TaskManagement.Commands
             var existsAndAllowed = taskRepository.GetAll().Any(t => t.ID == value.ID && t.Project!.UserID == currentUser.UserId);
             if (!existsAndAllowed) { throw new InvalidOperationException("task not found or not owned by the current user"); }
 
-            task.Title = value.Title;
-            task.Description = value.Description;
+            task.DueDate = value.DueDate;
             await taskRepository.UpdateAsync(task);
         }
     }

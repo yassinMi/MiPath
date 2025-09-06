@@ -92,7 +92,6 @@ namespace MiPath.Server.Infrastructure
         private static async Task SeedClientsAndProjectsAsync(IServiceProvider scope)
         {
             var projectCommandHandler = (CreateProjectCommandHandler)scope.GetRequiredService<CreateProjectCommandHandler>();
-            var updateEstimateHandler = scope.GetRequiredService<UpdateProjectInfoCommandHandler>();
                          // Create projects with clients - varied names, descriptions, and statuses
              var projectCommands = new[]
              {
@@ -164,7 +163,7 @@ namespace MiPath.Server.Infrastructure
 
         private static async Task SetProjectEstimatesAsync(IServiceProvider scope, List<int> projectIds)
         {
-            var updateEstimateHandler = scope.GetRequiredService<UpdateProjectInfoCommandHandler>();
+            var updateEstimateHandler = scope.GetRequiredService<UpdateProjectEstimateValueCommandHandler>();
             
             // Realistic project estimates - some projects have estimates, others don't (null)
             var estimates = new[]
@@ -182,7 +181,7 @@ namespace MiPath.Server.Infrastructure
                 // Only set estimates for projects that have them (not null)
                 if (estimate.HasValue)
                 {
-                    var updateCommand = new UpdateProjectInfoCommand
+                    var updateCommand = new UpdateProjectEstimateValueCommand
                     {
                         ID = projectId,
                         EstimateValue = estimate.Value,
@@ -235,8 +234,8 @@ namespace MiPath.Server.Infrastructure
                  "E-commerce Redesign" => new List<(CreateTaskCommand, PTaskStatus)>
                  {
                      (new() { Title = "UI/UX Research", Description = "User research and wireframes", EstimateMinute = 480 }, PTaskStatus.Done),
-                     (new() { Title = "Frontend Dev", Description = "React.js with TypeScript implementation", EstimateMinute = 1200 }, PTaskStatus.InProgress),
-                     (new() { Title = "Backend APIs", Description = "RESTful APIs for products, users, orders", EstimateMinute = 960 }, PTaskStatus.ToDo),
+                     (new() { Title = "Frontend Dev", Description = "React.js with TypeScript implementation", EstimateMinute = 1200, DueDate = DateTime.Today }, PTaskStatus.InProgress),
+                     (new() { Title = "Backend APIs", Description = "RESTful APIs for products, users, orders", EstimateMinute = 960, PlannedStart = DateTime.Today }, PTaskStatus.ToDo),
                      (new() { Title = "Database Design", Description = "Optimized schema for products, users, orders, inventory", EstimateMinute = 360 }, PTaskStatus.Done),
                      (new() { Title = "Payment Integration", Description = "Stripe and PayPal integration with error handling", EstimateMinute = 600 }, PTaskStatus.ToDo)
                  },
@@ -244,9 +243,9 @@ namespace MiPath.Server.Infrastructure
                  "Cross-Platform Fitness Tracking Mobile Application with GPS Integration" => new List<(CreateTaskCommand, PTaskStatus)>
                  {
                      (new() { Title = "Architecture Design", Description = "Overall architecture and technology selection for cross-platform development", EstimateMinute = 300 }, PTaskStatus.Done),
-                     (new() { Title = "UI/UX Design", Description = "Intuitive and engaging user interface designs for fitness tracking features", EstimateMinute = 600 }, PTaskStatus.InProgress),
+                     (new() { Title = "UI/UX Design", Description = "Intuitive and engaging user interface designs for fitness tracking features", EstimateMinute = 600, DueDate = DateTime.Today }, PTaskStatus.InProgress),
                      (new() { Title = "Core Features", Description = "Workout tracking, GPS integration, user profile management", EstimateMinute = 900 }, PTaskStatus.InProgress),
-                     (new() { Title = "Backend Development", Description = "Cloud backend for user data synchronization and social features", EstimateMinute = 720 }, PTaskStatus.ToDo),
+                     (new() { Title = "Backend Development", Description = "Cloud backend for user data synchronization and social features", EstimateMinute = 720, PlannedStart = DateTime.Today }, PTaskStatus.ToDo),
                      (new() { Title = "Testing", Description = "Test on various devices and platforms", EstimateMinute = 540 }, PTaskStatus.ToDo),
                      (new() { Title = "App Store Submission", Description = "Submit to Apple App Store and Google Play Store", EstimateMinute = 240 }, PTaskStatus.ToDo),
                      (new() { Title = "Performance Optimization", Description = "Optimize app performance and battery usage", EstimateMinute = 420 }, PTaskStatus.ToDo)
@@ -263,9 +262,9 @@ namespace MiPath.Server.Infrastructure
                  {
                      (new() { Title = "API Design", Description = "Endpoints, data models, OpenAPI documentation", EstimateMinute = 360 }, PTaskStatus.Done),
                      (new() { Title = "Authentication", Description = "JWT-based auth with role-based authorization", EstimateMinute = 480 }, PTaskStatus.Done),
-                     (new() { Title = "Core Endpoints", Description = "Main API endpoints with error handling", EstimateMinute = 720 }, PTaskStatus.InProgress),
+                     (new() { Title = "Core Endpoints", Description = "Main API endpoints with error handling", EstimateMinute = 720, DueDate = DateTime.Today }, PTaskStatus.InProgress),
                      (new() { Title = "Security", Description = "Rate limiting, input validation, security measures", EstimateMinute = 300 }, PTaskStatus.InProgress),
-                     (new() { Title = "Testing", Description = "Unit tests, integration tests, API testing", EstimateMinute = 540 }, PTaskStatus.ToDo),
+                     (new() { Title = "Testing", Description = "Unit tests, integration tests, API testing", EstimateMinute = 540, PlannedStart = DateTime.Today }, PTaskStatus.ToDo),
                      (new() { Title = "Performance", Description = "Caching, query optimization, load testing", EstimateMinute = 420 }, PTaskStatus.ToDo),
                      (new() { Title = "Monitoring", Description = "Health checks, logging, metrics collection", EstimateMinute = 300 }, PTaskStatus.ToDo),
                      (new() { Title = "Deployment", Description = "CI/CD pipeline automation", EstimateMinute = 240 }, PTaskStatus.ToDo)
