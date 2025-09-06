@@ -13,7 +13,7 @@ const PTaskCardInKanbanBoard: React.FC<PTaskCardInKanbanBoardProps> = ({ pTask ,
         <p className="text-sm text-gray-500 dark:text-gray-500">Estimate: {pTask.estimateMinute} min</p>
       )}
       {pTask && showProjectName&& (
-        <p className="text-sm text-gray-400 dark:text-gray-600">Project: project name here - {pTask.projectId}</p>
+        <p className="text-sm text-gray-400 dark:text-gray-600">Project: project name here - {pTask.projectID}</p>
       )}
     </div>
   );

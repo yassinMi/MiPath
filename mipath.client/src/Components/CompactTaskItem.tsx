@@ -1,6 +1,7 @@
 
 import CheckedIcon from '@mui/icons-material/CheckCircle'
 import UncheckedIcon from '@mui/icons-material/CheckCircle'
+import PlayCircleIcon from '@mui/icons-material/PlayCircle'
 import CevronRightIcon from '@mui/icons-material/ChevronRight'
 import type { PTask, PTaskStatus } from "../Model/PTask";
 import { Box, Button, IconButton, Popover, styled, type IconButtonProps } from "@mui/material";
@@ -66,9 +67,9 @@ export const CompactTaskItem: React.FC<CompactTaskItemProps> = ({task:t, onClick
 <>
                 <div onClick={onClick} key={t.id} className="flex flex-row items-center group gap-1 p-2 hover:bg-gray-200 dark:hover:bg-gray-800 h-12 rounded cursor-pointer">
                 {t.status=="Done"?<CheckedIcon fontSize="small" color="success"></CheckedIcon>:
-                t.status=="InProgress"?<UncheckedIcon fontSize="small" sx={{color:"orange"}}></UncheckedIcon>
+                t.status=="InProgress"?<PlayCircleIcon fontSize="small" color='info' ></PlayCircleIcon>
                 :t.status=="Canceled"?<UncheckedIcon fontSize="small" sx={{color:"gray"}}></UncheckedIcon>
-                :<UncheckedIcon fontSize="small" sx={{color:"gray"}}></UncheckedIcon>
+                :<UncheckedIcon fontSize="small" sx={{color:"orange"}}></UncheckedIcon>
             }
                 <div title={t.title} className="truncate flex-1">{t.title}</div>
                 <div className='flex flex-row gap-1 items-center hidden group-hover:flex '>

@@ -8,7 +8,7 @@ export interface PTask {
   title: string;
   description: string;
 
-  projectId: number;
+  projectID: number;
   estimateMinute?: number;
   dueDate?: Date;
   plannedStart?: Date;

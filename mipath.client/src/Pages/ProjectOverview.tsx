@@ -183,6 +183,10 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
             };
 
          });
+         console.log("invalidating today")
+            queryClient.invalidateQueries({queryKey:["today"]})
+            await queryClient.refetchQueries({ queryKey: ["today"] });
+
       } catch (error) {
                   showSnackbar("failed to update task status: "+error, "error")
       }

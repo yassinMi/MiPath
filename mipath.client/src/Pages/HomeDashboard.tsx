@@ -13,6 +13,12 @@ import LoginCard from '../Components/LoginCard';
 import { useSnackbar } from '../Components/SnackbarContext';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import Clock from '../Components/Clock';
+import World from '../Components/DayCompact';
+import DayCompact from '../Components/DayCompact';
+import WeekCompact from '../Components/WeekCompact';
+import LocalShippingIcon  from '@mui/icons-material/LocalShipping'
+
+import { FloatingTicket } from '../Components/FloatingTicket';
 export const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
   color: theme.palette.getContrastText(purple[500]),
   backgroundColor: 'var(--color-gray-900)',
@@ -129,25 +135,40 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({  }) => {
                       
                     }}>Clock in</Button>
                   </div>
-                  <div className='hidden sm:flex kpis-section text-gray-700 h-64  flex-row lg:flex-col items-stretch gap-4  flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
-                    <div className='min-h-22 flex flex-row items-center justify-center bg-gray-100 dark:bg-gray-900'>
-                      - indicator placeholder -
-                    </div>
-                     <div className='min-h-22 flex flex-row items-center justify-center bg-gray-100 dark:bg-gray-900'>
-                       - indicator placeholder -
+                  <div className='hidden sm:flex kpis-section text-white h-64  flex-row lg:flex-col items-stretch gap-4  flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
+                    
+                    
+                      <FloatingTicket iconType='money' sub='Est. Project payout: $5000' value='$ 75 / Hr'  label='Projected earnings'></FloatingTicket>
+                      <FloatingTicket   label='Upcoming'>
+                        <div className='flex flex-row gap-4 items-center'>
+                           <div className='relative shrink-0 h-[30px] w-[30px] text-[#b039f7]'>
+                          <CircularProgress  thickness={4} size={30} className='absolute top-0 left-0' sx={{color:"#b039f7"}} variant='determinate' value={89}></CircularProgress>
+                          <div className=' h-[30px] w-[30px] flex flex-col items-center justify-center'>
+                                   <LocalShippingIcon  className=' w-[16px] h-[16px] ' sx={{color:"#b039f7", height:"16px",width:"16px"}}></LocalShippingIcon>
 
-                    </div>
-                     <div className='min-h-22 flex flex-row items-center justify-center bg-gray-100 dark:bg-gray-900'>
-                         - indicator placeholder -
-                    </div>
+                             </div>
+                        </div>
+                        <div className='text-lg font-bold'>E-commerce Redesign </div>
+                        </div>
+                       
+                      </FloatingTicket>
+                      <FloatingTicket iconType='money' sub='Up to 54$' value='$ 13.5'  label='Est earning today'></FloatingTicket>
+
                     </div>
 
                 
                </div>
            <div className='tasks-overview-row row-start-3 row-end-4 col-start-1 col-end-5 lg:col-end-4 flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
 
-             <div className="min-h-64 flex flex-con items-center justify-center">
-                 <div className='text-gray-500'>recent tasks / tasks currently working on</div>
+             <div className="min-h-64 flex flex-col items-center justify-center">
+                 <div className='text-gray-500 flex flex-col items-center w-full'>
+                 <WeekCompact></WeekCompact>
+                 </div>
+                 <div className='text-gray-500 flex flex-col items-center w-full'>
+                 <DayCompact></DayCompact>
+                 </div>
+                
+                      <FloatingTicket iconType='money' sub='Est. Project payout: $5000' value='$ 75 / Hr'  label='Projected earnings'></FloatingTicket>
               </div>
            </div>
                

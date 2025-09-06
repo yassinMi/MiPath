@@ -10,6 +10,7 @@ import { useState, type ReactElement, type ReactHTMLElement } from "react";
 
 import PlayIcon from '@mui/icons-material/PlayArrow';
 import CheckIcon from '@mui/icons-material/CheckCircle';
+import CheckIconNoCircle from '@mui/icons-material/Check';
 import UndoIcon from '@mui/icons-material/Undo'; 
 import BackIcon from '@mui/icons-material/ArrowBack';
 import PauseIcon from '@mui/icons-material/Pause';
@@ -109,6 +110,7 @@ const onDueDateValueChangeRequest = async(date:Dayjs|null)=>{
     task.dueDate = newDueDate
         queryClient.invalidateQueries({queryKey:["task",selectedTaskId]})
    showSnackbar("Updated task due date", "success")
+   queryClient.invalidateQueries({queryKey:["today"]})
 }
 const onPlannedStartValueChangeRequest = async(date:Dayjs|null)=>{
       date?.utc()
@@ -124,6 +126,8 @@ const onPlannedStartValueChangeRequest = async(date:Dayjs|null)=>{
     queryClient.invalidateQueries({queryKey:["task",selectedTaskId]})
 
    showSnackbar(`Updated task planned Start: ${newplannedStart?.toUTCString()}`, "success")
+      queryClient.invalidateQueries({queryKey:["today"]})
+
 }
 
     return <div className="flex flex-col gap-0 p-0">
@@ -176,7 +180,7 @@ const onPlannedStartValueChangeRequest = async(date:Dayjs|null)=>{
       In Progress
     </Button>
     <Button sx={{ textTransform: "none" }} onClick={handleDoneClick} className="flex flex-row !justify-start gap-2" color="success">
-            <CheckIcon sx={{ fontSize: 16 }}></CheckIcon>
+            <CheckIconNoCircle sx={{ fontSize: 16 }}></CheckIconNoCircle>
 
       Done
     </Button>

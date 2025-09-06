@@ -42,7 +42,6 @@ export async function apiFetchProjects(): Promise<any[]> {
             "Authorization": token ? `Bearer ${token}` : "",
         }
      });
-            await delay(100);
             if (!res.ok) {
                 throw new Error(`failed req: ${res.status}`);
             }
@@ -105,7 +104,6 @@ export async function apiFetchTask(taskId:number): Promise<PTask> {
 }
 export async function apiGetClients(): Promise<Client[]> {
     const token = localStorage.getItem("jwt");
-    await delay(1000);
     var res= await fetch(`/api/clients`, {
         method: 'GET',
         headers: {
@@ -132,6 +130,7 @@ export async function apiDeleteProject(projectId:number): Promise<void> {
 
 export async function apiMarkTaskAs(data:MarkTaskAsCommand): Promise<void> {
     const token = localStorage.getItem("jwt");
+    await delay(100)
     var res= await fetch(`/api/tasks/${data.id}/markas`, {
         method: 'POST',
         headers: {

@@ -21,7 +21,21 @@ namespace MiPath.Server.Application.TaskManagement.Queries
         }
         public async Task<List<TaskDto>> Handle(GetThisWeekOverviewQuery request, CancellationToken cancellationToken)
         {
-            var tasks = _taskRepository.GetAll().Where(t=>t.Project.UserID==currentUser.UserId);
+            if (currentUser.UserId == null) { throw new UnauthorizedAccessException("User not authenticated"); }
+            var today = DateTime.UtcNow.Date;
+
+var startOfWeek = today.AddDays(-(int)today.DayOfWeek + (int)DayOfWeek.Monday);
+
+var endOfWeek = startOfWeek.AddDays(7).AddTicks(-1);
+           
+           var tasks = _taskRepository.GetAll()
+    .Where(t => t.Project!.UserID == currentUser.UserId)
+    .Where(t =>
+        (t.PlannedStart.HasValue &&
+         t.PlannedStart.Value.Date >= startOfWeek &&
+         t.PlannedStart.Value.Date <= endOfWeek)
+    );
+            
             return await tasks.Select(t => t.ToDto()).ToListAsync();
         }
     }
