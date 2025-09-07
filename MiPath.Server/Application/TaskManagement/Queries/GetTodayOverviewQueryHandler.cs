@@ -25,8 +25,8 @@ namespace MiPath.Server.Application.TaskManagement.Queries
             var today = DateTime.UtcNow.Date;
             var tasks = _taskRepository.GetAll()
                 .Where(t => t.Project!.UserID == currentUser.UserId)
-                .Where(t => (t.DueDate.HasValue && t.DueDate.Value.Date == today) || 
-                           (t.PlannedStart.HasValue && t.PlannedStart.Value.Date == today));
+                .Where(t => 
+                           (t.PlannedStart.HasValue && t.PlannedStart.Value >= request.DayStart && t.PlannedStart.Value < request.DayEnd ));
             
             return await tasks.Select(t => t.ToDto()).ToListAsync();
         }

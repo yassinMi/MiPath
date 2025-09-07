@@ -78,6 +78,14 @@ export interface UpdateProjectInfoCommand {
   description: string;
 }
 
+export interface GetThisWeekOverviewQuery {
+  weekStart : Date,
+  weekEnd: Date
+}
+export interface GetTodayOverviewQuery {
+  dayStart : Date,
+  dayEnd: Date
+}
 
 
 export interface GetTasksQuery {

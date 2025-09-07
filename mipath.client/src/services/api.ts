@@ -1,6 +1,6 @@
 import type { AccountInfo } from "../Model/AccountInfo";
 import type { Client } from "../Model/Client";
-import type { CreateProjectCommand, CreateTaskCommand, MarkTaskAsCommand, UpdateProjectEstimateValueCommand, UpdateProjectInfoCommand, UpdateTaskDueDateCommand, UpdateTaskEstimateMinuteCommand, UpdateTaskInfoCommand, UpdateTaskPlannedStartCommand } from "../Model/Commands";
+import type { CreateProjectCommand, CreateTaskCommand, GetThisWeekOverviewQuery, GetTodayOverviewQuery, MarkTaskAsCommand, UpdateProjectEstimateValueCommand, UpdateProjectInfoCommand, UpdateTaskDueDateCommand, UpdateTaskEstimateMinuteCommand, UpdateTaskInfoCommand, UpdateTaskPlannedStartCommand } from "../Model/Commands";
 import type { ProjectProgress } from "../Model/ProjectProgress";
 import type { PTask } from "../Model/PTask";
 import { delay } from "./utils";
@@ -65,9 +65,10 @@ export async function apiAddTaske(data:CreateTaskCommand): Promise<number> {
     return taskId;
 }
 
-export async function apiGetOverviewThisWeek(): Promise<PTask[]> {
+export async function apiGetOverviewThisWeek(query: GetThisWeekOverviewQuery): Promise<PTask[]> {
     const token = localStorage.getItem("jwt");
-    var res= await fetch(`/api/tasks/overview/thisweek`, {
+        var params = new URLSearchParams({weekStart:query.weekStart.toISOString(), weekEnd: query.weekEnd.toISOString()})
+    var res= await fetch(`/api/tasks/overview/thisweek?${params}`, {
         method: 'GET',
         headers: {
             "Authorization": token ? `Bearer ${token}` : "",
@@ -77,14 +78,15 @@ export async function apiGetOverviewThisWeek(): Promise<PTask[]> {
     if(!res.ok) throw new Error(`Error adding task: ${res.statusText}`);
     return await res.json();
 }
-export async function apiGetOverviewToday(): Promise<PTask[]> {
+export async function apiGetOverviewToday(query: GetTodayOverviewQuery): Promise<PTask[]> {
     const token = localStorage.getItem("jwt");
-    var res= await fetch(`/api/tasks/overview/today`, {
+    var params = new URLSearchParams({dayStart:query.dayStart.toISOString(), dayEnd: query.dayEnd.toISOString()})
+    var res= await fetch(`/api/tasks/overview/today?${params}`, {
         method: 'GET',
         headers: {
             "Authorization": token ? `Bearer ${token}` : "",
             'Content-Type': 'application/json'
-        }
+        },
     });
     if(!res.ok) throw new Error(`Error adding task: ${res.statusText}`);
     return await res.json();

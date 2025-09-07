@@ -23,9 +23,9 @@ import { DateTimePicker } from "@mui/x-date-pickers";
 import { apiUpdateTaskDueDate, apiUpdateTaskPlannedStart } from "../services/api";
 import { useSnackbar } from "./SnackbarContext";
 import { useQueryClient } from "@tanstack/react-query";
-import utc from "dayjs/plugin/utc";
+//import utc from "dayjs/plugin/utc";
 
-dayjs.extend(utc); 
+//dayjs.extend(utc); 
 export const ColoredBox = styled(Box)(({theme})=>({
 
   
@@ -68,8 +68,8 @@ const [popoverMode, setPopoverMode] = useState<PopoverMode>('markas')
     setPopoverMode(mode)
     var task = pTasks.find(t=>t.id==taskId);
     if(!task) throw new Error("cannot find task in the list")
-    setDueDateValue(task.dueDate===undefined?null: dayjs( task.dueDate,{utc:true}))
-    setPlannedStartValue(task.plannedStart===undefined?null: dayjs( task.plannedStart, {utc:true}))
+    setDueDateValue(task.dueDate===undefined?null: dayjs( task.dueDate))
+    setPlannedStartValue(task.plannedStart===undefined?null: dayjs( task.plannedStart))
 
   };
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
@@ -100,7 +100,7 @@ const handleDoneClick = ()=>{
       onTaskStateChangeRequested(selectedTaskId, "Done")
 }
 const onDueDateValueChangeRequest = async(date:Dayjs|null)=>{
-    date?.utc()
+
     setDueDateValue(date);
     if(!selectedTaskId) throw new Error("no task selected")
       var task = pTasks.find(t=>t.id==selectedTaskId);
@@ -113,8 +113,6 @@ const onDueDateValueChangeRequest = async(date:Dayjs|null)=>{
    queryClient.invalidateQueries({queryKey:["today"]})
 }
 const onPlannedStartValueChangeRequest = async(date:Dayjs|null)=>{
-      date?.utc()
-
    setPlannedStartValue(date);
     if(!selectedTaskId) throw new Error("no task selected")
        var task = pTasks.find(t=>t.id==selectedTaskId);
@@ -125,7 +123,7 @@ const onPlannedStartValueChangeRequest = async(date:Dayjs|null)=>{
     task.plannedStart = newplannedStart
     queryClient.invalidateQueries({queryKey:["task",selectedTaskId]})
 
-   showSnackbar(`Updated task planned Start: ${newplannedStart?.toUTCString()}`, "success")
+   showSnackbar(`Updated task planned Start: ${newplannedStart?.toLocaleString()}`, "success")
       queryClient.invalidateQueries({queryKey:["today"]})
 
 }

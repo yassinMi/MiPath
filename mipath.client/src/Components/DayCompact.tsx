@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useRoadmapOverview } from "../hooks/useRoadmap";
-import type { PTask } from "../Model/PTask";
+import type { PTask, PTaskStatus } from "../Model/PTask";
 import { apiMarkTaskAs } from "../services/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CircularProgress } from "@mui/material";
 import { useSnackbar } from "./SnackbarContext";
+import type { Project } from "../Model/Project";
+import type { ProjectProgress } from "../Model/ProjectProgress";
+import { getDayStart } from "../services/utils";
 
 interface HourLabelProps {
    x:number,
@@ -32,8 +35,8 @@ interface Track {
 /**
  * a date represeting 8 am today
  */
-const DayStartDate = new Date(Date.now())
-DayStartDate.setHours(8,0,0,0)
+const DayStartDate = getDayStart(8,  new Date(Date.now()))
+
 const RoadmapWidth = 200
 const tracksGap = 5;
 const trackHeight = 10;
@@ -65,12 +68,31 @@ const TaskCircle : React.FC<TaskCircleProps> = ({x, y, status,width, task})=>{
 const {showSnackbar} = useSnackbar()
 const queryClient = useQueryClient();
     const markAsMutation = useMutation({mutationFn:async()=>{
+      var newStatus: PTaskStatus = status=="gray"?"Done":"ToDo"
           await apiMarkTaskAs({id:task.id, intent: status=="gray"?"Completed":"ReOpen"})
          showSnackbar("updated task status", "success")
+        return newStatus;
 
-    }, onSuccess:()=>{
-         queryClient.invalidateQueries({queryKey:["today"]})
-         queryClient.invalidateQueries({queryKey:["project"]})
+    }, onSuccess:(newStatus:PTaskStatus)=>{
+         queryClient.setQueryData(["thisweek"], (old: PTask[])=>{
+            if(old){
+               return old.map(t=>t.id==task.id?{...t, status:newStatus }:t)
+            }
+            return old;
+         })
+         queryClient.setQueryData(["today"], (old: PTask[])=>{
+            if(old){
+               return old.map(t=>t.id==task.id?{...t, status:newStatus }:t)
+            }
+            return old;
+         })
+         queryClient.setQueryData<Project>(["project",task.projectID], (old)=>{
+            if(old&&old.tasks){
+               return {...old, tasks: old.tasks.map(t=>t.id==task.id?{...t, status:newStatus}:t)}
+            }
+            return old;
+         })
+           queryClient.invalidateQueries({queryKey: ["projectProgress",task.projectID]});
     }})
     const handleSatusToggle = async()=>{
 
@@ -118,8 +140,8 @@ export default function DayCompact() {
  */
 const HourToXCordinate=(hour: Date)=>{
     var hoursDiffFromDayStart = ( hour.getTime() - DayStartDate.getTime() )/ (1000 * 60 * 60)
-  if(hoursDiffFromDayStart<-1) hoursDiffFromDayStart = hoursDiffFromDayStart + 24
-    return  ( (hoursDiffFromDayStart + (timeDiv/2)) * (RoadmapWidth/24));
+  if(hoursDiffFromDayStart<0) hoursDiffFromDayStart = hoursDiffFromDayStart + 24
+    return  5+  ( (hoursDiffFromDayStart +(timeDiv/2) ) * (RoadmapWidth/24));
    
 }
 
@@ -130,7 +152,7 @@ const [tracks, setTracks] = useState<Track[]|undefined>(undefined);
 
 const isWithinDay = (d:Date)=>{
    var diffHours = ( d.getTime()- DayStartDate .getTime())/(1000*60*60)
-   return diffHours >0 && diffHours <24
+   return diffHours >=0 && diffHours <24
 }
 useEffect(()=>{
    if(overviewData){

@@ -19,3 +19,21 @@ if (!fullName) return "";
   const lastInitial = words.length > 1 ? words[words.length - 1][0].toUpperCase() : "";
   return firstInitial + lastInitial;
 }
+
+
+
+/**
+ * return a date and time representing the mooment the current day started (if settings_day_start_hour is 8, it will return the date representing most recent 8:00:00 AM)
+ * @param settings_day_start_hour 
+ * @param now 
+ * @returns 
+ */
+export function getDayStart(settings_day_start_hour:number, now: Date){
+        var SETTINGS_DAY_START_HOUR = settings_day_start_hour
+        var settings_day_start_ms = 8*1000*60*60
+        var thisTimeMs = (now.getHours()*1000*60*60) + (now.getMinutes()*1000*60) + (now.getSeconds()*1000) + (now.getMilliseconds())
+        var isSameDay = thisTimeMs>= settings_day_start_ms;
+         var dayStart = new Date(now.getFullYear(),now.getMonth(), now.getDate(), SETTINGS_DAY_START_HOUR,0,0,0)
+                if(!isSameDay) dayStart = new Date(dayStart.getTime()-(24*60*60*1000))
+                  return dayStart;
+}

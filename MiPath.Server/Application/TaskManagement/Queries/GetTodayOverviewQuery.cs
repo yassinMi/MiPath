@@ -2,5 +2,7 @@
 {
     public class GetTodayOverviewQuery
     {
+        public DateTime DayStart {get;set;}
+        public DateTime DayEnd {get;set;}
     }
 }

@@ -57,14 +57,14 @@ namespace MiPath.Server.Api.Controllers
             return handler.Handle(query, CancellationToken.None).Result;
         }
         [HttpGet("overview/thisweek")]
-        public async Task<List<TaskDto>> GetThisWeekOverview([FromServices] GetThisWeekOverviewQueryHandler handler)
+        public async Task<List<TaskDto>> GetThisWeekOverview([FromQuery] GetThisWeekOverviewQuery query, [FromServices] GetThisWeekOverviewQueryHandler handler)
         {
-            return await handler.Handle(new GetThisWeekOverviewQuery() { }, CancellationToken.None);
+            return await handler.Handle(query, CancellationToken.None);
         }
         [HttpGet("overview/today")]
-        public async Task<List<TaskDto>> GetTodayOverview([FromServices] GetTodayOverviewQueryHandler handler)
+        public async Task<List<TaskDto>> GetTodayOverview([FromQuery] GetTodayOverviewQuery query, [FromServices] GetTodayOverviewQueryHandler handler)
         {
-            return await handler.Handle(new GetTodayOverviewQuery() { }, CancellationToken.None);
+            return await handler.Handle(query, CancellationToken.None);
         }
 
 

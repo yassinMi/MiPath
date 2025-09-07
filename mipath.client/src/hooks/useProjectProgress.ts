@@ -6,7 +6,7 @@ import type { ProjectProgress } from "../Model/ProjectProgress";
 
 export function useProjectProgress(projectId?:number|string, options?:any){
 
-    return useQuery<ProjectProgress>({queryKey:["project", projectId], queryFn:async ()=>{
+    return useQuery<ProjectProgress>({queryKey:["projectProgress", projectId], queryFn:async ()=>{
 
            return await apiGetProjectProgress(Number(projectId))
     }, enabled:!!projectId&&projectId!==-1&&options?.enabled!==false})

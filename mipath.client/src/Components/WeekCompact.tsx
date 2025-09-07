@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRoadmapOverview } from "../hooks/useRoadmap";
 import type { PTask } from "../Model/PTask";
+import { getDayStart } from "../services/utils";
 
 interface DayLabelProps {
    x:number,
@@ -106,7 +107,7 @@ export default function WeekCompact() {
 
    const getDayIndexFromDate = (date:Date)=>{
       date = new Date(date)
-           return date.getDay()
+           return getDayStart(8,date).getDate()
    }
 
    useEffect(()=>{
