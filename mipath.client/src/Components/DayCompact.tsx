@@ -348,7 +348,8 @@ const roadmapHeigh = (roadmapVerticalPadding*2) + (tracksGap* (Math.max(0,tracks
             }
             else endHour.setTime(endHour.getTime()+ 23 * 60 * 60 * 1000)
             var diffHours =( (endHour.getTime()- ts.startTime.getTime()  )/ (1000 * 60 * 60)) -1
-            return ({x:HourToXCordinate(ts.startTime), y:yOffset, task:ts , width: diffHours*hourWidth})
+            var diffHoursBasedOnEstimate = Math.min(diffHours, ts.task.estimateMinute?(ts.task.estimateMinute/60):0)
+            return ({x:HourToXCordinate(ts.startTime), y:yOffset, task:ts , width: diffHoursBasedOnEstimate*hourWidth})
          });
            return <>{tasksWithLengths.map(tw=>{
 

@@ -23,7 +23,7 @@ import { useProjectPTasks } from '../hooks';
 import type { ref } from 'process';
 import { useProject } from '../hooks/useProject';
 import AddTaskForm from '../Components/AddTaskForm';
-import { apiAddTaske, apiCreateProject, apiFetchProject, apiFetchTask, apiMarkTaskAs, apiUpdateProjectInfo } from '../services/api';
+import { apiAddTaske, apiCreateProject, apiFetchProject, apiFetchTask, apiMarkTaskAs, apiUpdateProjectEstimateValue, apiUpdateProjectInfo } from '../services/api';
 import type { CreateTaskCommand, MarkAs } from '../Model/Commands';
 import { truncateString } from '../services/utils';
 import { useSnackbar } from '../Components/SnackbarContext';
@@ -76,6 +76,8 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
    const [isEditabledDescriptionDirty, setIsEditabledDescriptionDirty] = useState<boolean>(false)
    const [editabledName, setEditabledName] = useState<string | undefined>(project_?.name)
    const [isEditingName, setIsEditingName] = useState<boolean>(false)
+   const [isEditingEstimateValue, setIsEditingEstimateValue] = useState<boolean>(false)
+   const [editabledEstimateValue, setEditabledEstimateValue] = useState<number | undefined>(project_?.estimateValue)
 
 
    useEffect(()=>{
@@ -87,6 +89,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
       if(project_){
       setEditabledDescription( project_?.description)
       setEditabledName( project_?.name)
+      setEditabledEstimateValue( project_?.estimateValue)
 
       }
    },[project_])
@@ -212,17 +215,25 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
       queryClient.invalidateQueries({queryKey:["project",projectId]})
       showSnackbar("Updated project name", "success")
    }
+      const onSaveEstimateValue = async ()=>{
+      setIsEditingEstimateValue(false);
+      if(!projectId) throw new Error("no project id")
+      await apiUpdateProjectEstimateValue({id:Number(projectId)!, estimateValue:editabledEstimateValue})
+      queryClient.invalidateQueries({queryKey:["project",projectId]})//todo optimize by setting data locally
+      showSnackbar(editabledEstimateValue===undefined?"Reset project estimate": `Updated project estimate to $${editabledEstimateValue}`, "success")
+   }
 
    return (
       <div className='flex flex-1 flex-col gap-2 overflow-auto max-h-[calc(100vh-5rem)] '>
          <ControlPanelLayout className='flex-shrink-0 flex-grow-0 flex-wrap'>
-            <div className='flex mx-2 mb-0 flex-row gap-1'>
-            {isEditingName?<input autoFocus
+            <div title='Rename' className='flex mx-2 mb-0 flex-row gap-1 group'>
+            {isEditingName?<input autoFocus   className={`text-xl w-auto font-bold`}
       value={editabledName}
       onChange={(e) => setEditabledName(e.target.value)}
       onBlur={() => onSaveTitle()}
-      onKeyDown={(e) => e.key === "Enter" && onSaveTitle()}></input>:<h1 onClick={() => setIsEditingName(true)} className={(`text-xl font-bold ${!project_?.name?"italic opacity-40":""}`)}>{project_?.name? project_.name:"Untitled"}</h1> }
-               
+      onKeyDown={(e) => e.key === "Enter" && onSaveTitle()}></input>:<h1 onClick={() => setIsEditingName(true)} className={(`text-xl font-bold border border-transparent group-hover:border-gray-800 ${!project_?.name?"italic opacity-40":""}`)}>{project_?.name? project_.name:"Untitled"}</h1> }
+              <div className={isEditingName?'block':'hidden group-hover:block'}> <EditIcon sx={{width:24,height:24}} className='ml-4 opacity-40' ></EditIcon></div>
+              
             </div>
             <div className='flex flex-row gap-2 ml-auto'>
                <Button title="Add a task for this project" onClick={handleAddTaskModalOpen} variant='contained' className='whitespace-nowrap' color='secondary'>Add Task</Button>
@@ -306,11 +317,35 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                         </div>
                      </div>
 
-                     <div className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
-                        <div className='flex flex-col p-2'>
-                           <div className='text-sm text-blue-500/80'>Value</div>
-                           <div className='font-bold text-blue-500'>200$</div>
+                     <div onClick={() => setIsEditingEstimateValue(true)} className='flex px-4 flex-row gap-2 relative cursor-pointer group flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
+                        <div className='flex flex-col p-2 '>
+                           <div className='text-sm text-blue-500/80 flex flex-row'>Value
+                          
+
+                           </div>
+                           <div className='font-bold text-blue-500 flex flex-row gap-1'>
+                               <div>$</div>
+                   {isEditingEstimateValue?<input autoFocus   className={`text-l w-[100%] font-bold`}
+                     value={editabledEstimateValue}
+      onChange={(e) => setEditabledEstimateValue(Number.isNaN(Number(e.target.value))?undefined:Number(e.target.value))}
+      onBlur={() => onSaveEstimateValue()}
+      onKeyDown={(e) => e.key === "Enter" && onSaveEstimateValue()}
+                   
+                   ></input>:
+                     <div   className={`text-l w-auto font-bold`}>{project_?.estimateValue??"-"}</div>
+                     
+                           }
+                          
+                              
+                              </div>
+
+                             
+                           
                         </div>
+                         <div className={isEditingEstimateValue?'block text-blue-500/80 absolute right-4  top-1/2 -translate-y-1/2 ml-auto ':'hidden  text-blue-500/80 absolute right-4 -translate-y-1/2 top-1/2  group-hover:block ml-auto'}>
+                            <EditIcon sx={{width:24,height:24}} className='ml-4 opacity-40' ></EditIcon>
+                            </div>
+                          
                      </div>
                   </div>
 

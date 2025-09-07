@@ -20,9 +20,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import { DateTimePicker } from "@mui/x-date-pickers";
-import { apiUpdateTaskDueDate, apiUpdateTaskPlannedStart } from "../services/api";
+import { apiUpdateProjectEstimateValue, apiUpdateTaskDueDate, apiUpdateTaskEstimateMinute, apiUpdateTaskPlannedStart } from "../services/api";
 import { useSnackbar } from "./SnackbarContext";
 import { useQueryClient } from "@tanstack/react-query";
+import DurationPicker from "./DurationPicker";
 //import utc from "dayjs/plugin/utc";
 
 //dayjs.extend(utc); 
@@ -59,6 +60,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
 const [popoverMode, setPopoverMode] = useState<PopoverMode>('markas')
   const [dueDateValue, setDueDateValue] = useState<Dayjs|null>(dayjs());
   const [plannedStartValue, setPlannedStartValue] = useState<Dayjs|null>(dayjs());
+  const [estimateMinuteValue, setEstimateMinuteValue] = useState<number|undefined>(undefined);
   const queryClient = useQueryClient()
   const {showSnackbar} = useSnackbar()
   const handlePopoverOpen = (target: HTMLElement, taskId: number,mode: PopoverMode) => {
@@ -70,6 +72,7 @@ const [popoverMode, setPopoverMode] = useState<PopoverMode>('markas')
     if(!task) throw new Error("cannot find task in the list")
     setDueDateValue(task.dueDate===undefined?null: dayjs( task.dueDate))
     setPlannedStartValue(task.plannedStart===undefined?null: dayjs( task.plannedStart))
+    setEstimateMinuteValue(task.estimateMinute)
 
   };
   const [isPopoverOpen, setIsPopoverOpen] = useState<boolean>(false)
@@ -127,7 +130,20 @@ const onPlannedStartValueChangeRequest = async(date:Dayjs|null)=>{
       queryClient.invalidateQueries({queryKey:["today"]})
 
 }
+const onEstimateMinutesChangeRequest = async(minutes?:number)=>{
+   setEstimateMinuteValue(minutes);
+    if(!selectedTaskId) throw new Error("no task selected")
+       var task = pTasks.find(t=>t.id==selectedTaskId);
+    if(!task) throw new Error("cannot find task in the list")
+      console.log("setting minutes to", minutes)
+    await apiUpdateTaskEstimateMinute({id:selectedTaskId!,estimateMinute:minutes})
+    task.estimateMinute = minutes
+    queryClient.invalidateQueries({queryKey:["task",selectedTaskId]})//todo optimize
 
+   showSnackbar(`Updated task minutes : ${minutes?.toFixed()??"-"}`, "success")
+      queryClient.invalidateQueries({queryKey:["today"]})//todo optimize
+
+}
     return <div className="flex flex-col gap-0 p-0">
             {pTasks.map(t=>(
                 <CompactTaskItem onClick={(e)=>{handlePopoverOpen(e.currentTarget, t.id, "markas")}}
@@ -192,7 +208,7 @@ const onPlannedStartValueChangeRequest = async(date:Dayjs|null)=>{
         onChange={(newValue) => newValue&& setDueDateValue(newValue)}
         onAccept={(newValue) => newValue&& onDueDateValueChangeRequest(newValue)}
       /></div>  
-  :popoverMode=="set-planned-start"?<div className="p-1 flex items-stretch p-4 flex-col gap-2"><DateTimePicker
+  :popoverMode=="set-planned-start"?<><div className="p-1 flex items-stretch p-4 flex-col gap-4"><DateTimePicker
         label="Select planned start"
         value={plannedStartValue}
         
@@ -200,7 +216,13 @@ const onPlannedStartValueChangeRequest = async(date:Dayjs|null)=>{
         onChange={(newValue) => newValue&& setPlannedStartValue(newValue)}
         onAccept={(newValue) => newValue&& onPlannedStartValueChangeRequest(newValue)}
 
-      /></div>  
+      />
+      <DurationPicker onChangeDuration={onEstimateMinutesChangeRequest}
+        
+        durationMinutes={estimateMinuteValue}
+
+      />
+      </div>  </>
   :null
 }
 </LocalizationProvider>

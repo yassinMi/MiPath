@@ -107,7 +107,7 @@ export default function WeekCompact() {
 
    const getDayIndexFromDate = (date:Date)=>{
       date = new Date(date)
-           return getDayStart(8,date).getDate()
+           return getDayStart(8,date).getDay()
    }
 
    useEffect(()=>{
