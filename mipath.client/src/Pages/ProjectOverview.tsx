@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { Project } from '../Model/Project';
 import { useParams } from 'react-router-dom';
-import { Alert, Box, Button, Card, CircularProgress, Input, LinearProgress, linearProgressClasses, Modal, Paper, Snackbar, styled, TextField } from '@mui/material';
+import { Alert, Box, Button, Card, CircularProgress, Grid, Input, LinearProgress, linearProgressClasses, Modal, Paper, Snackbar, styled, TextField } from '@mui/material';
 
 import EditIcon from '@mui/icons-material/Edit'
 import NoteIcon from '@mui/icons-material/NoteAlt'
@@ -36,8 +36,9 @@ import ArrowRight from '@mui/icons-material/ChevronRight';
 
 const PaperM = styled(Paper)(({ theme }) => ({
    backgroundColor: '#ffffffff',
+   backgroundImage:"unset",
    ...theme.applyStyles('dark', {
-      backgroundColor: 'var(--color-gray-900)',
+      backgroundColor: 'var(--color-gray-950)',
    }),
 }));
 
@@ -224,8 +225,8 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
    }
 
    return (
-      <div className='flex flex-1 flex-col gap-2 overflow-auto max-h-[calc(100vh-5rem)] '>
-         <ControlPanelLayout className='flex-shrink-0 flex-grow-0 flex-wrap'>
+      <div className='flex flex-1 flex-col gap-2 overflow-auto md:max-h-[calc(100vh-5rem)] '>
+         <ControlPanelLayout className='flex-shrink-0 flex-grow-1 flex-wrap h-auto'>
             <div title='Rename' className='flex mx-2 mb-0 flex-row gap-1 group'>
             {isEditingName?<input autoFocus   className={`text-xl w-auto font-bold`}
       value={editabledName}
@@ -254,7 +255,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                }
             </StyledBox>
          </Modal>
-         <div className="flex flex-col md:flex-row flex-1 h-full min-h-80 overflow-auto  gap-2 p-6 mx-4 items-stretch" >
+         <div className="flex flex-col md:flex-row flex-1  md:h-full min-h-80 overflow-auto  gap-2 p-6 pt-0  items-stretch" >
             <div className='flex-1 flex flex-col gap-4 overflow-auto'>
               
 
@@ -278,7 +279,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                      </Link>
 
                   </div>
-                  <div className='flex flex-row gap-2 m-4 flex-wrap pb-1 overflow-auto h-auto flex-grow-0 flex-shrink-1 justify max-h-1/3'>
+                  <Grid container columns={{xs:3, sm:3, md:4,  lg:5, xl:5}} margin={2} spacing={1} className=' pb-1 items-stretch overflow-auto h-auto flex-grow-0 flex-shrink-1  max-h-1/3'>
                      {/* <PaperM className='card-paper-m h-auto flex-grow-0 flex-shrink-1 max-h-1/3'>
                   <div className='card-header-m'>
                      <InfoIcon fontSize='large'></InfoIcon>
@@ -291,38 +292,35 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                   </div>
 
                </PaperM> */}
-
-                     <div className='flex px-4 flex-row gap-2 flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
+               <Grid title={(project_?.client?.name??"-")} size={1} className='flex px-4 flex-row gap-2  items-center bg=gray-100 dark:bg-gray-900 shadow rounded' >
                         <PersonIcon></PersonIcon>
-                        <div className='font-bold'>{(project_?.client?.name??"YassinMi")}</div>
-                     </div>
-                     <div className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
-                        <div className='flex flex-col p-2'>
-                           <div className='text-sm text-amber-500'>Work hours</div>
+                        <div  className='font-bold truncate'>{(project_?.client?.name??"-")}</div>
+                     </Grid>
+
+                     <Grid size={1} className='flex px-4 flex-col bg=gray-100 dark:bg-gray-900 shadow rounded'>
+                        <div className='flex flex-col items-stretch p-2'>
+                           <div className='text-sm text-amber-500/80 truncate'>Work hours</div>
                            <div className='font-bold text-amber-500'>-</div>
                         </div>
-                     </div>
+                      </Grid>
 
-                     <div className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
+                     <Grid size={1} className='px-4 bg=gray-100 dark:bg-gray-900 shadow rounded'>
                         <div className='flex flex-col p-2'>
-                           <div className='text-sm text-purple-500/80'>Avg. rate</div>
+                           <div className='text-sm text-purple-500/80 truncate'>Avg. rate</div>
                            <div className='font-bold text-purple-500'>-</div>
                         </div>
-                     </div>
+                   </Grid>
 
-                     <div className='flex px-4 flex-row gap-2  flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
+                     <Grid size={1} className='px-4 bg=gray-100 dark:bg-gray-900 shadow rounded'>
                         <div className='flex flex-col p-2'>
-                           <div className='text-sm text-green-500/80'>Progress</div>
+                           <div className='text-sm text-green-500/80 truncate'>Progress</div>
                            <div className='font-bold text-green-500'>{getCompletedTasksCount()}/{getPlannedTaskCount()}</div>
                         </div>
-                     </div>
+                      </Grid>
 
-                     <div onClick={() => setIsEditingEstimateValue(true)} className='flex px-4 flex-row gap-2 relative cursor-pointer group flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
+                     <Grid size={1}  onClick={() => setIsEditingEstimateValue(true)} className='px-4 relative cursor-pointer group flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
                         <div className='flex flex-col p-2 '>
-                           <div className='text-sm text-blue-500/80 flex flex-row'>Value
-                          
-
-                           </div>
+                           <div className='text-sm text-blue-500/80 truncate'>Value  </div>
                            <div className='font-bold text-blue-500 flex flex-row gap-1'>
                                <div>$</div>
                    {isEditingEstimateValue?<input autoFocus   className={`text-l w-[100%] font-bold`}
@@ -346,8 +344,8 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                             <EditIcon sx={{width:24,height:24}} className='ml-4 opacity-40' ></EditIcon>
                             </div>
                           
-                     </div>
-                  </div>
+                      </Grid>
+                  </Grid>
 
                   <div className=' card-separator-m'></div>
                   <div className='m-4 mb-0 flex flex-shrink-0 flex-col items-center'>
@@ -357,7 +355,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
 
                   </div>
                   <div className='flex flex-1 flex-row items-stretch overflow-auto m-4 gap-4 '>
-                     <div className='properties overflow-auto gap-2 w-1/2 flex flex-col flex-1  p-2 border-1 border-gray-700 rounded-xl dark:bg-gray-900  '>
+                     {false&&<div className='properties overflow-auto gap-2 w-1/2 flex flex-col flex-1  p-2 border-1 border-gray-700 rounded-xl dark:bg-gray-900  '>
                         <h2>Properties</h2>
                         <div>this section is not implemnted : view and set properties e.g. estimated value, hours, due date </div>
                         {false &&<div className='max-h-100 flex flex-col overflow-auto gap-2 text-sm '>hi
@@ -381,8 +379,8 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
 
                            <div>property</div>
                         </div>}
-                     </div>
-                     <div className='tasksPreview overflow-auto  p-2 border-1 flex flex-col items-stretch border-gray-700 flex-1 w-1/2 rounded-xl dark:bg-gray-900 text-sm'>
+                     </div>}
+                     <div className='tasksPreview overflow-auto  p-2  flex flex-col items-stretch  flex-1 w-1/2   text-sm'>
                         {isLoadingProject_ && <div className='self-center justify-center flex-1 flex flex-col items-center '> <CircularProgress className=''></CircularProgress></div>}
                         {errorProject_ && <div className='text-red-500'>Error loading tasks</div>}
                         {!isLoadingProject_ && !errorProject_ && project_ &&
@@ -399,7 +397,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
 
 
             </div>
-            <PaperM className='card-paper-m flex-1'>
+            <PaperM className='card-paper-m  flex-1'>
                <div className='card-header-m'>
                   <NoteIcon fontSize='large'></NoteIcon>
                   <span>Notes</span>
@@ -412,7 +410,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
                        
                </div>
                <div className='card-separator-m'></div>
-               <div style={{ padding: "8px", height: "100%" }}>
+               <div className='p-2 h-100 md:h-[100%]'>
 
                   <textarea placeholder='Write notes' onChange={(e) => onDescriptionChange(e.target.value)} value={editabledDescription} className='h-full w-full outline-none resize-none'></textarea>
                </div>

@@ -169,17 +169,17 @@ const [currentTime, setCurrentTime] = useState(new Date(Date.now()))
   }, []);
 
 
-const roadmapHeigh = 40
+const roadmapHeigh = 22
 const dayWidth = RoadmapWidth/7
   return (
-    <div className='font-thin w-full max-w-160 flex-shrink-0 items-end text-4xl flex flex-row gap-4'>
+    <div className='font-thin w-full flex-shrink-0 items-end text-4xl flex flex-row gap-4'>
      
        
 
 <svg
     style={{transition:"all 0.5s ease"}}
    width="100%"
-   viewBox={`0 -10 210 ${roadmapHeigh+30}`}
+   viewBox={`0 -10 210 ${roadmapHeigh+20}`}
    version="1.1"
    id="svg1"
    xmlnsXlink="http://www.w3.org/1999/xlink"
@@ -279,7 +279,7 @@ const dayWidth = RoadmapWidth/7
            id="g114"
            mask="none">
           <rect
-             style={{fill: '#0B101C', fillOpacity: 1, stroke: 'none', strokeWidth: 0, strokeDasharray: 'none', strokeOpacity: 1}}
+             style={{fill: 'none', fillOpacity: 1, stroke: 'none', strokeWidth: 0, strokeDasharray: 'none', strokeOpacity: 1}}
              id="rect99"
              width="200"
              height={roadmapHeigh}

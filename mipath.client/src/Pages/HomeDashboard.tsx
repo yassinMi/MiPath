@@ -91,7 +91,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({  }) => {
                 
                <div className='projects-overview-row flex flex-col col-start-1 col-end-5 lg:col-end-4 row-start-1 row-end-1 flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
                 <div className='flex flex-row justify-between items-center mb-4'>
-                   <h2 className="font-bold  capitalize">Projects ({projects.length})</h2>
+                   <h2 className="font-bold text-2xl capitalize flex flex-row gap-2 items-center justify-center "><div>Projects</div> <div className='rounded-full font-bold h-8 w-8 text-lg bg-gray-800 flex flex-col items-center justify-center '>{projects.length}</div></h2>
                    <Link to="/project" className='no-underline group'>
               <ColorButton  variant="contained" color="success" onClick={()=>{
                           //navigate to /projects/create
@@ -152,21 +152,27 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({  }) => {
                         </div>
                        
                       </FloatingTicket>
-                      <FloatingTicket iconType='money' sub='Up to 54$' value='$ 13.5'  label='Est earning today'></FloatingTicket>
+                      <FloatingTicket iconType='money'  label='Est. earnings today'>
+                        <div>                        <div className='font-bold text-lg inline'>$13</div><div className='font-bold text-lg text-gray-500 inline'> / $54</div>
+</div>
+                      </FloatingTicket>
 
                     </div>
 
                 
                </div>
-           <div className='tasks-overview-row row-start-3 row-end-4 col-start-1 col-end-5 lg:col-end-4 flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
-
-             <div className="min-h-64 flex flex-col items-center justify-center">
+           <div className='tasks-overview-row row-start-3 max-w-[1800px] w-full justify-self-center row-end-4 col-start-1 col-end-5 lg:col-end-4 flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
+             <div className='font-bold text-2xl'>Weekly timeline</div>
+             <div className="min-h-64 flex flex-col  items-center justify-center">
                  <div className='text-gray-500 flex flex-col items-center w-full'>
                  <WeekCompact></WeekCompact>
                  </div>
+                 <div className='bg-gray-900 h-[2px] w-full m-6'  ></div>
                  <div className='text-gray-500 flex flex-col items-center w-full'>
                  <DayCompact></DayCompact>
                  </div>
+                                  <div className='bg-gray-900 h-[2px] w-full m-6'  ></div>
+
                 
                       <FloatingTicket iconType='money' sub='Est. Project payout: $5000' value='$ 75 / Hr'  label='Projected earnings'></FloatingTicket>
               </div>

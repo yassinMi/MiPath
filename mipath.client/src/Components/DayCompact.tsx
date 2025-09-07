@@ -192,7 +192,7 @@ if(!tracks) return null
 
 const roadmapHeigh = (roadmapVerticalPadding*2) + (tracksGap* (Math.max(0,tracks.length-1))) + (trackHeight*tracks.length)  +ticksHeight
   return (
-    <div className='font-thin w-full max-w-160 flex-shrink-0 items-end text-4xl flex flex-row gap-4'>
+    <div className='font-thin w-full flex-shrink-0 items-end text-4xl flex flex-row gap-4'>
      
        
 
@@ -306,7 +306,7 @@ const roadmapHeigh = (roadmapVerticalPadding*2) + (tracksGap* (Math.max(0,tracks
     <g
        id="g186">
       <rect
-         style={{fill: '#040812', fillOpacity: 1, strokeWidth: 3.46319}}
+         style={{fill: 'none', fillOpacity: 1, strokeWidth: 3.46319}}
          id="rect1"
          width="200"
          height={roadmapHeigh}
@@ -322,7 +322,7 @@ const roadmapHeigh = (roadmapVerticalPadding*2) + (tracksGap* (Math.max(0,tracks
            id="g114"
            mask="none">
           <rect
-             style={{fill: '#0B101C', fillOpacity: 1, stroke: 'none', strokeWidth: 0.792038, strokeDasharray: 'none', strokeOpacity: 1}}
+             style={{fill: 'none', fillOpacity: 1, stroke: 'none', strokeWidth: 0.792038, strokeDasharray: 'none', strokeOpacity: 1}}
              id="rect99"
              width="200"
              height={roadmapHeigh}
@@ -402,7 +402,7 @@ const roadmapHeigh = (roadmapVerticalPadding*2) + (tracksGap* (Math.max(0,tracks
       </g>
 
       <rect
-         style={{fill: 'none', stroke: '#111928', strokeWidth: 0.529167, strokeDasharray: 'none', strokeOpacity: 1}}
+         style={{fill: 'none', stroke: 'none', strokeWidth: 0.529167, strokeDasharray: 'none', strokeOpacity: 1}}
          id="rect7-7-2"
          width="200"
          height={roadmapHeigh}

@@ -28,7 +28,7 @@
   @apply  flex flex-col ;
 }
 .card-separator-m{
-   @apply  mx-1 bg-gray-200 dark:bg-gray-800 h-[1px];
+   @apply  mx-1 bg-gray-200 dark:bg-gray-900 h-[1px];
 }
 #root{
     width: 100%;
