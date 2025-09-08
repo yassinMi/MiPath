@@ -166,6 +166,13 @@ var connectionString = builder.Configuration.GetConnectionString("FpmDBConnectio
 
             app.MapControllers();
 
+            app.MapGet("/", async context =>
+            {
+                context.Response.ContentType = "text/html";
+                await context.Response.SendFileAsync(Path.Combine(app.Environment.WebRootPath, "landing-page.html"));
+            });
+
+
             app.MapFallbackToFile("/index.html");
 
             app.Run();
