@@ -28,9 +28,9 @@ export const FloatingTicket : React.FC<FloatingTicketProps> = ({label, iconType,
 
 
    return (
-    <div className="flex flex-col items-stretch">
-        <div className='dark:bg-[#0B101C]  p-4 flex flex-row gap-4'>
-            <div className="border-radius-50 flex-col flex items-center justify-center text-gray-500 "><ThumbIcon></ThumbIcon></div>
+    <div className="flex shadow-xl flex-col items-stretch">
+        <div className='text-black border-b border-gray-200 dark:border-b-0 dark:text-white dark:bg-[#0B101C]  p-4 flex flex-row gap-4'>
+            <div className="border-radius-50 flex-col flex items-center justify-center text-gray-500 dark:text-gray-500 "><ThumbIcon></ThumbIcon></div>
             <div>{label}  </div>
 
         </div>
@@ -44,7 +44,7 @@ export const FloatingTicket : React.FC<FloatingTicketProps> = ({label, iconType,
 
             </div>:null}
             <div className='flex flex-col flex-1'>
-                <div className='text-lg font-bold'>{value}</div>
+                <div className='text-lg text-gray-950 dark:text-gray-100 font-bold'>{value}</div>
                 {children}
                 {sub? <div className='text-lg text-gray-500 font-semibold'>{sub}</div>:null}
 

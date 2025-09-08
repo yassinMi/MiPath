@@ -27,8 +27,8 @@ createRoot(document.getElementById("root")!).render(
                 <Route path='project/:projectId/tasks' element={<ProjectTasks ></ProjectTasks>}></Route>
                 <Route path='today' element={<TodayOverview ></TodayOverview>}></Route>
                 <Route path='thisweek' element={<WeekOverview ></WeekOverview>}></Route>
-                <Route path='/' element={<HomeDashboard ></HomeDashboard>}></Route>
-                <Route path='/login' element={<HomeDashboard ></HomeDashboard>}></Route>
+                <Route path='/dashboard' element={<HomeDashboard ></HomeDashboard>}></Route>
+                <Route path='/login' element={<HomeDashboard isLogin={true} ></HomeDashboard>}></Route>
                 <Route path="/about" element={<About />} />
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />

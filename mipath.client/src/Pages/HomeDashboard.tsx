@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import type { Project } from '../Model/Project';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ProjectComponent from '../Components/ProjectComponent';
 import { userProjects } from '../hooks';
 import { Button, CircularProgress, LinearProgress, styled, type ButtonProps } from '@mui/material';
@@ -19,6 +19,7 @@ import WeekCompact from '../Components/WeekCompact';
 import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 
 import { FloatingTicket } from '../Components/FloatingTicket';
+import type { LocationState } from '../Model/LocationState';
 export const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
   color: theme.palette.getContrastText(purple[500]),
   backgroundColor: 'var(--color-gray-900)',
@@ -33,10 +34,10 @@ export const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
 }));
 
 interface HomeDashboardProps {
-
+isLogin?: boolean
 }
 
-const HomeDashboard: React.FC<HomeDashboardProps> = ({ }) => {
+const HomeDashboard: React.FC<HomeDashboardProps> = ({isLogin }) => {
 
   //useProjects
   const { data: accountInfo, isLoading: isLoadingAccountInfo, error: errorAccountInfo } = useAccountInfo();
@@ -44,6 +45,8 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ }) => {
   const { data: projects, error: errorProjects, isLoading: isLoadingProjects, refetch: refetchProjects } = userProjects({ enabled: !isLoadingAccountInfo && !errorAccountInfo && !accountInfo?.isGuest });
   const { data: ugentTasks, error: errorUrgentTasks, isLoading: isLoadingUrgentTasks, refetch: refetcUrgentTasksh } = userProjects({ enabled: !isLoadingAccountInfo && !errorAccountInfo && !accountInfo?.isGuest });
   const { showSnackbar } = useSnackbar()
+  const navigate = useNavigate()
+
   const queryClient = useQueryClient();
   function loginWithGoogle() {
     const width = 500;
@@ -57,6 +60,8 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ }) => {
       "googleLogin",
       `width=${width},height=${height},left=${left},top=${top},resizable,scrollbars`
     );
+
+
 
 
     window.addEventListener("message", function handler(event) {
@@ -78,6 +83,18 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ }) => {
     });
   }
 
+
+  useEffect(()=>{
+
+   if(isLogin&& accountInfo?.email){
+      navigate("/dashboard", { replace: true, state :{pageType:"home"} as LocationState });
+   }
+   if(!isLogin&& !isLoadingAccountInfo&&!accountInfo?.email){
+          navigate("/login", { replace: true,state :{pageType:"login"} as LocationState });
+   }
+
+  },[isLogin,accountInfo, navigate])
+
   return (
     <div className='flex flex-col gap-8 flex-1 overflow-auto '>
 
@@ -91,7 +108,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ }) => {
 
           <div className='projects-overview-row flex flex-col col-start-1 col-end-5 lg:col-end-4 row-start-1 row-end-1 flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
             <div className='flex flex-row justify-between items-center mb-4'>
-              <h2 className="font-bold text-2xl capitalize flex flex-row gap-2 items-center justify-center "><div>Projects</div> <div className='rounded-full font-bold h-8 w-8 text-lg bg-gray-800 flex flex-col items-center justify-center '>{projects.length}</div></h2>
+              <h2 className="font-bold text-2xl capitalize flex flex-row gap-2 items-center justify-center "><div>Projects</div> <div className='rounded-full font-bold h-8 w-8 text-lg bg-gray-200 dark:bg-gray-800 flex flex-col items-center justify-center '>{projects.length}</div></h2>
               <Link to="/project" className='no-underline group'>
                 <ColorButton variant="contained" color="success" onClick={() => {
                   //navigate to /projects/create
@@ -127,15 +144,15 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ }) => {
 
             </div>
           </div>
-          <div className='utils-row gap-2 row-start-2 row-end-3 col-start-1 col-end-5 lg:row-start-1 lg:row-end-4 lg:col-start-4 lg:col-end-4 flex flex-row lg:flex-col flex-shrink-0 lg:self-start  '>
-            <div className='clock-section   flex flex-col items-center gap-4  flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
+          <div className='utils-row gap-2 row-start-2 row-end-3 col-start-1 col-end-5 lg:row-start-1 lg:row-end-4 lg:col-start-4 lg:col-end-4 flex flex-col lg:flex-col flex-shrink-0 lg:self-start  '>
+            <div className='clock-section   flex flex-col items-center gap-4  lg:flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
 
               <Clock></Clock>
               <Button variant="contained" className='self-stretch flex-shrink-0 font-bold' color='secondary' onClick={() => {
 
               }}>Clock in</Button>
             </div>
-            <div className='hidden sm:flex kpis-section text-white h-64  flex-row lg:flex-col items-stretch gap-4  flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
+            <div className='flex flex-col kpis-section text-white h-64 lg:flex  lg:flex-col items-stretch gap-4  flex-1 bg-white dark:bg-gray-950 p-6 rounded'>
 
 
               {/* <FloatingTicket label='Upcoming'>
@@ -175,7 +192,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ }) => {
                     {/* <LinearProgress color='success' variant='buffer' sx={{height:16}} value={12}></LinearProgress> */}
                     <div className='text-lg  font-semibold'>
                        <div>                        
-                  <div className='font-bold text-lg inline'>$13</div>
+                  <div className='font-bold text-lg text-gray-950 dark:text-gray-100 inline'>$13</div>
                   <div className='font-bold text-lg text-gray-500 inline'> / $54</div>
                 </div>
                     </div>
@@ -197,11 +214,11 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({ }) => {
               <div className='text-gray-500 flex flex-col items-center w-full'>
                 <WeekCompact></WeekCompact>
               </div>
-              <div className='bg-gray-900 h-[2px] w-full m-6'  ></div>
+              <div className='bg-gray-100 dark:bg-gray-900 h-[2px] w-full m-6'  ></div>
               <div className='text-gray-500 flex flex-col items-center w-full'>
                 <DayCompact></DayCompact>
               </div>
-              <div className='bg-gray-900 h-[2px] w-full m-6'  ></div>
+              <div className='bg-gray-100 dark:bg-gray-900 h-[2px] w-full m-6'  ></div>
 
 
             </div>

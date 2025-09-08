@@ -5,5 +5,5 @@ export interface LocationState {
     projectName?:string,
     projectStatus?:ProjectStatus,
     taskName?:string,
-    pageType: "home"|"projectOverview"|"projectTasks"|"todayOverview"|"thisweekOverview"|"about"|"projects"|"tasks"
+    pageType: "home"|"projectOverview"|"projectTasks"|"todayOverview"|"thisweekOverview"|"about"|"projects"|"tasks"|"login"
 }

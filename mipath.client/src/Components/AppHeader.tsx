@@ -103,6 +103,14 @@ const BreadcrumbsComponent: React.FC<BreadcrumbsComponentProps> = ({ locationInf
                 Home
             </Typography>
         </Breadcrumbs>)
+         case "login": return (<Breadcrumbs className={className} sx={{  overflow: "clip" }}  aria-label="breadcrumb">
+            <Typography
+                sx={{ color: 'text.primary', display: 'flex', alignItems: 'center' }}
+            >
+                <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
+                Login
+            </Typography>
+        </Breadcrumbs>)
         case "thisweekOverview":
         case "todayOverview": return (<Breadcrumbs className={className} sx={{  overflow: "clip" }}  aria-label="breadcrumb">
             <Typography
@@ -157,7 +165,8 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
             let projOverviewMatch = location.pathname.match(/\/project\/(\d+)\/overview/);
             let projTaskswMatch = location.pathname.match(/\/project\/(\d+)\/tasks/);
             let projectsMatch = location.pathname.match(/\/project$/);
-            let homeMatch = location.pathname.match(/^\/?$/);
+            let homeMatch = location.pathname.match(/^\/?dashboard$/);
+            let loginMatch = location.pathname.match(/^\/login$/);
 
             if (projOverviewMatch || projTaskswMatch) {
                 const projectNumber = Number.parseInt(projOverviewMatch?.[1] ?? projTaskswMatch?.[1]??"-1");
@@ -179,6 +188,9 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                 });*/
 
 
+            }
+            else if(loginMatch){
+                 setLocactionInfo({ pageType: "login" })
             }
             else if (homeMatch) {
                 setLocactionInfo({ pageType: "home" })
@@ -213,6 +225,9 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
             switch (locationInfo.pageType) {
                 case "about":
                     document.title = `About - Path`
+                    break;
+                case "login":
+                    document.title = `Login - Path`
                     break;
                 case "home":
                     document.title = `Dashboard - Path`
@@ -262,7 +277,7 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
         localStorage.removeItem("jwt");
        //queryClient.invalidateQueries({queryKey:["accountInfo"]})
         queryClient.clear()
-          navigate(`/login`, {state :{pageType:"home"} as LocationState})
+          navigate(`/login`, {state :{pageType:"login"} as LocationState})
   
         }
     const hndleSearchInputKeyDown =  (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -280,19 +295,21 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                 <div className="flex items-center min-w-0  space-x-3">
 
 
-                    <RouterLink className='hidden sm:block' to="/" state={{pageType:"home"} as LocationState}>
+                    <RouterLink className='hidden sm:block' to="/dashboard" state={{pageType:"home"} as LocationState}>
                                         <AppIcon ></AppIcon>
                     </RouterLink>
                     <div className='flex flex-col max-h-16 gap-0 items-stretch min-w-0 '>
-                        {!scrolled?
-                        <h1 className="text-2xl truncate min-w-0 font-semibold text-black dark:text-white hidden lg:block">{title}</h1>
+                        {!scrolled?<RouterLink to="/dashboard" state={{pageType:"home"} as LocationState}>
+                                <h1 className="text-2xl truncate min-w-0 font-semibold text-black dark:text-white hidden lg:block">{title}</h1>
+                        </RouterLink>
+                       
                         :null}
                         {locationInfo ? <BreadcrumbsComponent locationInfo={locationInfo}></BreadcrumbsComponent> : null}
                     </div>
                 </div>
 
                 {/* search: todo impl */}
-                <div className="flex-1 hidden md:block mx-6 max-w-lg">
+                {locationInfo&&(locationInfo.pageType!="login")&&<div className="flex-1 hidden md:block mx-6 max-w-lg">
                     <div className="relative dark:text-gray-600 text-gray-400 focus-within:text-gray-600">
                         <input onKeyDown={hndleSearchInputKeyDown} autoComplete='tyer'
                             type="text"
@@ -309,13 +326,18 @@ const AppHeader: React.FC<AppHeaderProps> = ({ title, subtitle, children, onDark
                             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1110.5 3a7.5 7.5 0 016.15 13.65z" />
                         </svg>
                     </div>
-                </div>
+                </div>}
 
 { <ul className=" flex-row gap-4 p-4 hidden lg:flex">
 
+                    {locationInfo&&locationInfo.pageType!="login"&&
+                    <>
                     <li className="font-bold hover:underline cursor-pointer"><RouterLink className='truncate ' state={{ pageType: "todayOverview" }} to={"/today"} >Today</RouterLink></li>
                     <li className="font-bold hover:underline cursor-pointer"><RouterLink className='truncate ' state={{ pageType: "thisweekOverview" }} to={"/thisweek"} >This Week</RouterLink></li>
-                    <li className="font-bold hover:underline cursor-pointer"><RouterLink className='truncate ' state={{ pageType: "about" }} to={"/about"} >About</RouterLink></li>
+
+                    </>
+                    }
+                 <li className="font-bold hover:underline cursor-pointer"><RouterLink className='truncate ' state={{ pageType: "about" }} to={"/about"} >About</RouterLink></li>
                 </ul>
                 }
                 <div className="flex flex-row gap-4  items-center">
