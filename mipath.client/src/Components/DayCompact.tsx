@@ -8,7 +8,29 @@ import { useSnackbar } from "./SnackbarContext";
 import type { Project } from "../Model/Project";
 import type { ProjectProgress } from "../Model/ProjectProgress";
 import { getDayStart } from "../services/utils";
+import ProjectComponent from "./ProjectComponent";
+import { useProject } from "../hooks/useProject";
+import { CompactTaskItem } from "./CompactTaskItem";
 
+
+
+const DetachedProjectCard: React.FC<{projectID:number}> = ({projectID})=>{
+  const {data:project,isLoading} = useProject(projectID)
+   return !project?<div><CircularProgress variant="indeterminate"></CircularProgress></div>:
+    <ProjectComponent project={project} projectId={projectID} projectName={project.name}
+    status={project.status} clientName={project.client?.name} description={project.description} 
+    className="h-full w-fill max-w-[100%] max-h-[100%]"
+    ></ProjectComponent>
+}
+
+const DetachedTaskCard: React.FC<{task:PTask}> = ({task})=>{
+   return <div style={{transform:"scale(0.1)"}}
+    className="h-full bg:gray-950 flex flex-row items-center z-100 w-fill max-w-[100%] max-h-[100%]"
+    >
+
+      <div className="text-white">{task.title}</div>
+    </div>
+}
 interface HourLabelProps {
    x:number,
    y:number,
@@ -19,7 +41,8 @@ interface TaskCircleProps {
    y:number,
    status : "green"|"gray",
    width:number,
-   task: PTask
+   task: PTask,
+   handleOnTaskHovered : (hoveredTask:{target:any, task:PTask,x:number,y:number}|undefined)=>void
 }
 
 interface TrackTask {
@@ -63,9 +86,10 @@ const Tracks_:Track[] = [
       {startTime:new Date("2025-09-06T08:00:00"), status:"green",saskId:10},
    ]},*/
 ]
-const TaskCircle : React.FC<TaskCircleProps> = ({x, y, status,width, task})=>{
+const TaskCircle : React.FC<TaskCircleProps> = ({x, y, status,width, task,handleOnTaskHovered})=>{
 
 const {showSnackbar} = useSnackbar()
+const [isHover, setIsHover] = useState<boolean>(false)
 const queryClient = useQueryClient();
     const markAsMutation = useMutation({mutationFn:async()=>{
       var newStatus: PTaskStatus = status=="gray"?"Done":"ToDo"
@@ -101,12 +125,14 @@ const queryClient = useQueryClient();
 
     }
     const raduis = ((RoadmapWidth/24)/2)-0.5
-   return (<><circle onClick={()=>{handleSatusToggle()}}
+   return (<><circle onClick={()=>{handleSatusToggle()}} onMouseEnter={(e)=>handleOnTaskHovered({target:e.currentTarget,task:task, x:x, y:y})}
+    onMouseLeave={(e)=>handleOnTaskHovered(undefined)}
              style={{cursor:"pointer", fill: status=="gray"?'url(#swatch16)': 'url(#swatch15)', transition:"all 0.5s ease", fillOpacity: 1, strokeWidth: 2.19533}}
              opacity={markAsMutation.isPending?0.5:1}
              cx={x}
              cy={y}
-             r={raduis} /><rect
+             r={raduis} />
+             <rect
              style={{fill: status=="gray"?'url(#swatch16)': 'url(#swatch15)', fillOpacity: 1, strokeWidth: 3.32833, transition:"all 0.5s ease"}}
              
              width={width}
@@ -115,6 +141,13 @@ const queryClient = useQueryClient();
              y={y-raduis}
              rx="1"
              ry="1" />
+             {markAsMutation.isPending&& <foreignObject pointerEvents={"none"}  x={x-(raduis*2*0.5)} y={y-(raduis*2*0.5)}  width={raduis*2} height={raduis*2}>
+               <div className="flex flex-col items-center justify-center absolute top-0 left-0" style={{height:raduis*2, width:raduis*2}}>
+               <CircularProgress sx={{color:"white",width:`${(raduis*2*0.5)}px !important`, height: `${(raduis*2*0.5)}px !important` }}  variant="indeterminate"></CircularProgress>
+
+               </div>
+             </foreignObject>}
+             
             
              </>)
 }
@@ -146,7 +179,7 @@ const HourToXCordinate=(hour: Date)=>{
 }
 
 const {isLoading:isloadingOverviewData,data:overviewData,error:overviewDataError} = useRoadmapOverview("today");
-
+const [hoveredTask, setHoveredTask] = useState<{target:any, task:PTask, x:number, y:number}|undefined>(undefined)
 
 const [tracks, setTracks] = useState<Track[]|undefined>(undefined);
 
@@ -180,6 +213,15 @@ useEffect(()=>{
 const [currentTime, setCurrentTime] = useState(new Date(Date.now()))
 
 
+const handleOnTaskHovered = (h:{target:any, task:PTask, x:number, y:number}|undefined)=>{
+   return
+   if(!h){
+      setHoveredTask(undefined);
+       return;
+   }
+   setHoveredTask(h)
+}
+
   useEffect(() => {
     const interval = setInterval(() => {
       //setCurrentTime(new Date(DayStartDate.getTime()+(1000*60*60*(new Date(Date.now()).getSeconds()%12))));
@@ -189,6 +231,8 @@ const [currentTime, setCurrentTime] = useState(new Date(Date.now()))
     return () => clearInterval(interval);
   }, []);
 if(!tracks) return null
+
+
 
 const roadmapHeigh = (roadmapVerticalPadding*2) + (tracksGap* (Math.max(0,tracks.length-1))) + (trackHeight*tracks.length)  +ticksHeight
   return (
@@ -353,7 +397,7 @@ const roadmapHeigh = (roadmapVerticalPadding*2) + (tracksGap* (Math.max(0,tracks
          });
            return <>{tasksWithLengths.map(tw=>{
 
-            return <TaskCircle task={tw.task.task} key={tw.task.saskId} x={tw.x} y={tw.y} width={tw.width} status={tw.task.status}></TaskCircle>
+            return <TaskCircle handleOnTaskHovered={handleOnTaskHovered} task={tw.task.task} key={tw.task.saskId} x={tw.x} y={tw.y} width={tw.width} status={tw.task.status}></TaskCircle>
            })}</>
           })}
          {/* <image height={20} width={20} x={15} y={roadmapHeigh/2-(5)}  href="/bot1.png" />  */}
@@ -400,6 +444,12 @@ const roadmapHeigh = (roadmapVerticalPadding*2) + (tracksGap* (Math.max(0,tracks
 
      
       </g>
+
+      {hoveredTask&&<foreignObject   pointerEvents={"none"}  x={hoveredTask.x+(5)+1} y={hoveredTask.y-(5)}  width={100} height={5*2}>
+               <div  className="flex flex-col items-center justify-center absolute top-0 left-0 bg-gray-500 " style={{height:5*2, width:100}}>
+                 <DetachedTaskCard task={hoveredTask.task}></DetachedTaskCard>
+               </div>
+             </foreignObject>}
 
       <rect
          style={{fill: 'none', stroke: 'none', strokeWidth: 0.529167, strokeDasharray: 'none', strokeOpacity: 1}}

@@ -56,6 +56,8 @@ const CompactTasksPreview : React.FC<CompactTasksPreviewProps> = ({pTasks, onTas
 
 type PopoverMode = "markas"|'set-due'|'set-planned-start'
 const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [anchorPos, setAnchorPos] = useState<{ top: number; left: number } | null>(null);
+
 const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
 const [popoverMode, setPopoverMode] = useState<PopoverMode>('markas')
   const [dueDateValue, setDueDateValue] = useState<Dayjs|null>(dayjs());
@@ -63,9 +65,14 @@ const [popoverMode, setPopoverMode] = useState<PopoverMode>('markas')
   const [estimateMinuteValue, setEstimateMinuteValue] = useState<number|undefined>(undefined);
   const queryClient = useQueryClient()
   const {showSnackbar} = useSnackbar()
-  const handlePopoverOpen = (target: HTMLElement, taskId: number,mode: PopoverMode) => {
+  const handlePopoverOpen = (target: HTMLElement, taskId: number,mode: PopoverMode, event:React.MouseEvent) => {
     console.log("handle popover open",taskId, mode, target )
     setAnchorEl(target);
+     setAnchorPos(
+      
+        { top: event.clientY, left: event.clientX }
+        
+    );
     setSelectedTaskId(taskId)
     setPopoverMode(mode)
     var task = pTasks.find(t=>t.id==taskId);
@@ -146,9 +153,9 @@ const onEstimateMinutesChangeRequest = async(minutes?:number)=>{
 }
     return <div className="flex flex-col gap-0 p-0">
             {pTasks.map(t=>(
-                <CompactTaskItem onClick={(e)=>{handlePopoverOpen(e.currentTarget, t.id, "markas")}}
-                onSetDueDateClick={(e)=>{handlePopoverOpen(e, t.id, "set-planned-start")}}
-                onSetPlannedStartClick={(e)=>{handlePopoverOpen(e, t.id, "set-due")}}
+                <CompactTaskItem onClick={(e)=>{handlePopoverOpen(e.currentTarget, t.id, "markas",e)}}
+                onSetDueDateClick={(e,ev)=>{handlePopoverOpen(e, t.id, "set-planned-start",ev)}}
+                onSetPlannedStartClick={(e,ev)=>{handlePopoverOpen(e, t.id, "set-due",ev)}}
                  key={t.id} task={t}></CompactTaskItem>
             ))}
 
@@ -176,9 +183,11 @@ const onEstimateMinutesChangeRequest = async(minutes?:number)=>{
     vertical: 'center',
     horizontal: 'right',
   }} transformOrigin={{
-    vertical: 'center',
+    vertical: 'bottom',
     horizontal: 'left',
   }}
+  anchorReference="anchorPosition"
+        anchorPosition={anchorPos ?? { top: 0, left: 0 }}
 >
   <ColoredBox className="overflow-clip">
   <LocalizationProvider dateAdapter={AdapterDayjs}>

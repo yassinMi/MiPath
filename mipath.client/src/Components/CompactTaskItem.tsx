@@ -40,8 +40,8 @@ export const ColorIconButton = styled(IconButton)<IconButtonProps>(({ theme }) =
 
 export type CompactTaskItemProps  ={
    task:PTask,
-   onSetPlannedStartClick: (t:HTMLElement)=>void,
-   onSetDueDateClick: (t:HTMLElement)=>void
+   onSetPlannedStartClick: (t:HTMLElement,e:React.MouseEvent)=>void,
+   onSetDueDateClick: (t:HTMLElement,e:React.MouseEvent)=>void
 }& React.HTMLAttributes<HTMLDivElement>
 export const CompactTaskItem: React.FC<CompactTaskItemProps> = ({task:t, onClick, onSetPlannedStartClick, onSetDueDateClick})=>{
 
@@ -55,11 +55,11 @@ export const CompactTaskItem: React.FC<CompactTaskItemProps> = ({task:t, onClick
 
     const handleSetDueDateClick: React.MouseEventHandler<HTMLButtonElement> = (e)=>{
         e.stopPropagation()
-        onSetDueDateClick(e.currentTarget.parentElement?.parentElement!)
+        onSetDueDateClick(e.currentTarget.parentElement?.parentElement!,e)
     }
     const handleSetPlannedDateClick:React.MouseEventHandler<HTMLButtonElement>  = (e)=>{
         e.stopPropagation()
-        onSetPlannedStartClick(e.currentTarget.parentElement?.parentElement!)
+        onSetPlannedStartClick(e.currentTarget.parentElement?.parentElement!,e)
     }
 
 

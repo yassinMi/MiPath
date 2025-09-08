@@ -221,7 +221,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
       if(!projectId) throw new Error("no project id")
       await apiUpdateProjectEstimateValue({id:Number(projectId)!, estimateValue:editabledEstimateValue})
       queryClient.invalidateQueries({queryKey:["project",projectId]})//todo optimize by setting data locally
-      showSnackbar(editabledEstimateValue===undefined?"Reset project estimate": `Updated project estimate to $${editabledEstimateValue}`, "success")
+      showSnackbar(editabledEstimateValue===undefined?"Reset project payout": `Updated project payout to $${editabledEstimateValue}`, "success")
    }
 
    return (
@@ -320,7 +320,7 @@ const ProjectOverview: React.FC<ProjectOverviewProps> = ({ }) => {
 
                      <Grid size={1}  onClick={() => setIsEditingEstimateValue(true)} className='px-4 relative cursor-pointer group flex-1 items-center bg=gray-100 dark:bg-gray-900 shadow rounded'>
                         <div className='flex flex-col p-2 '>
-                           <div className='text-sm text-blue-500/80 truncate'>Value  </div>
+                           <div className='text-sm text-blue-500/80 truncate'>Payout  </div>
                            <div className='font-bold text-blue-500 flex flex-row gap-1'>
                                <div>$</div>
                    {isEditingEstimateValue?<input autoFocus   className={`text-l w-[100%] font-bold`}

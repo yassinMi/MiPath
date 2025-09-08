@@ -12,7 +12,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import CircularBgProgress from './CircularBGProgress';
 import { useProjectProgress } from '../hooks/useProjectProgress';
 
-interface ProjectComponentProps {
+type ProjectComponentProps = {
   projectId: number;
   projectName: string;
   clientName?: string;
@@ -20,7 +20,7 @@ interface ProjectComponentProps {
     status: ProjectStatus;
     description?:string;
     project:Project
-}
+}&React.HTMLAttributes<HTMLDivElement>
 const projects = [
   {
     id: 1,
@@ -128,7 +128,8 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({
   deadline,
   status,
   description,
-  project
+  project,
+  className
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const {showSnackbar} = useSnackbar()
@@ -193,7 +194,7 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({
 
   };
   return (
-      <div data-status={(status)} onClick={handleCardClick} className="project-component group cursor-pointer h-48  flex flex-col gap-2  bg-white dark:bg-[#060606] rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300  
+      <div data-status={(status)} onClick={handleCardClick} className={`project-component group cursor-pointer h-48  flex flex-col gap-2  bg-white dark:bg-[#060606] rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300  
     data-[status=Scoping]:border-2
     dark:border-white
     border-amber-700
@@ -202,7 +203,8 @@ const ProjectComponent: React.FC<ProjectComponentProps> = ({
     data-[status=Scoping]:opacity-40
     dark:data-[status=Scoping]:bg-[repeating-linear-gradient(45deg,#060606,#060606_20px,#101828_20px,#101828_21px)]
     data-[status=Scoping]:bg-[repeating-linear-gradient(45deg,#ffffff,#ffffff_20px,#B45309_20px,#B45309_21px)]
-">
+    ${className}
+`}>
           <div onClick={handleCardClick}  className="project-card-header  flex m-4 mt-6 flex-row items-center justify-between h-4 " >
               <h3 title={projectName} onClick={handleCardClick}  className="text-lg group-hover:underline line-clamp-2">{projectName}</h3>
               <IconButton onClick={handleClick} className="text-gray-800 dark:text-gray-200">
