@@ -24,7 +24,7 @@
 
 <!-- Favicon -->
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=show_chart,view_timeline" />
 <!-- Optional: keywords (less important nowadays, but still) -->
 <meta name="keywords" content="freelance, productivity, task management, AI powered, AI scheduling, Kanban, Mi Path">
 
@@ -76,7 +76,7 @@
   }
 
   nav a.cta {
-    background-color: #6366f1;
+    background-color: #325fc0;
     color: #fff;
     padding: 0.6rem 1.2rem;
     border-radius: 0.5rem;
@@ -85,7 +85,7 @@
   }
 
   nav a.cta:hover {
-    background-color: #4f46e5;
+    background-color: #6890e7;
   }
 
   /* Hero Section */
@@ -148,6 +148,35 @@
     color: #d1d5db;
     font-size: 1rem;
   }
+  .feature-card .feature-card-icon {
+    height: 48px;
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #d1d5db;
+    background-color: #d1d5db1e;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    margin-left: -8px;
+    margin-top: -8px;
+  }
+  .feature-card-icon.orange {
+  background-color: #f9741614; /* light orange background */
+  color: #f49552; /* orange icon */
+}
+
+.feature-card-icon.green {
+  background-color: #16a34a1b; /* light green background */
+  color: #2bd469; /* green icon */
+}
+
+
+  .feature-card-icon.purple{
+    background-color: #3d6ff912;
+    color: #4877f8;
+  }
 
   /* Screenshots Section */
   .screenshots {
@@ -170,7 +199,7 @@
 
   /* CTA Section */
   .cta-section {
-    background-color: #6366f1;
+    background-color: #325fc0;
     color: #fff;
     text-align: center;
     padding: 4rem 2rem;
@@ -190,7 +219,7 @@
 
   .cta-section a {
     background-color: #fff;
-    color: #6366f1;
+    color: #325fc0;
     padding: 0.8rem 1.5rem;
     border-radius: 0.5rem;
     font-weight: 500;
@@ -199,7 +228,7 @@
 
   .cta-section a:hover {
     background-color: #e5e7eb;
-    color: #4f46e5;
+    color: #325fc0;
   }
 
   /* Footer */
@@ -221,7 +250,7 @@
 
   @media(min-width: 768px) {
     .hero {
-      flex-direction: row;
+      flex-direction: row ;
       text-align: left;
       justify-content: space-between;
     }
@@ -246,7 +275,7 @@
   font-weight: bold;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 ">
-  ⚠️ Mi Path is currently under development — some features may be incomplete.
+  Currently under development, some features may be incomplete.
 </div>
 <!-- Navbar -->
 <nav class="container">
@@ -282,35 +311,44 @@
     </div>
     <div> Mi Path</div>
   </div>
-  <a href="/login" class="cta">Get Started Free</a>
+  <a href="/login" class="cta">Get Started</a>
 </nav>
 
 <!-- Hero Section -->
 <section class="hero container">
   <div>
-    <h1>Know what to work on today</h1>
-    <!-- <p>Mi Path helps freelancers stay organized, motivated, and on track.  using AI to suggest daily schedules you can actually follow</p> -->
-    <p>Mi Path keeps freelancers focused and motivated, with AI-generated schedules that help you prioritize and finish work.</p>
-    <a href="/login" class="cta">Start Your Free Trial</a>
+    <h1>Keep your work on track</h1>
+    <p>Mi Path helps solo freelancers to stay organized, motivated, and on track using AI tools to schedule and prioritize work.</p>
   </div>
   <img src="screenshots/sc-1.jpeg" alt="Project Dashboard Mockup">
 </section>
 
 <!-- Features Section -->
 <section class="container features">
+
    <div class="feature-card">
+    <div class="feature-card-icon purple">
+      <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 30 30" width="24px" height="24px" fill="currentColor" baseProfile="basic"><path  d="M14.217,19.707l-1.112,2.547c-0.427,0.979-1.782,0.979-2.21,0l-1.112-2.547c-0.99-2.267-2.771-4.071-4.993-5.057	L1.73,13.292c-0.973-0.432-0.973-1.848,0-2.28l2.965-1.316C6.974,8.684,8.787,6.813,9.76,4.47l1.126-2.714	c0.418-1.007,1.81-1.007,2.228,0L14.24,4.47c0.973,2.344,2.786,4.215,5.065,5.226l2.965,1.316c0.973,0.432,0.973,1.848,0,2.28	l-3.061,1.359C16.988,15.637,15.206,17.441,14.217,19.707z"/><path d="M24.481,27.796l-0.339,0.777c-0.248,0.569-1.036,0.569-1.284,0l-0.339-0.777c-0.604-1.385-1.693-2.488-3.051-3.092	l-1.044-0.464c-0.565-0.251-0.565-1.072,0-1.323l0.986-0.438c1.393-0.619,2.501-1.763,3.095-3.195l0.348-0.84	c0.243-0.585,1.052-0.585,1.294,0l0.348,0.84c0.594,1.432,1.702,2.576,3.095,3.195l0.986,0.438c0.565,0.251,0.565,1.072,0,1.323	l-1.044,0.464C26.174,25.308,25.085,26.411,24.481,27.796z"/></svg>
+    </div>
     <h3>AI Scheduling</h3>
-    <p>Auto-generate your daily and weekly plans. Re-prioritize tasks if deadlines slip, and accept or reject suggestions to stay in control.</p>
+    <p>Auto-generate your daily and weekly plans. Easily update priorities as tasks evolve, and accept or reject suggestions to stay in control.</p>
   </div>
   
   <div class="feature-card">
-    <h3>Kanban Task Management</h3>
-    <p>Visualize your workflow with Backlog → In Progress → Done. Drag-and-drop tasks between columns, set priorities, and see progress at a glance.</p>
+    <div class="feature-card-icon orange">
+      <span class="material-symbols-outlined">show_chart</span>
+    </div>
+    
+    <h3>Performance Insights</h3>
+    <p>Track your productivity and progress with visual indicators. See how effectively you're completing tasks and meeting goals.</p>
   </div>
   
   <div class="feature-card">
+    <div class="feature-card-icon green">
+      <span class="material-symbols-outlined">view_timeline</span>
+    </div>
     <h3>Weekly Timeline</h3>
-    <p>See all your tasks and projects in a clean weekly view. Quickly identify busy days, upcoming deadlines, and allocate your time effectively.</p>
+    <p>See all your tasks and upcoming deadlines in a clean weekly overview.</p>
   </div>
  
 </section>
@@ -320,7 +358,7 @@
 <section class="cta-section container">
   <h2>Plan smarter. Finish faster. Stay motivated.</h2>
   <p>Mi Path is built for solo freelancers who want clarity, focus, and progress.</p>
-  <a href="/login">Try Mi Path Today</a>
+  <a href="/login">Get Started</a>
 </section>
 
 <!-- Footer -->
