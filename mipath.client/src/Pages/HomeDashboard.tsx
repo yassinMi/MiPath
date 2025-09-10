@@ -62,7 +62,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({isLogin }) => {
     );
 
 
-
+   
 
     window.addEventListener("message", function handler(event) {
       const expectedOrigin = window.location.origin;
@@ -83,6 +83,10 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({isLogin }) => {
     });
   }
 
+  function loginWithGithub(){
+
+    showSnackbar("Login with github is not implemented, please use Google instead.", "error")
+  }
 
   useEffect(()=>{
 
@@ -226,7 +230,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({isLogin }) => {
 
         </div>
         : null}
-      {accountInfo?.isGuest ? <div className='flex flex-col flex-1 items-center justify-center'><LoginCard onGoogleLogin={loginWithGoogle}></LoginCard></div> : null}
+      {accountInfo?.isGuest ? <div className='flex flex-col flex-1 items-center justify-center'><LoginCard onGithubLogin={loginWithGithub} onGoogleLogin={loginWithGoogle}></LoginCard></div> : null}
 
 
 
