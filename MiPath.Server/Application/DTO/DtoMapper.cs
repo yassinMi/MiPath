@@ -61,6 +61,8 @@ namespace MiPath.Server.Application.DTO
                 ID = u.ID,
                 Name = u.Name,
                 Email = u.Email,
+                GithubID = u.GithubID,
+                GoogleID = u.GoogleID,
             };
         }
 

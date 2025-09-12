@@ -17,7 +17,22 @@ namespace MiPath.Server.Application.UserManagement.Queries
         }
         public async Task<UserDto?> Handle(GetUserByEmailQuery value, CancellationToken cancellationToken)
         {
-            return (await userRepository.Query().Where(p=>p.Email==value.Email).FirstOrDefaultAsync())?.ToDto();
+            if (value.GoogleID != null)
+            {
+                return (await userRepository.Query().Where(p => p.GoogleID == value.GoogleID).FirstOrDefaultAsync())?.ToDto();
+            }
+            else if (value.GithubID != null)
+            {
+                return (await userRepository.Query().Where(p => p.GithubID == value.GithubID).FirstOrDefaultAsync())?.ToDto();
+            }
+            else if (value.Email != null)
+            {
+                return (await userRepository.Query().Where(p => p.Email == value.Email).FirstOrDefaultAsync())?.ToDto();
+            }
+
+            throw new Exception("must provide one of : google id, github id, email");
+
+
         }
     }
 

@@ -4,24 +4,26 @@ using System.ComponentModel.DataAnnotations;
 namespace MiPath.Server.Domain.UserManagement
 {
 
-    
-        public class User
-        {
-            [Key]
-            public int ID { get; set; }
 
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; } = string.Empty;
+    public class User
+    {
+        [Key]
+        public int ID { get; set; }
 
-            public string? Name { get; set; }
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
 
-            public DateTime CreatedAt { get; set; }
-            public DateTime? LastLoginAt { get; set; }
+        public string? Name { get; set; }
 
-            public bool IsAdmin { get; set; } = false;
+        public DateTime CreatedAt { get; set; }
+        public DateTime? LastLoginAt { get; set; }
 
-            public ICollection<Project>? Projects { get; set; }
-        }
+        public bool IsAdmin { get; set; } = false;
+        public string? GoogleID { get; set; }
+        public string? GithubID { get; set; }
+
+        public ICollection<Project>? Projects { get; set; }
+    }
 
 }

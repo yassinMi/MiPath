@@ -85,7 +85,38 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({isLogin }) => {
 
   function loginWithGithub(){
 
-    showSnackbar("Login with github is not implemented, please use Google instead.", "error")
+     const width = 500;
+    const height = 600;
+
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+
+    const popup = window.open(
+      "/api/auth/github-login",
+      "googleLogin",
+      `width=${width},height=${height},left=${left},top=${top},resizable,scrollbars`
+    );
+
+
+   
+
+    window.addEventListener("message", function handler(event) {
+      const expectedOrigin = window.location.origin;
+
+      if (event.origin !== expectedOrigin) {
+        console.warn("unexpected origin:", event.origin);
+      }
+
+
+      const { token } = event.data;
+      if (token) {
+        localStorage.setItem("jwt", token);
+        window.removeEventListener("message", handler);
+        popup?.close();
+        queryClient.invalidateQueries({ queryKey: ["accountInfo"] })
+        showSnackbar("Login success", "success")
+      }
+    });
   }
 
   useEffect(()=>{

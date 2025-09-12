@@ -7,6 +7,8 @@ namespace MiPath.Server.Application.UserManagement.Queries.Dto
         public int ID { get; set; }
         public required string Name { get; set; }
         public string? Email { get; set; }
+        public string? GoogleID { get; set; }
+        public string? GithubID { get; set; }
         
         
 
