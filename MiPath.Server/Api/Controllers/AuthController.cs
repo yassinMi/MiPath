@@ -34,7 +34,7 @@ namespace MiPath.Server.Api.Controllers
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
         [HttpGet("signin-google")]
-        public async Task<IActionResult> GoogleResponse([FromServices] CreateUserCommandHandler createUserHangler, [FromServices] UpdateUserCommandHandler updateUserHandler, [FromServices] GetUserByEmailQueryHandler queryUserByEmailHandler)
+        public async Task<IActionResult> GoogleResponse([FromServices] CreateUserCommandHandler createUserHangler, [FromServices] GetUserByEmailQueryHandler queryUserByEmailHandler)
         {
             logger.LogInformation($"GoogleResponse called");
             var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
@@ -50,7 +50,7 @@ namespace MiPath.Server.Api.Controllers
 
             string? token;
 
-            var maybeUser = await queryUserByEmailHandler.Handle(new GetUserByEmailQuery() { Email = email }, CancellationToken.None);
+            var maybeUser = await queryUserByEmailHandler.Handle(new GetUserByEmailQuery() { GoogleID = googleId }, CancellationToken.None);
             if (maybeUser == null)
             {
                 logger.LogInformation($"user doesn't exist, creating a new one");
@@ -58,17 +58,9 @@ namespace MiPath.Server.Api.Controllers
                 var userId = await createUserHangler.Handle(newUserCommand, CancellationToken.None);
                 logger.LogInformation($"user created with id: {userId}");
                 token = GenerateJwtToken(userId.ToString(), email, userName);
-
             }
             else
             {
-                if(maybeUser.GoogleID==null && maybeUser.GithubID == null)
-                {
-                    //migrating users who registerd in previous version when we didn't store google id
-                    await updateUserHandler.Handle(new UpdateUserCommand() { Email = maybeUser.Email!, Name = maybeUser.Name, GoogleID = googleId, ID = maybeUser.ID }, CancellationToken.None);
-                    maybeUser.GoogleID = googleId;
-
-                }
                 var userId = maybeUser.ID;
                 logger.LogInformation($"user exists with is ${userId}");
                 token = GenerateJwtToken(userId.ToString(), email, userName);
