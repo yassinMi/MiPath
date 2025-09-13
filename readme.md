@@ -1,7 +1,7 @@
 # Path - project managment and productivity tool for solo freelancers
 
 ## Live Demo
-Check it out here: [mipath.app.yassinmi.com](https://mipath.app.yassinmi.com) 
+Check it out here: [mipath.yassinmi.com](https://mipath.yassinmi.com) 
 
 ## run in development
 step 1: run:
